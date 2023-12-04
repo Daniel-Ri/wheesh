@@ -4,6 +4,8 @@ import { FormattedMessage } from 'react-intl';
 
 import { ping } from '@containers/App/actions';
 
+import classes from './style.module.scss';
+
 const Home = () => {
   const dispatch = useDispatch();
 
@@ -12,9 +14,9 @@ const Home = () => {
   }, [dispatch]);
 
   return (
-    <div>
+    <main className={classes.main}>
       <FormattedMessage id="app_greeting" />
-    </div>
+    </main>
   );
 };
 

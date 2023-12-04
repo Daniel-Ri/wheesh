@@ -1,6 +1,8 @@
 import MainLayout from '@layouts/MainLayout';
 
 import Home from '@pages/Home';
+import Me from '@pages/Me';
+import MyTickets from '@pages/MyTickets';
 import NotFound from '@pages/NotFound';
 
 const routes = [
@@ -9,6 +11,20 @@ const routes = [
     name: 'Home',
     protected: false,
     component: Home,
+    layout: MainLayout,
+  },
+  {
+    path: '/my-tickets',
+    name: 'My Tickets',
+    protected: false,
+    component: MyTickets,
+    layout: MainLayout,
+  },
+  {
+    path: '/me/:id',
+    name: 'Me',
+    protected: false,
+    component: Me,
     layout: MainLayout,
   },
   { path: '*', name: 'Not Found', component: NotFound, layout: MainLayout, protected: false },
