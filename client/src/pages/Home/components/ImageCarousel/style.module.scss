@@ -1,0 +1,9 @@
+@import '@styles/base';
+
+.carousel {
+  align-self: center;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 40rem;
+}
