@@ -15,6 +15,11 @@ exports.validateToken = (token) => {
   }
 }
 
+exports.generateRandomToken = () => {
+  const token = Math.floor(100000 + Math.random() * 900000); // Generates a random 6-digit number
+  return token;
+}
+
 exports.signResetToken = (id) => {
   // Expire in 1 hour
   return jwt.sign({ exp: Math.floor(Date.now() / 1000) + 60 * 60, id }, JWT_SECRET);
