@@ -1,0 +1,169 @@
+@import '@styles/base';
+
+// Reset
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Poppins;
+}
+
+.main {
+  margin-left: 200px;
+  position: relative;
+  background: $color-alabaster;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: calc(100vw - 200px);
+  height: 100%;
+  min-height: 100vh;
+
+  .container {
+    width: 90%;
+    max-width: 30rem;
+    @include directionY;
+
+    header {
+      width: 100%;
+      margin-top: 1rem;
+      @include directionX;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+
+      h1 {
+        font-size: 120%;
+      }
+    }
+
+    form {
+      margin-top: 1rem;
+      width: 100%;
+      @include directionY;
+
+      .header {
+        padding: 0.5rem;
+        background-color: $color-light-gray;
+      }
+
+      label {
+        flex: 45%;
+      }
+
+      div.input {
+        flex: 45%;
+        padding: 0.5rem;
+        @include directionX;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      input {
+        flex: 45%;
+        width: 45%;
+        padding: 0.25rem 0.5rem;
+        font-size: 80%;
+        text-align: right;
+        border-radius: 5px;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: $color-picton-blue;
+      }
+
+      .inputPassword {
+        flex: 45%;
+        width: 45%;
+        font-size: 100%;
+      }
+
+      .radios {
+        flex: 45%;
+        width: 45%;
+        @include directionX;
+        justify-content: space-around;
+        gap: 1rem;
+
+        .radio {
+          @include directionX;
+          gap: 0.25rem;
+          cursor: pointer;
+
+          input {
+            cursor: pointer;
+          }
+
+          label {
+            cursor: pointer;
+          }
+        }
+      }
+
+      .datePicker {
+        flex: 45%;
+        width: 45%;
+        align-self: flex-end;
+      }
+
+      .verification {
+        flex: 45%;
+        width: 45%;
+        text-align: left;
+      }
+
+      .button {
+        align-self: flex-end;
+        @include directionX;
+        justify-content: flex-end;
+        flex: 45%;
+      }
+    }
+
+    .buttons {
+      margin-top: 1rem;
+      @include directionY;
+      gap: 1rem;
+
+      .login {
+        background-color: $color-picton-blue-dark-shade;
+        color: $color-white;
+        transition: 0.3s opacity;
+      }
+
+      .login:disabled,
+      .login[disabled]{
+        opacity: 0.5;
+      }
+
+      .register {
+        color: $color-picton-blue-dark-shade;
+      }
+    }
+  }
+
+  @media screen and (max-width: $screen-lg-limit) {
+    margin-left: 192px;
+    width: calc(100vw - 192px);
+  }
+
+  @media screen and (max-width: $screen-md-limit) {
+    margin-left: 10rem;
+    width: calc(100vw - 10rem);
+  }
+
+  @media screen and (max-width: $screen-sm-limit) {
+    margin-left: 0;
+    width: 100vw;
+    margin-bottom: 76px;
+    height: 100%;
+    min-height: calc(100vh - 76px);
+
+    .container {
+      header {
+        height: 3rem;
+      }
+    }
+  }
+}

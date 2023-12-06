@@ -5,6 +5,7 @@ import Login from '@pages/Login';
 import Me from '@pages/Me';
 import MyTickets from '@pages/MyTickets';
 import NotFound from '@pages/NotFound';
+import Register from '@pages/Register';
 
 const routes = [
   {
@@ -33,6 +34,13 @@ const routes = [
     name: 'Login',
     protected: false,
     component: Login,
+    layout: MainLayout,
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    protected: false,
+    component: Register,
     layout: MainLayout,
   },
   { path: '*', name: 'Not Found', component: NotFound, layout: MainLayout, protected: false },
