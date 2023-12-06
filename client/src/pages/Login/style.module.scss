@@ -1,0 +1,115 @@
+@import '@styles/base';
+
+// Reset
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Poppins;
+}
+
+.main {
+  margin-left: 200px;
+  position: relative;
+  background: $color-alabaster;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: calc(100vw - 200px);
+  height: 100%;
+  min-height: 100vh;
+
+  .container {
+    width: 90%;
+    max-width: 30rem;
+    @include directionY;
+
+    header {
+      margin-top: 1rem;
+      @include directionX;
+      justify-content: center;
+      height: 5rem;
+
+      img {
+        height: 100%;
+        object-fit: contain;
+      }
+    }
+
+    .message {
+      margin-top: 1rem;
+      font-size: 100%;
+
+      .subMsg {
+        color: $color-cool-gray;
+      }
+    }
+
+    form {
+      margin-top: 1rem;
+      width: 100%;
+      @include directionY;
+      gap: 1rem;
+
+      input {
+        padding: 0.25rem 0.5rem;
+        border-radius: 5px;
+        font-size: 80%;
+      }
+
+      .input {
+        font-size: 100%;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: $color-picton-blue;
+      }
+    }
+
+    .buttons {
+      margin-top: 1rem;
+      @include directionY;
+      gap: 1rem;
+
+      .login {
+        background-color: $color-picton-blue-dark-shade;
+        color: $color-white;
+        transition: 0.3s opacity;
+      }
+
+      .login:disabled,
+      .login[disabled]{
+        opacity: 0.5;
+      }
+
+      .register {
+        color: $color-picton-blue-dark-shade;
+      }
+    }
+  }
+
+  @media screen and (max-width: $screen-lg-limit) {
+    margin-left: 192px;
+    width: calc(100vw - 192px);
+  }
+
+  @media screen and (max-width: $screen-md-limit) {
+    margin-left: 10rem;
+    width: calc(100vw - 10rem);
+  }
+
+  @media screen and (max-width: $screen-sm-limit) {
+    margin-left: 0;
+    width: 100vw;
+    margin-bottom: 76px;
+    height: 100%;
+    min-height: calc(100vh - 76px);
+
+    .container {
+      header {
+        height: 3rem;
+      }
+    }
+  }
+}

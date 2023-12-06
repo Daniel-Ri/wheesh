@@ -1,6 +1,7 @@
 import MainLayout from '@layouts/MainLayout';
 
 import Home from '@pages/Home';
+import Login from '@pages/Login';
 import Me from '@pages/Me';
 import MyTickets from '@pages/MyTickets';
 import NotFound from '@pages/NotFound';
@@ -21,10 +22,17 @@ const routes = [
     layout: MainLayout,
   },
   {
-    path: '/me/:id',
+    path: '/me',
     name: 'Me',
     protected: false,
     component: Me,
+    layout: MainLayout,
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    protected: false,
+    component: Login,
     layout: MainLayout,
   },
   { path: '*', name: 'Not Found', component: NotFound, layout: MainLayout, protected: false },

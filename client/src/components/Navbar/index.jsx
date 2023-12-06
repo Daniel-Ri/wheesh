@@ -48,7 +48,7 @@ const Navbar = ({ title, locale, theme }) => {
   };
 
   const goMePage = () => {
-    navigate('/me/1');
+    navigate('/me');
   };
 
   return (

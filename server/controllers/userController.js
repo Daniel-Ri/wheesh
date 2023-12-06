@@ -12,7 +12,7 @@ exports.login = async(req, res) => {
     const dataReq = req.body;
     const scheme = Joi.object({
       usernameOrEmail: Joi.string().required(),
-      password: Joi.string().min(6).required()
+      password: Joi.string().required()
     });
 
     const { error } = scheme.validate(dataReq);
