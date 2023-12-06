@@ -138,12 +138,19 @@ exports.register = async(req, res) => {
           return helpers.error('date.lessThanOrEqual17YearsAgo'); // Validation fails
         }
       }),
-      idCard: Joi.string().length(16).required(),
+      idCard: Joi.string().length(16).required().custom((value, helpers) => {
+        if (/^[0-9]+$/.test(value)) {
+          return value;
+        } else {
+          return helpers.error('idCard.invalidFormat');
+        }
+      }),
       name: Joi.string().required(),
       email: Joi.string().email().required(),
       emailToken: Joi.string().required(),
     }).messages({
       'date.lessThanOrEqual17YearsAgo': 'You must be at least 17 years old',
+      'idCard.invalidFormat': 'ID Card is in invalid format'
     });
 
     const { error } = scheme.validate(newData);
@@ -255,11 +262,18 @@ exports.updateProfile = async(req, res) => {
           return helpers.error('date.lessThanOrEqual17YearsAgo'); // Validation fails
         }
       }),
-      idCard: Joi.string().length(16),
+      idCard: Joi.string().length(16).custom((value, helpers) => {
+        if (/^[0-9]+$/.test(value)) {
+          return value;
+        } else {
+          return helpers.error('idCard.invalidFormat');
+        }
+      }),
       name: Joi.string(),
       email: Joi.string().email(),
     }).messages({
       'date.lessThanOrEqual17YearsAgo': 'You must be at least 17 years old',
+      'idCard.invalidFormat': 'ID Card is in invalid format'
     });
 
     const { error } = scheme.validate(req.body);

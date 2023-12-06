@@ -20,7 +20,9 @@ module.exports = {
         dateOfBirth: new Date(1995, 10, 12),
         idCard: '1234567890123456',
         name: 'John Doe',
-        email: 'johndoe@gmail.com'
+        email: 'johndoe@gmail.com',
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
       {
         userId: 1,
@@ -30,6 +32,8 @@ module.exports = {
         idCard: '1234567890123496',
         name: 'Jean Doe',
         email: 'jeandoe@gmail.com',
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
       {
         userId: 2,
@@ -39,6 +43,8 @@ module.exports = {
         idCard: '1234567890123496',
         name: 'Jean Doe',
         email: 'jeandoe@gmail.com',
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
       {
         userId: 3,
@@ -47,7 +53,9 @@ module.exports = {
         dateOfBirth: new Date(1995, 10, 12),
         idCard: '1234567890123457',
         name: 'Agus Ganteng',
-        email: 'agus@gmail.com'
+        email: 'agus@gmail.com',
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
       {
         userId: 3,
@@ -56,7 +64,9 @@ module.exports = {
         dateOfBirth: new Date(1997, 2, 3),
         idCard: '1234567890123499',
         name: 'Asep Ganteng',
-        email: 'asep@gmail.com'
+        email: 'asep@gmail.com',
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
       {
         userId: 3,
@@ -65,7 +75,9 @@ module.exports = {
         dateOfBirth: new Date(1998, 1, 30),
         idCard: '1234567890123500',
         name: 'Slamet Ganteng',
-        email: 'slamet@gmail.com'
+        email: 'slamet@gmail.com',
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
       {
         userId: 4,
@@ -74,7 +86,9 @@ module.exports = {
         dateOfBirth: new Date(1997, 2, 3),
         idCard: '1234567890123499',
         name: 'Asep Ganteng',
-        email: 'asep@gmail.com'
+        email: 'asep@gmail.com',
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
       {
         userId: 5,
@@ -83,7 +97,9 @@ module.exports = {
         dateOfBirth: new Date(1998, 1, 30),
         idCard: '1234567890123500',
         name: 'Slamet Ganteng',
-        email: 'slamet@gmail.com'
+        email: 'slamet@gmail.com',
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
     ]);
   },
