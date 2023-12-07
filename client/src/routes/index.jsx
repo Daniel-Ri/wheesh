@@ -1,8 +1,10 @@
 import MainLayout from '@layouts/MainLayout';
+import CreatePassenger from '@pages/CreatePassenger';
 
 import Home from '@pages/Home';
 import Login from '@pages/Login';
 import Me from '@pages/Me';
+import MyPassengers from '@pages/MyPassengers';
 import MyTickets from '@pages/MyTickets';
 import NotFound from '@pages/NotFound';
 import Register from '@pages/Register';
@@ -41,6 +43,20 @@ const routes = [
     name: 'Register',
     protected: false,
     component: Register,
+    layout: MainLayout,
+  },
+  {
+    path: '/myPassengers',
+    name: 'My Passengers',
+    protected: true,
+    component: MyPassengers,
+    layout: MainLayout,
+  },
+  {
+    path: '/createPassenger',
+    name: 'Create Passenger',
+    protected: true,
+    component: CreatePassenger,
     layout: MainLayout,
   },
   { path: '*', name: 'Not Found', component: NotFound, layout: MainLayout, protected: false },

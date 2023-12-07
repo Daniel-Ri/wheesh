@@ -78,9 +78,16 @@ exports.createPassenger = async (req, res) => {
     if (error) 
       return res.status(400).json({ status: 'Validation Failed', message: error.details[0].message })
 
-    const existingIdCard = await Passenger.findOne({
-      where: { userId: req.user.id, idCard }
+    const myPassengersData = await Passenger.findAll({
+      where: { userId: req.user.id }
     });
+
+    if (myPassengersData.length >= 15)
+      return handleClientError(res, 400, `You have reached the limit of creating passengers`);
+
+    const existingIdCard = myPassengersData.find(
+      (element) => element.userId == req.user.id && element.idCard == idCard
+    );
     if (existingIdCard)
       return handleClientError(res, 400, 'You have already added this ID Card');
 

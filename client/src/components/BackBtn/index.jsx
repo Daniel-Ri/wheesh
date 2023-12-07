@@ -1,16 +1,16 @@
 import { Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 import classes from './style.module.scss';
 
-const BackBtn = () => {
-  const navigate = useNavigate();
+const BackBtn = ({ handleClickBack }) => (
+  <Button className={classes.btn} onClick={handleClickBack}>
+    Back
+  </Button>
+);
 
-  return (
-    <Button className={classes.btn} onClick={() => navigate(-1)}>
-      Back
-    </Button>
-  );
+BackBtn.propTypes = {
+  handleClickBack: PropTypes.func.isRequired,
 };
 
 export default BackBtn;

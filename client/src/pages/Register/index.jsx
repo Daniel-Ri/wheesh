@@ -174,7 +174,7 @@ const Register = () => {
     <main className={classes.main}>
       <div className={classes.container}>
         <header>
-          <BackBtn />
+          <BackBtn handleClickBack={() => navigate('/login')} />
           <h1>Register</h1>
         </header>
 

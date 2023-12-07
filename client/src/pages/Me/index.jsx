@@ -29,7 +29,7 @@ const Me = ({ user }) => {
     if (!user) {
       toast.error('Need to login');
     } else {
-      navigate('/passenger');
+      navigate('/myPassengers');
     }
   };
 

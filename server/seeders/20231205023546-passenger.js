@@ -80,6 +80,136 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        userId: 3,
+        isUser: false,
+        gender: 'Female',
+        dateOfBirth: new Date(1998, 1, 30),
+        idCard: '1234567890123502',
+        name: 'Siti Cantik',
+        email: 'siti@gmail.com',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        userId: 3,
+        isUser: false,
+        gender: 'Female',
+        dateOfBirth: new Date(1998, 1, 30),
+        idCard: '1234567890123503',
+        name: 'Sri Cantik',
+        email: 'sri@gmail.com',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        userId: 3,
+        isUser: false,
+        gender: 'Female',
+        dateOfBirth: new Date(1998, 1, 30),
+        idCard: '1234567890123504',
+        name: 'Nur Cantik',
+        email: 'nur@gmail.com',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        userId: 3,
+        isUser: false,
+        gender: 'Female',
+        dateOfBirth: new Date(1998, 1, 30),
+        idCard: '1234567890123505',
+        name: 'Ni Cantik',
+        email: 'ni@gmail.com',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        userId: 3,
+        isUser: false,
+        gender: 'Female',
+        dateOfBirth: new Date(1998, 1, 30),
+        idCard: '1234567890123506',
+        name: 'Dewi Cantik',
+        email: 'dewi@gmail.com',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        userId: 3,
+        isUser: false,
+        gender: 'Female',
+        dateOfBirth: new Date(1998, 1, 30),
+        idCard: '1234567890123507',
+        name: 'Endang Cantik',
+        email: 'endang@gmail.com',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        userId: 3,
+        isUser: false,
+        gender: 'Female',
+        dateOfBirth: new Date(1998, 1, 30),
+        idCard: '1234567890123508',
+        name: 'Maria Cantik',
+        email: 'maria@gmail.com',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        userId: 3,
+        isUser: false,
+        gender: 'Female',
+        dateOfBirth: new Date(1998, 1, 30),
+        idCard: '1234567890123509',
+        name: 'Ida Cantik',
+        email: 'ida@gmail.com',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        userId: 3,
+        isUser: false,
+        gender: 'Female',
+        dateOfBirth: new Date(1998, 1, 30),
+        idCard: '1234567890123510',
+        name: 'Nurul Cantik',
+        email: 'nurul@gmail.com',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        userId: 3,
+        isUser: false,
+        gender: 'Female',
+        dateOfBirth: new Date(1998, 1, 30),
+        idCard: '1234567890123511',
+        name: 'Wayan Cantik',
+        email: 'wayan@gmail.com',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        userId: 3,
+        isUser: false,
+        gender: 'Male',
+        dateOfBirth: new Date(1998, 1, 30),
+        idCard: '1234567890123512',
+        name: 'Andy Tulen',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        userId: 3,
+        isUser: false,
+        gender: 'Male',
+        dateOfBirth: new Date(1998, 1, 30),
+        idCard: '1234567890123513',
+        name: 'Satria Tulen',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
         userId: 4,
         isUser: true,
         gender: 'Male',
