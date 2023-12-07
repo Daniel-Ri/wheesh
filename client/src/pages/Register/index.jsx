@@ -279,6 +279,7 @@ const Register = () => {
               showMonthDropdown
               dropdownMode="select"
               showYearDropdown
+              dateFormat="dd/MM/yyyy"
               className={classes.datePicker}
               onChange={(date) => setInputs((prev) => ({ ...prev, dateOfBirth: date }))}
             />

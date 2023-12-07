@@ -7,6 +7,7 @@ import Me from '@pages/Me';
 import MyPassengers from '@pages/MyPassengers';
 import MyTickets from '@pages/MyTickets';
 import NotFound from '@pages/NotFound';
+import Passenger from '@pages/Passenger';
 import Register from '@pages/Register';
 
 const routes = [
@@ -57,6 +58,13 @@ const routes = [
     name: 'Create Passenger',
     protected: true,
     component: CreatePassenger,
+    layout: MainLayout,
+  },
+  {
+    path: '/passenger/:passengerId',
+    name: 'Passenger',
+    protected: true,
+    component: Passenger,
     layout: MainLayout,
   },
   { path: '*', name: 'Not Found', component: NotFound, layout: MainLayout, protected: false },

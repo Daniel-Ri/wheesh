@@ -19,6 +19,7 @@ const MyPassengers = ({ myPassengers }) => {
 
   useEffect(() => {
     dispatch(getMyPassengers());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

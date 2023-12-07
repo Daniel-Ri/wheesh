@@ -44,6 +44,10 @@ const CreatePassenger = () => {
   };
 
   const validateEmail = () => {
+    if (!inputs.email) {
+      return true;
+    }
+
     if (!/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(inputs.email)) {
       toast.error('Incorrect E-mail format');
       return false;
@@ -55,16 +59,16 @@ const CreatePassenger = () => {
   const handleFocusOut = (e) => {
     if (e.target.name === 'idCard') {
       validateIdCard();
-    } else if (e.target.name === 'email') {
+    }
+
+    if (e.target.name === 'email') {
       validateEmail();
     }
   };
 
   const validateInputs = () => {
     if (!validateIdCard()) return false;
-
     if (!validateEmail()) return false;
-
     return true;
   };
 
@@ -80,7 +84,6 @@ const CreatePassenger = () => {
   const handleSubmit = () => {
     if (!validateInputs()) return;
 
-    console.log('validated');
     const formattedInputs = { ...inputs };
     formattedInputs.dateOfBirth = new Date(inputs.dateOfBirth).toDateString();
 
@@ -133,6 +136,7 @@ const CreatePassenger = () => {
               showMonthDropdown
               dropdownMode="select"
               showYearDropdown
+              dateFormat="dd/MM/yyyy"
               className={classes.datePicker}
               onChange={(date) => setInputs((prev) => ({ ...prev, dateOfBirth: date }))}
             />
