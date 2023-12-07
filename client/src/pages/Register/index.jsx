@@ -60,6 +60,11 @@ const Register = () => {
 
   const validatePassword = () => {
     if (!inputs.password) {
+      toast.error('Password cannot be empty');
+      return false;
+    }
+
+    if (inputs.password.length < 6) {
       toast.error('Password must have min 6 characters');
       return false;
     }

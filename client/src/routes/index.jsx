@@ -10,6 +10,7 @@ import NotFound from '@pages/NotFound';
 import Passenger from '@pages/Passenger';
 import Profile from '@pages/Profile';
 import Register from '@pages/Register';
+import ChangePassword from '@pages/ChangePassword';
 
 const routes = [
   {
@@ -73,6 +74,13 @@ const routes = [
     name: 'Profile',
     protected: true,
     component: Profile,
+    layout: MainLayout,
+  },
+  {
+    path: '/changePassword',
+    name: 'Change Password',
+    protected: true,
+    component: ChangePassword,
     layout: MainLayout,
   },
   { path: '*', name: 'Not Found', component: NotFound, layout: MainLayout, protected: false },
