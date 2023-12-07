@@ -7,12 +7,13 @@ import BackBtn from '@components/BackBtn';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { createStructuredSelector } from 'reselect';
-import classes from './style.module.scss';
 import { deletePassenger, getPassenger } from './actions';
 import { selectPassenger } from './selectors';
 import NonEditable from './components/NonEditable';
 import Editable from './components/Editable';
 import ReminderDialog from './components/ReminderDialog';
+
+import classes from './style.module.scss';
 
 const Passenger = ({ passenger }) => {
   const { passengerId } = useParams();

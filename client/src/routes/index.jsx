@@ -8,6 +8,7 @@ import MyPassengers from '@pages/MyPassengers';
 import MyTickets from '@pages/MyTickets';
 import NotFound from '@pages/NotFound';
 import Passenger from '@pages/Passenger';
+import Profile from '@pages/Profile';
 import Register from '@pages/Register';
 
 const routes = [
@@ -65,6 +66,13 @@ const routes = [
     name: 'Passenger',
     protected: true,
     component: Passenger,
+    layout: MainLayout,
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    protected: true,
+    component: Profile,
     layout: MainLayout,
   },
   { path: '*', name: 'Not Found', component: NotFound, layout: MainLayout, protected: false },

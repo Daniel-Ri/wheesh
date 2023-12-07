@@ -312,19 +312,13 @@ exports.updateProfile = async(req, res) => {
 
       const reloadedUser = await User.findByPk(req.user.id, {
         attributes: { exclude: [ 'password', 'createdAt', 'updatedAt'] },
-        include: [
-          {
-            model: Passenger,
-            attributes: { exclude: [ 'createdAt', 'updatedAt'] },
-            where: {
-              isUser: true
-            }
-          }
-        ],
         transaction: t
       });
 
-      return res.status(200).json({ data: reloadedUser, status: 'Success' });
+      const formateedUser = reloadedUser.toJSON();
+      formateedUser.role = 'user';
+
+      return res.status(200).json({ data: formateedUser, status: 'Success' });
     });
 
   } catch (error) {

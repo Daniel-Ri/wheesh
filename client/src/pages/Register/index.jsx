@@ -186,7 +186,7 @@ const Register = () => {
               type="text"
               name="username"
               id="username"
-              value={inputs.usernameOrEmail}
+              value={inputs.username}
               onChange={handleInputChange}
               onBlur={handleFocusOut}
               placeholder="Enter the username"
