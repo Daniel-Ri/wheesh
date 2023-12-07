@@ -355,3 +355,59 @@ exports.changePassword = async (req, res) => {
     handleServerError(res);
   }
 } 
+
+exports.changeEmail = async (req, res) => {
+  try {
+    const { email, emailToken } = req.body;
+    const scheme = Joi.object({
+      email: Joi.string().email().required(),
+      emailToken: Joi.string().required(),
+    });
+
+    const { error } = scheme.validate(req.body);
+    if (error) 
+      return res.status(400).json({ status: 'Validation Failed', message: error.details[0].message });
+
+    const foundUser = await User.findByPk(req.user.id);
+    const foundPassenger = await Passenger.findOne({
+      where: {userId: req.user.id, isUser: true}
+    });
+
+    const foundEmailToken = await EmailToken.findOne({
+      where: {
+        email: email,
+        token: emailToken,
+        expiredAt: {[Op.gte]: new Date()}
+      }
+    });
+    if (!foundEmailToken)
+      return handleClientError(res, 400, "Email token is expired or invalid!");
+
+    foundUser.email = email;
+    foundPassenger.email = email;
+
+    await sequelize.transaction(async(t) => {
+      await foundUser.save({ transaction: t });
+      await foundPassenger.save({ transaction: t });
+
+      await EmailToken.destroy({
+        where: {email},
+        transaction: t
+      });
+
+      const reloadedUser = await User.findByPk(req.user.id, {
+        attributes: { exclude: [ 'password', 'createdAt', 'updatedAt'] },
+        transaction: t
+      });
+
+      const formateedUser = reloadedUser.toJSON();
+      formateedUser.role = 'user';
+
+      return res.status(200).json({ data: formateedUser, status: 'Success' });
+    });
+    
+  } catch (error) {
+    console.error(error);
+    handleServerError(res);
+  }
+}

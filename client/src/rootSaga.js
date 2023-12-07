@@ -7,6 +7,7 @@ import createPassengerSaga from '@pages/CreatePassenger/saga';
 import passengerSaga from '@pages/Passenger/saga';
 import profileSaga from '@pages/Profile/saga';
 import changePasswordSaga from '@pages/ChangePassword/saga';
+import changeEmailSaga from '@pages/ChangeEmail/saga';
 
 export default function* rootSaga() {
   yield all([
@@ -17,5 +18,6 @@ export default function* rootSaga() {
     passengerSaga(),
     profileSaga(),
     changePasswordSaga(),
+    changeEmailSaga(),
   ]);
 }

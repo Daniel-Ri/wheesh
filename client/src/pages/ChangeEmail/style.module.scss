@@ -27,39 +27,29 @@
       width: 100%;
       margin-top: 5vh;
       @include directionX;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
       position: relative;
-
-      .empty {
-        width: 32%;
-      }
 
       h1 {
         font-size: 120%;
       }
-
-      .edit {
-        width: 32%;
-        text-align: right;
-        cursor: pointer;
-      }
     }
-    
+
     form {
       margin-top: 1rem;
       width: 100%;
       @include directionY;
-  
+
       .header {
         padding: 0.5rem;
         background-color: $color-light-gray;
       }
-  
+
       label {
         flex: 45%;
       }
-  
+
       div.input {
         flex: 45%;
         padding: 0.5rem;
@@ -67,7 +57,7 @@
         justify-content: space-between;
         align-items: center;
       }
-  
+
       input {
         flex: 45%;
         width: 45%;
@@ -76,42 +66,31 @@
         text-align: right;
         border-radius: 5px;
       }
-  
+
       input:focus {
         outline: none;
         border-color: $color-picton-blue;
       }
-  
-      input:disabled {
-        color: #000;
-        border-width: 0;
-      }
-  
-      .radios {
+
+      .verification {
         flex: 45%;
         width: 45%;
-        @include directionX;
-        justify-content: space-around;
-        gap: 1rem;
-  
-        .radio {
-          @include directionX;
-          gap: 0.25rem;
-        }
+        text-align: left;
       }
-  
-      .datePicker {
-        flex: 45%;
-        width: 45%;
+
+      .button {
         align-self: flex-end;
+        @include directionX;
+        justify-content: flex-end;
+        flex: 45%;
       }
     }
 
     .buttons {
       margin-top: 1rem;
+      padding: 0 0.5rem;
       @include directionY;
       gap: 1rem;
-
     }
   }
 

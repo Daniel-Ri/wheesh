@@ -36,6 +36,7 @@ export const register = (inputs) => callAPI(`${urls.user}/register`, 'POST', {},
 export const getProfile = () => callAPI(urls.user, 'GET');
 export const updateProfile = (inputs) => callAPI(urls.user, 'PUT', {}, {}, inputs);
 export const changePassword = (inputs) => callAPI(`${urls.user}/changePassword`, 'PUT', {}, {}, inputs);
+export const changeEmail = (inputs) => callAPI(`${urls.user}/changeEmail`, 'PUT', {}, {}, inputs);
 export const getMyPassengers = () => callAPI(urls.passenger, 'GET');
 export const getPassenger = (passengerId) => callAPI(`${urls.passenger}/${passengerId}`, 'GET');
 export const createPassenger = (inputs) => callAPI(urls.passenger, 'POST', {}, {}, inputs);

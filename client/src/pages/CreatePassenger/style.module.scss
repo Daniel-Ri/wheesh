@@ -14,19 +14,18 @@
   background: $color-alabaster;
   display: flex;
   justify-content: center;
-  align-items: center;
   width: calc(100vw - 200px);
   height: 100%;
   min-height: 100vh;
 
   .container {
     width: 90%;
-    max-width: 30rem;
+    max-width: 40rem;
     @include directionY;
 
     header {
       width: 100%;
-      margin-top: 1rem;
+      margin-top: 5vh;
       @include directionX;
       justify-content: center;
       align-items: center;
