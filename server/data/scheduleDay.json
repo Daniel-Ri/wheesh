@@ -1,0 +1,122 @@
+[
+  {
+    "departureStationId": 1,   
+    "arrivalStationId": 3,
+    "departureTime": "06:15:00",
+    "arrivalTime": "06:45:00"
+  },
+  {
+    "departureStationId": 1,   
+    "arrivalStationId": 3,
+    "departureTime": "06:40:00",
+    "arrivalTime": "07:10:00"
+  },
+  {
+    "departureStationId": 1,   
+    "arrivalStationId": 3,
+    "departureTime": "07:30:00",
+    "arrivalTime": "08:00:00"
+  },
+  {
+    "departureStationId": 1,   
+    "arrivalStationId": 3,
+    "departureTime": "07:55:00",
+    "arrivalTime": "08:25:00"
+  },
+  {
+    "departureStationId": 1,   
+    "arrivalStationId": 3,
+    "departureTime": "08:45:00",
+    "arrivalTime": "09:15:00"
+  },
+  {
+    "departureStationId": 1,   
+    "arrivalStationId": 3,
+    "departureTime": "09:45:00",
+    "arrivalTime": "10:15:00"
+  },
+  {
+    "departureStationId": 1,   
+    "arrivalStationId": 3,
+    "departureTime": "10:20:00",
+    "arrivalTime": "10:50:00"
+  },
+  {
+    "departureStationId": 1,   
+    "arrivalStationId": 3,
+    "departureTime": "10:55:00",
+    "arrivalTime": "11:25:00"
+  },
+  {
+    "departureStationId": 1,   
+    "arrivalStationId": 3,
+    "departureTime": "12:00:00",
+    "arrivalTime": "12:30:00"
+  },
+  {
+    "departureStationId": 1,   
+    "arrivalStationId": 3,
+    "departureTime": "13:00:00",
+    "arrivalTime": "13:30:00"
+  },
+  {
+    "departureStationId": 3,   
+    "arrivalStationId": 1,
+    "departureTime": "06:32:00",
+    "arrivalTime": "07:01:00"
+  },
+  {
+    "departureStationId": 3,   
+    "arrivalStationId": 1,
+    "departureTime": "06:57:00",
+    "arrivalTime": "07:26:00"
+  },
+  {
+    "departureStationId": 3,   
+    "arrivalStationId": 1,
+    "departureTime": "07:47:00",
+    "arrivalTime": "08:16:00"
+  },
+  {
+    "departureStationId": 3,   
+    "arrivalStationId": 1,
+    "departureTime": "08:37:00",
+    "arrivalTime": "09:06:00"
+  },
+  {
+    "departureStationId": 3,   
+    "arrivalStationId": 1,
+    "departureTime": "09:02:00",
+    "arrivalTime": "09:31:00"
+  },
+  {
+    "departureStationId": 3,   
+    "arrivalStationId": 1,
+    "departureTime": "10:04:00",
+    "arrivalTime": "10:33:00"
+  },
+  {
+    "departureStationId": 3,   
+    "arrivalStationId": 1,
+    "departureTime": "10:37:00",
+    "arrivalTime": "11:06:00"
+  },
+  {
+    "departureStationId": 3,   
+    "arrivalStationId": 1,
+    "departureTime": "11:12:00",
+    "arrivalTime": "11:41:00"
+  },
+  {
+    "departureStationId": 3,   
+    "arrivalStationId": 1,
+    "departureTime": "12:17:00",
+    "arrivalTime": "12:46:00"
+  },
+  {
+    "departureStationId": 3,   
+    "arrivalStationId": 1,
+    "departureTime": "13:19:00",
+    "arrivalTime": "13:48:00"
+  }
+]
