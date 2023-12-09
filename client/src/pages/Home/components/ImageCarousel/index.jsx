@@ -4,9 +4,16 @@ import bannerImage2Desktop from '@static/images/Frame 2 - Desktop.png';
 import bannerImage1Mobile from '@static/images/Frame 1 - Mobile.png';
 import bannerImage2Mobile from '@static/images/Frame 2 - Mobile.png';
 
-import Carousel from 'react-material-ui-carousel';
 import { Paper } from '@mui/material';
 import { useMediaQuery } from 'react-responsive';
+import { Swiper, SwiperSlide } from 'swiper/react';
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+
+import { Pagination, Navigation, Autoplay } from 'swiper/modules';
+
 import classes from './style.module.scss';
 
 const ImageCarousel = () => {
@@ -30,25 +37,38 @@ const ImageCarousel = () => {
     },
   ];
 
-  const isMobile = useMediaQuery({ query: '(max-width: 576px)' });
+  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
 
   return (
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    <>
-      {!isMobile ? (
-        <Carousel className={classes.carousel}>
-          {dekstopItems.map((item, index) => (
-            <Item key={index} item={item} />
+    <Swiper
+      style={{
+        '--swiper-navigation-color': '#fff',
+        '--swiper-pagination-color': '#fff',
+      }}
+      spaceBetween={0}
+      slidesPerView={1}
+      navigation
+      autoplay={{
+        delay: 3000,
+        disableOnInteraction: false,
+      }}
+      pagination={{ clickable: true }}
+      modules={[Pagination, Navigation, Autoplay]}
+      loop
+      className={classes.mySwapper}
+    >
+      {!isMobile
+        ? dekstopItems.map((item, index) => (
+            <SwiperSlide key={index} className={classes.swiperSlide}>
+              <img src={item.img} alt={item.alt} />{' '}
+            </SwiperSlide>
+          ))
+        : mobileItems.map((item, index) => (
+            <SwiperSlide key={index} className={classes.swiperSlide}>
+              <img src={item.img} alt={item.alt} />
+            </SwiperSlide>
           ))}
-        </Carousel>
-      ) : (
-        <Carousel className={classes.carousel}>
-          {mobileItems.map((item, index) => (
-            <Item key={index} item={item} />
-          ))}
-        </Carousel>
-      )}
-    </>
+    </Swiper>
   );
 };
 

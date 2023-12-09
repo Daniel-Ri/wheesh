@@ -3,7 +3,6 @@ const { Op } = require("sequelize");
 
 const { Passenger, sequelize } = require("../models");
 const { handleServerError, handleClientError } = require("../utils/handleError");
-const passenger = require("../models/passenger");
 
 exports.getMyPassengers = async (req, res) => {
   try {

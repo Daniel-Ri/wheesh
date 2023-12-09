@@ -19,62 +19,47 @@
   min-height: 100vh;
 
   .container {
+    margin-top: 35vh;
     position: absolute;
-    z-index: 2;
+    z-index: 1;
     width: 90%;
+    max-width: 40rem;
     @include directionY;
-
-    .images {
-      align-self: center;
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 40rem;
-      height: 24rem;
-  
-      img {
-        width: 100%;
-        height: 100%;
-      }
-    }
-
-    .carousel {
-      align-self: center;
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 40rem;
-    }
-
-    h1 {
-      font-size: 160%;
-      margin-top: 1rem;
-    }
 
     section {
       margin-top: 1rem;
+      background-color: $color-white;
+      padding: 1.5rem 1rem;
+      border-radius: 10px;
+      box-shadow: 0 0 5px 0 $color-cool-gray;
       @include directionY;
       gap: 1rem;
-      margin-bottom: 1rem;
 
-      h2 {
-        font-size: 120%;
-      }
-
-      .sectionImage {
+      .row {
         width: 100%;
-        @include directionY;
+        @include directionX;
         align-items: center;
-        gap: 0.5rem;
+        justify-content: space-between;
+        gap: 0.75rem;
 
-        .image {
-          width: 6rem;
-          height: 6rem;
-  
-          img {
-            width: 100%;
-            height: 100%;
+        .input {
+          width: 45%;
+
+          label {
+            font-size: 80%;
+            color: $color-cool-gray;
           }
+        }
+
+        .icon {
+          font-size: 180%;
+          color: $color-picton-blue-dark-shade;
+          cursor: pointer;
+          transition: 0.3s ease-in-out;
+        }
+
+        .icon:hover {
+          color: $color-picton-blue-dark-shade-2;
         }
       }
     }

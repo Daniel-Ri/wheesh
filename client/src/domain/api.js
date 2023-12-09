@@ -7,6 +7,7 @@ const urls = {
   ping: 'ping.json',
   user: 'user',
   passenger: 'passenger',
+  station: 'station',
 };
 
 export const callAPI = async (endpoint, method, header = {}, params = {}, data = {}) => {
@@ -43,3 +44,4 @@ export const createPassenger = (inputs) => callAPI(urls.passenger, 'POST', {}, {
 export const updatePassenger = (passengerId, inputs) =>
   callAPI(`${urls.passenger}/${passengerId}`, 'PUT', {}, {}, inputs);
 export const deletePassenger = (passengerId) => callAPI(`${urls.passenger}/${passengerId}`, 'DELETE');
+export const getAllStations = () => callAPI(urls.station, 'GET');

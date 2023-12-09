@@ -5,6 +5,7 @@ import clientReducer, { storedKey as storedClientState } from '@containers/Clien
 import myPassengersReducer, { storedKey as storedMyPassengersState } from '@pages/MyPassengers/reducer';
 import passengerReducer, { storedKey as storedPassengerState } from '@pages/Passenger/reducer';
 import profileReducer, { storedKey as storedProfileState } from '@pages/Profile/reducer';
+import homeReducer, { storedKey as storedHomeState } from '@pages/Home/reducer';
 import languageReducer from '@containers/Language/reducer';
 
 import { mapWithPersistor } from './persistence';
@@ -15,6 +16,7 @@ const storedReducers = {
   myPassengers: { reducer: myPassengersReducer, whitelist: storedMyPassengersState },
   passenger: { reducer: passengerReducer, whitelist: storedPassengerState },
   profile: { reducer: profileReducer, whitelist: storedProfileState },
+  home: { reducer: homeReducer, whitelist: storedHomeState },
 };
 
 const temporaryReducers = {

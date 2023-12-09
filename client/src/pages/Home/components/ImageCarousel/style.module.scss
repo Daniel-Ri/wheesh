@@ -1,9 +1,17 @@
 @import '@styles/base';
 
-.carousel {
-  align-self: center;
-  position: relative;
-  z-index: 1;
+.mySwapper {
   width: 100%;
-  max-width: 40rem;
+  height: 40vh;
+
+  .swiperSlide {
+    width: 100%;
+    height: 100%;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+    }
+  }
 }
