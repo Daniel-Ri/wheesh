@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require('express')
+const cron = require('node-cron');
 const cors = require('cors');
 const app = express()
 const port = process.env.PORT;
@@ -17,6 +18,11 @@ app.get("/", async (req, res) => {
 
 app.all('*', (req, res) => {
   res.status(404).json({ message: 'API Not Found' })
+});
+
+cron.schedule('* * * * *', () => {
+  console.log('Job running every minute.');
+  // Add your logic for the first job here
 });
 
 app.listen(port, () => {
