@@ -8,6 +8,7 @@ const urls = {
   user: 'user',
   passenger: 'passenger',
   station: 'station',
+  schedule: 'schedule',
 };
 
 export const callAPI = async (endpoint, method, header = {}, params = {}, data = {}) => {
@@ -45,3 +46,6 @@ export const updatePassenger = (passengerId, inputs) =>
   callAPI(`${urls.passenger}/${passengerId}`, 'PUT', {}, {}, inputs);
 export const deletePassenger = (passengerId) => callAPI(`${urls.passenger}/${passengerId}`, 'DELETE');
 export const getAllStations = () => callAPI(urls.station, 'GET');
+export const getLatestDateSchedule = () => callAPI(`${urls.schedule}/latestDate`, 'GET');
+export const getSchedules = (departureStationId, arrivalStationId, date) =>
+  callAPI(`${urls.schedule}/${departureStationId}/${arrivalStationId}/${date}`, 'GET');

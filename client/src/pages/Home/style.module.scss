@@ -42,13 +42,13 @@
         justify-content: space-between;
         gap: 0.75rem;
 
+        label {
+          font-size: 80%;
+          color: $color-cool-gray;
+        }
+
         .input {
           width: 45%;
-
-          label {
-            font-size: 80%;
-            color: $color-cool-gray;
-          }
         }
 
         .icon {
@@ -61,6 +61,20 @@
         .icon:hover {
           color: $color-picton-blue-dark-shade-2;
         }
+
+        .inputDatePicker {
+          width: 100%;
+
+          .datePicker {
+            width: 100%;
+            border-width: 0 0 2px 0;
+            font-size: 90%;
+          }
+        }
+      }
+
+      .btn {
+        text-transform: capitalize;
       }
     }
   }
