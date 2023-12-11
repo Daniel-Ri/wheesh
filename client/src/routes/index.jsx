@@ -13,6 +13,7 @@ import Register from '@pages/Register';
 import ChangePassword from '@pages/ChangePassword';
 import ChangeEmail from '@pages/ChangeEmail';
 import Test from '@pages/Test';
+import Schedule from '@pages/Schedule';
 
 const routes = [
   {
@@ -90,6 +91,13 @@ const routes = [
     name: 'Change Email',
     protected: true,
     component: ChangeEmail,
+    layout: MainLayout,
+  },
+  {
+    path: '/schedule/:departureStationId/:arrivalStationId/:date',
+    name: 'Schedule',
+    protected: false,
+    component: Schedule,
     layout: MainLayout,
   },
   {

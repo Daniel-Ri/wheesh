@@ -10,3 +10,24 @@ export const formatDate = (date) => {
 
   return `${year}-${month}-${day}`;
 };
+
+export const formatRupiah = (price) => {
+  const formatter = new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+  });
+  return formatter.format(price);
+};
+
+const optionsHour = {
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false,
+  timeZone: 'Asia/Jakarta',
+};
+
+export const formatHour = (inputDateString) => {
+  const inputDate = new Date(inputDateString);
+  return inputDate.toLocaleTimeString('en-US', optionsHour);
+};

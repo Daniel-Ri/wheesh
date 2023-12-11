@@ -1,7 +1,7 @@
 const Joi = require("joi");
 const { Op } = require("sequelize");
 
-const { Schedule, Station, Train, sequelize } = require("../models");
+const { Schedule, SchedulePrice, Station, Train, sequelize } = require("../models");
 const { handleServerError, handleClientError } = require("../utils/handleError");
 
 exports.getLatestDateSchedule = async(req, res) => {
@@ -22,7 +22,12 @@ exports.getLatestDateSchedule = async(req, res) => {
 exports.getSchedules = async(req, res) => {
   try {
     const { departureStationId, arrivalStationId, date } = req.params;
-    const startLimit = new Date((new Date(date)).setHours(0, 0, 0, 0));
+    let startLimit;
+    if (new Date(date).toDateString() === new Date().toDateString()) {
+      startLimit = new Date(new Date().getTime() + 30 * 60 * 1000);
+    } else {
+      startLimit = new Date((new Date(date)).setHours(0, 0, 0, 0));
+    }
     const endLimit = new Date(startLimit.getTime() + 24 * 60 * 60 * 1000);
 
     const foundDepartureStation = await Station.findByPk(departureStationId);
@@ -45,6 +50,10 @@ exports.getSchedules = async(req, res) => {
       attributes: { exclude: ['createdAt', 'updatedAt'] },
       include: [
         {
+          model: Train,
+          attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
+        },
+        {
           model: Station,
           as: 'departureStation',
           attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
@@ -52,6 +61,11 @@ exports.getSchedules = async(req, res) => {
         {
           model: Station,
           as: 'arrivalStation',
+          attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
+        },
+        {
+          model: SchedulePrice,
+          as: 'prices',
           attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
         },
       ]
