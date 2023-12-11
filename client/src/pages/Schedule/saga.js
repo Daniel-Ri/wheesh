@@ -1,5 +1,6 @@
 import { getAllStations, getLatestDateSchedule, getSchedules } from '@domain/api';
 import { takeLatest, call, put } from 'redux-saga/effects';
+import { setLoading } from '@containers/App/actions';
 import { setLatestDateSchedule, setSchedules, setStations } from './actions';
 import { GET_ALL_STATIONS, GET_LATEST_DATE_SCHEDULE, GET_SCHEDULES } from './constants';
 
@@ -22,12 +23,14 @@ function* doGetLatestDateSchedule() {
 }
 
 function* doGetSchedules({ departureStationId, arrivalStationId, date }) {
+  yield put(setLoading(true));
   try {
     const response = yield call(getSchedules, departureStationId, arrivalStationId, date);
     yield put(setSchedules(response.data));
   } catch {
     // error
   }
+  yield put(setLoading(false));
 }
 
 export default function* scheduleSaga() {

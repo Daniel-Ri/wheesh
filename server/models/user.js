@@ -18,6 +18,12 @@ module.exports = (sequelize, DataTypes) => {
           name: 'userId'
         },
       });
+      
+      User.hasMany(models.Order, {
+        foreignKey: {
+          name: 'userId',
+        },
+      });
     }
   }
   User.init({

@@ -79,7 +79,7 @@ const Schedule = ({ stations, latestDateSchedule, schedules }) => {
               <Autocomplete
                 {...defaultProps}
                 id="controlled-demo"
-                value={inputs.departureStation}
+                value={inputs.departureStation || null}
                 onChange={(event, newValue) => {
                   if (!newValue) return;
                   if (newValue.id === parseInt(arrivalStationId, 10)) {
@@ -100,7 +100,7 @@ const Schedule = ({ stations, latestDateSchedule, schedules }) => {
               <Autocomplete
                 {...defaultProps}
                 id="controlled-demo"
-                value={inputs.arrivalStation}
+                value={inputs.arrivalStation || null}
                 onChange={(event, newValue) => {
                   if (!newValue) return;
                   if (newValue.id === parseInt(departureStationId, 10)) {
