@@ -1,0 +1,29 @@
+@import '@styles/base';
+
+.card {
+  @include directionX;
+  align-items: center;
+  justify-content: space-between;
+
+  .leftCard {
+    width: 50%;
+    @include directionY;
+    gap: 0.25rem;
+
+    .name {
+      font-size: 70%;
+    }
+
+    .description {
+      font-size: 60%;
+      color: $color-cool-gray;
+      @include directionX;
+      gap: 0.5rem;
+    }
+  }
+
+  .iconButton {
+    font-size: 100%;
+    color: $color-strawberry-red;
+  }
+}

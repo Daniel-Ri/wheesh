@@ -23,9 +23,10 @@
     max-width: 40rem;
     @include directionY;
 
-    header {
+    .header {
       margin-top: 5vh;
       @include directionX;
+      justify-content: flex-start;
       gap: 1rem;
       align-items: center;
       cursor: pointer;

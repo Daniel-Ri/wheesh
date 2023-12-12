@@ -1,0 +1,59 @@
+@import '@styles/base';
+
+.centerCarriage {
+  width: 100%;
+  padding: 0 0.5rem;
+
+  .seat {
+    @include directionX;
+    justify-content: center;
+    padding: 0.25rem 0;
+
+    .chair {
+      width: 2.5rem;
+      height: 3rem;
+      border: 1px solid $color-picton-blue;
+      @include directionX;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .seats {
+    display: grid; 
+    grid-auto-columns: 1fr; 
+    grid-template-columns: repeat(6, 1fr); 
+    grid-template-rows: repeat(18, 1fr); 
+    gap: 1px 1px; 
+    grid-template-areas: 
+      ". . . AISLE . ."
+      ". . . AISLE . ."
+      ". . . AISLE . ."
+      ". . . AISLE . ."
+      ". . . AISLE . ."
+      ". . . AISLE . ."
+      ". . . AISLE . ."
+      ". . . AISLE . ."
+      ". . . AISLE . ."
+      ". . . AISLE . ."
+      ". . . AISLE . ."
+      ". . . AISLE . ."
+      ". . . AISLE . ."
+      ". . . AISLE . ."
+      ". . . AISLE . ."
+      ". . . AISLE . ."
+      ". . . AISLE . ."
+      ". . . AISLE . ."; 
+  }
+
+  .aisle {
+    justify-self: stretch; 
+    align-self: stretch;
+    grid-area: AISLE;
+    background-color: $color-magnolia;
+    color: $color-cool-gray;
+    @include directionY;
+    align-items: center;
+    justify-content: space-around; 
+  }
+}

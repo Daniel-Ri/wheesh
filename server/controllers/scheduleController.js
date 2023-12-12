@@ -164,3 +164,123 @@ exports.getSchedules = async(req, res) => {
     handleServerError(res);
   }
 }
+
+exports.getSchedule = async (req, res) => {
+  try {
+    const { scheduleId } = req.params;
+
+    const foundSchedule = await Schedule.findByPk(
+      scheduleId,
+      {
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+        include: [
+          {
+            model: Train,
+            attributes: { exclude: [ 'createdAt', 'updatedAt' ] },
+            include: [
+              {
+                model: Carriage,
+                attributes: { exclude: [ 'createdAt', 'updatedAt' ] },
+                include: [
+                  {
+                    model: Seat,
+                    attributes: { exclude: [ 'createdAt', 'updatedAt' ] },
+                    include: [
+                      {
+                        model: OrderedSeat,
+                        attributes: { exclude: [ 'createdAt', 'updatedAt' ] },
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            model: Order,
+          },
+          {
+            model: Station,
+            as: 'departureStation',
+            attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
+          },
+          {
+            model: Station,
+            as: 'arrivalStation',
+            attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
+          },
+          {
+            model: SchedulePrice,
+            as: 'prices',
+            attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
+          },
+        ]
+      }
+    );
+    if (!foundSchedule)
+      return handleClientError(res, 404, 'Schedule Not Found');
+
+    const foundScheduleJSON = foundSchedule.toJSON();
+
+    const orderIds = foundScheduleJSON.Orders.map((order) => order.id);
+    const countSeatsByClass = async (seatClass) => countSeats(foundScheduleJSON.Train.Carriages, seatClass);
+    const countBookedSeatsByClass = async (seatClass) => 
+      countBookedSeats(foundScheduleJSON.Train.Carriages, seatClass, orderIds);
+
+    const [firstSeatNumbers, bookedFirstSeatNumbers] = await Promise.all([
+      countSeatsByClass('first'),
+      countBookedSeatsByClass('first'),
+    ]);
+
+    const [businessSeatNumbers, bookedBusinessSeatNumbers] = await Promise.all([
+      countSeatsByClass('business'),
+      countBookedSeatsByClass('business'),
+    ]);
+
+    const [economySeatNumbers, bookedEconomySeatNumbers] = await Promise.all([
+      countSeatsByClass('economy'),
+      countBookedSeatsByClass('economy'),
+    ]);
+
+    const isSeatAvailable = (booked, total) => 
+      (booked === total) ? 'None' : (booked / total > 0.75) ? 'Few' : 'Available';
+    const getRemainder = (booked, total) => total - booked;
+
+    foundScheduleJSON.Train.Carriages = await Promise.all(
+      foundScheduleJSON.Train.Carriages.map((carriage) => {
+        carriage.Seats = carriage.Seats.map((seat) => {
+          const isBooked = seat.OrderedSeats.some((orderedSeat) => orderIds.includes(orderedSeat.orderId));
+          // Create a new seat object without the OrderedSeats property
+          const updatedSeat = { ...seat, isBooked };
+          delete updatedSeat.OrderedSeats;
+          return updatedSeat;
+        });
+
+        return carriage;
+      })
+    );
+
+    const formattedSchedule = {
+      id: foundScheduleJSON.id,
+      Train: { id: foundScheduleJSON.Train.id, name: foundScheduleJSON.Train.name },
+      departureStation: { id: foundScheduleJSON.departureStation.id, name: foundScheduleJSON.departureStation.name },
+      arrivalStation: { id: foundScheduleJSON.arrivalStation.id, name: foundScheduleJSON.arrivalStation.name },
+      departureTime: foundScheduleJSON.departureTime,
+      arrivalTime: foundScheduleJSON.arrivalTime,
+      firstSeatAvailable: isSeatAvailable(bookedFirstSeatNumbers, firstSeatNumbers),
+      businessSeatAvailable: isSeatAvailable(bookedBusinessSeatNumbers, businessSeatNumbers),
+      economySeatAvailable: isSeatAvailable(bookedEconomySeatNumbers, economySeatNumbers),
+      firstSeatRemainder: getRemainder(bookedFirstSeatNumbers, firstSeatNumbers),
+      businessSeatRemainder: getRemainder(bookedBusinessSeatNumbers, businessSeatNumbers),
+      economySeatRemainder: getRemainder(bookedEconomySeatNumbers, economySeatNumbers),
+      prices: foundScheduleJSON.prices,
+      carriages: foundScheduleJSON.Train.Carriages,
+    };
+
+    return res.status(200).json({ data: formattedSchedule, status: 'Success' });
+
+  } catch (error) {
+    console.error(error);
+    handleServerError(res);
+  }
+}

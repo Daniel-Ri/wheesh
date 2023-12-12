@@ -49,3 +49,4 @@ export const getAllStations = () => callAPI(urls.station, 'GET');
 export const getLatestDateSchedule = () => callAPI(`${urls.schedule}/latestDate`, 'GET');
 export const getSchedules = (departureStationId, arrivalStationId, date) =>
   callAPI(`${urls.schedule}/${departureStationId}/${arrivalStationId}/${date}`, 'GET');
+export const getSchedule = (scheduleId) => callAPI(`${urls.schedule}/${scheduleId}`, 'GET');

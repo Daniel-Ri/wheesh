@@ -1,0 +1,79 @@
+@import '@styles/base';
+
+.cornerCarriage {
+  width: 100%;
+  padding: 0 0.5rem;
+
+  .seat {
+    @include directionX;
+    justify-content: center;
+    padding: 0.5rem 0;
+
+    .chair {
+      width: 2.5rem;
+      height: 3.5rem;
+      border: 1px solid $color-picton-blue;
+      @include directionX;
+      align-items: center;
+      justify-content: center;
+      font-size: 100%;
+    }
+  }
+
+  .firstSection {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 1px 1px;
+    grid-template-areas:
+      ". . AisleFirst ."
+      ". . AisleFirst ."
+      ". . AisleFirst .";
+  }
+    
+  .aisleFirst {
+    justify-self: stretch; 
+    align-self: stretch; 
+    grid-area: AisleFirst;
+    background-color: $color-magnolia;
+    color: $color-cool-gray;
+    @include directionY;
+    align-items: center;
+    justify-content: space-around; 
+  }
+
+  .businessSection {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+    gap: 1px 1px;
+    grid-template-areas:
+      ". . AisleBusiness . ."
+      ". . AisleBusiness . ."
+      ". . AisleBusiness . ."
+      ". . AisleBusiness . ."
+      ". . AisleBusiness . ."
+      ". . AisleBusiness . ."
+      ". . AisleBusiness . .";
+  }
+  
+  .aisleBusiness { 
+    justify-self: stretch; 
+    align-self: stretch;
+    grid-area: AisleBusiness;
+    background-color: $color-magnolia;
+    color: $color-cool-gray;
+    @include directionY;
+    align-items: center;
+    justify-content: space-around; 
+  }  
+
+  hr {
+    border-width: 0 0 1px 0;
+  }
+}
+  

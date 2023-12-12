@@ -11,6 +11,20 @@ export const formatDate = (date) => {
   return `${year}-${month}-${day}`;
 };
 
+export const formatDateWithDay = (date) => {
+  const inputDate = new Date(date);
+
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const dayOfWeek = days[inputDate.getDay()];
+
+  const day = inputDate.getDate();
+  const month = inputDate.toLocaleString('en-US', { month: 'short' });
+  const year = inputDate.getFullYear();
+
+  const formattedDate = `${dayOfWeek}, ${day} ${month} ${year}`;
+  return formattedDate;
+};
+
 export const formatRupiah = (price) => {
   const formatter = new Intl.NumberFormat('id-ID', {
     style: 'currency',

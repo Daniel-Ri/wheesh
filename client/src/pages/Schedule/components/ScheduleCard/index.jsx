@@ -21,7 +21,7 @@ const ScheduleCard = ({ login, schedule }) => {
       toast.error('You need to login');
     }
 
-    navigate(`/order/${schedule.id}/${seatClass}`);
+    navigate(`/book/${schedule.id}/${seatClass}`);
   };
 
   return (

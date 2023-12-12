@@ -14,6 +14,7 @@ import ChangePassword from '@pages/ChangePassword';
 import ChangeEmail from '@pages/ChangeEmail';
 import Test from '@pages/Test';
 import Schedule from '@pages/Schedule';
+import Book from '@pages/Book';
 
 const routes = [
   {
@@ -98,6 +99,13 @@ const routes = [
     name: 'Schedule',
     protected: false,
     component: Schedule,
+    layout: MainLayout,
+  },
+  {
+    path: '/book/:scheduleId/:seatClass',
+    name: 'Book',
+    protected: true,
+    component: Book,
     layout: MainLayout,
   },
   {

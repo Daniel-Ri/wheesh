@@ -52,7 +52,7 @@ const Me = ({ user }) => {
   return (
     <main className={classes.main}>
       <div className={classes.container}>
-        <header onClick={clickHeader}>
+        <header className={classes.header} onClick={clickHeader}>
           <Avatar className={classes.icon} />
           <h1>{user && user.username ? user.username : 'Login'}</h1>
         </header>

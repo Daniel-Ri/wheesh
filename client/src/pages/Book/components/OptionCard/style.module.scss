@@ -1,0 +1,44 @@
+@import '@styles/base';
+
+.optionCard {
+  border-radius: 10px;
+  width: 30%;
+  height: 5.5rem;
+  padding: 1rem 0.5rem;
+  background-color: $color-magnolia;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  
+  .price {
+    font-size: 90%;
+  }
+
+  .seatClass {
+    color: $color-cool-gray;
+    font-size: 70%;
+    text-transform: capitalize;
+  }
+
+  .available {
+    color: $color-cool-gray;
+    font-size: 70%;
+  }
+
+  @media screen and (max-width: $screen-sm-limit) {
+    height: 7rem;
+
+    .price {
+      font-size: 80%;
+    }
+  }
+}
+
+.optionCard.selected {
+  background-color: $color-white;
+  border-color: $color-picton-blue-dark-shade;
+}
+
+.optionCard.disabled {
+  cursor: no-drop;
+}
