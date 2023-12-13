@@ -1,6 +1,8 @@
 import {
+  CREATE_ORDER,
   GET_MY_PASSENGERS,
   GET_SCHEDULE,
+  SET_CHOSEN_SEATS,
   SET_MY_PASSENGERS,
   SET_PASSENGER_IDS,
   SET_SCHEDULE,
@@ -34,4 +36,16 @@ export const setPassengerIds = (passengerIds) => ({
 export const setStep = (step) => ({
   type: SET_STEP,
   step,
+});
+
+export const setChosenSeats = (chosenSeats) => ({
+  type: SET_CHOSEN_SEATS,
+  chosenSeats,
+});
+
+export const createOrder = (inputs, handleSuccess, handleError) => ({
+  type: CREATE_ORDER,
+  inputs,
+  handleSuccess,
+  handleError,
 });

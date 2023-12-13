@@ -39,53 +39,94 @@ section {
 
     .row {
       @include directionX;
-      justify-content: space-between;
-      align-items: center;
+      align-items: baseline;
+      gap: 1rem;
+
+      .train {
+        font-size: 120%;
+      }
+
+      .place {
+        font-size: 90%;
+      }
+
+      .time {
+        font-size: 70%;
+      }
 
       .dateTime {
-        font-size: 70%;
+        font-size: 80%;
         color: $color-cool-gray;
       }
 
-      .timeAndPlace {
-        @include directionY;
-  
-        .time {
-          font-size: 90%;
-  
-          sup {
-            font-size: 60%;
-            color: $color-strawberry-red;
-          }
-        }
-  
-        .place {
-          font-size: 80%;
-          color: $color-cool-gray;
+      .arrowImage {
+        margin-top: -0.9rem;
+        width: 2.5rem;
+        height: 0.5rem;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: fill;
         }
       }
-  
-      .train {
-        min-width: 3rem;
-        @include directionY;
+    }
+    
+    table.passengers {
+      font-size: 80%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+
+      tr {
+        border: 1px solid $color-cool-gray;
+      }
+
+      td, th {
+        text-align: left;
+        padding: 0.5rem;
+      }
+    }
+
+    .carriages {
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+      @include directionX;
+      gap: 1rem;
+
+      .card {
+        border: 1px solid $color-picton-blue;
+        border-radius: 5px;
+        color: $color-picton-blue;
+        background-color: $color-white;
+        @include directionX;
         align-items: center;
-  
-        .name {
-          margin-top: -0.75rem;
-          font-size: 70%;
-        }
-  
-        .arrowImage {
-          margin-top: -0.9rem;
-          width: 100%;
-          height: 0.5rem;
-  
-          img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-          }
-        }
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        cursor: pointer;
+        transition: 0.3s ease-in-out;
+      }
+
+      .card.active {
+        border-color: transparent;
+        background-color: $color-picton-blue;
+        color: $color-white;
+      }
+    }
+
+    .selectSeat {
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      @include directionX;
+      justify-content: space-between;
+
+      .header {
+        margin: 0;
+      }
+
+      .message {
+        font-size: 90%;
       }
     }
 
@@ -123,5 +164,55 @@ section {
       @include directionY;
       gap: 0.5rem;
     }
+  }
+
+  @media screen and (max-width: $screen-md-limit) {
+    .sectionDesc {
+      .row {
+        gap: 0.5rem;
+
+        .train {
+          font-size: 110%;
+        }
+
+        .place {
+          font-size: 80%;
+        }
+
+        .time {
+          font-size: 75%;
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: $screen-sm-limit) {
+    .sectionDesc {
+      .row {
+        gap: 0.25rem;
+
+        .train {
+          font-size: 100%;
+        }
+
+        .place {
+          font-size: 75%;
+        }
+
+        .time {
+          font-size: 70%;
+        }
+      }
+    }
+  }
+}
+
+.footer {
+  margin-bottom: 1rem;
+  @include directionX;
+  justify-content: flex-end;
+
+  .btn {
+    text-transform: capitalize;
   }
 }

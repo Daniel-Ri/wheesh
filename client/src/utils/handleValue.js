@@ -45,3 +45,13 @@ export const formatHour = (inputDateString) => {
   const inputDate = new Date(inputDateString);
   return inputDate.toLocaleTimeString('en-US', optionsHour);
 };
+
+export const convertChosenSeats = (chosenSeats) => {
+  const newMap = new Map();
+  // eslint-disable-next-line no-restricted-syntax
+  for (const [key, value] of chosenSeats) {
+    newMap.set(value.seatId, key);
+  }
+
+  return newMap;
+};

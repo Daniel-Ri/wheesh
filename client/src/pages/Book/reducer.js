@@ -1,11 +1,12 @@
 import { produce } from 'immer';
-import { SET_MY_PASSENGERS, SET_PASSENGER_IDS, SET_SCHEDULE, SET_STEP } from './constants';
+import { SET_CHOSEN_SEATS, SET_MY_PASSENGERS, SET_PASSENGER_IDS, SET_SCHEDULE, SET_STEP } from './constants';
 
 export const initialState = {
   schedule: null,
   step: 0,
   myPassengers: [],
   passengerIds: [],
+  chosenSeats: new Map(),
 };
 
 export const storedKey = [];
@@ -24,6 +25,9 @@ const bookReducer = (state = initialState, action) =>
         break;
       case SET_STEP:
         draft.step = action.step;
+        break;
+      case SET_CHOSEN_SEATS:
+        draft.chosenSeats = action.chosenSeats;
         break;
     }
   });

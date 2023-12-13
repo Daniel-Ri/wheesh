@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import BackBtn from '@components/BackBtn';
 import { formatDateWithDay, formatHour, formatRupiah } from '@utils/handleValue';
-import { getSchedule, setPassengerIds, setStep } from '@pages/Book/actions';
+import { getSchedule, setChosenSeats, setPassengerIds, setStep } from '@pages/Book/actions';
 import arrowImage from '@static/images/arrowTrain.png';
 import toast from 'react-hot-toast';
 import { createStructuredSelector } from 'reselect';
@@ -93,12 +93,9 @@ const ClassAndPassenger = ({ schedule, myPassengers, passengerIds }) => {
       return;
     }
 
+    dispatch(setChosenSeats(new Map()));
     dispatch(setStep(1));
   };
-
-  console.log(schedule, '<< SCHEDULE');
-  console.log(myPassengers, '<< MY PASSENGERS');
-  console.log(passengerIds, '<< PASSENGER IDS');
 
   useEffect(() => {
     dispatch(getSchedule(scheduleId));

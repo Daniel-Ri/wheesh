@@ -7,6 +7,7 @@ const { handleServerError, handleClientError } = require("../utils/handleError")
 
 exports.createOrder = async (req, res) => {
   try {
+    console.log(req.body, '<< REQ BODY');
     const { scheduleId, orderedSeats } = req.body;
     const scheme = Joi.object({
       scheduleId: Joi.number().integer().required(),
@@ -112,7 +113,7 @@ exports.createOrder = async (req, res) => {
         )
       }
 
-      return res.status(201).json({ message: 'Successfully booked seats', status: 'success' });
+      return res.status(201).json({ data: newOrder.id, message: 'Successfully booked seats', status: 'success' });
     })
 
   } catch (error) {

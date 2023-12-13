@@ -1,0 +1,19 @@
+@import '@styles/base';
+
+tr.rowPassenger {
+  cursor: pointer;
+}
+
+tr.activeRow {
+  background-color: $color-magnolia;
+}
+
+td.passenger {
+  @include directionX;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+input {
+  cursor: pointer;
+}

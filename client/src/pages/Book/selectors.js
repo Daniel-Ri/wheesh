@@ -7,3 +7,4 @@ export const selectSchedule = createSelector(selectBookState, (state) => state.s
 export const selectMyPassengers = createSelector(selectBookState, (state) => state.myPassengers);
 export const selectPassengerIds = createSelector(selectBookState, (state) => state.passengerIds);
 export const selectStep = createSelector(selectBookState, (state) => state.step);
+export const selectChosenSeats = createSelector(selectBookState, (state) => state.chosenSeats);
