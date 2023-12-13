@@ -74,7 +74,10 @@ const ChooseSeat = ({ step, schedule, myPassengers, passengerIds, chosenSeats })
   };
 
   const handleErrorOrder = (errorRes) => {
-    if (errorRes.status === 409) {
+    if (errorRes.status === 403) {
+      toast.error(errorRes.data.message);
+      navigate('/');
+    } else if (errorRes.status === 409) {
       toast.error('Your seat has been booked by other users');
       dispatch(setStep(0));
       dispatch(getSchedule(scheduleId));

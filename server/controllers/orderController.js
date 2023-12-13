@@ -2,7 +2,7 @@ const Joi = require("joi");
 const { Op } = require("sequelize");
 const crypto = require('crypto');
 
-const { Schedule, SchedulePrice, Train, Carriage, Seat, OrderedSeat, Order, Passenger, sequelize } = require("../models");
+const { Schedule, SchedulePrice, Train, Carriage, Seat, OrderedSeat, Order, Passenger, Payment, sequelize } = require("../models");
 const { handleServerError, handleClientError } = require("../utils/handleError");
 
 exports.createOrder = async (req, res) => {
@@ -65,6 +65,9 @@ exports.createOrder = async (req, res) => {
       if (!foundSchedule)
         return handleClientError(res, 404, 'Schedule Not Found');
 
+      if (new Date(foundSchedule.departureTime) < new Date(new Date() + 30 * 60 * 1000))
+        return handleClientError(res, 403, 'The train will depart soon');
+
       const passengerIds = orderedSeats.map((orderedSeat) => orderedSeat.passengerId);
       const foundPassengers = await Passenger.findAll({
         where: {id: passengerIds, userId: req.user.id},
@@ -125,6 +128,16 @@ exports.createOrder = async (req, res) => {
           { transaction: t }
         )
       }
+
+      await Payment.create(
+        {
+          orderId: newOrder.id,
+          amount: orderedPrices.reduce((accumulator, value) => accumulator + value, 0),
+          isPaid: false,
+          duePayment: new Date(new Date().getTime() + 60 * 60 * 1000),
+        },
+        { transaction: t }
+      )
 
       return res.status(201).json({ data: newOrder.id, message: 'Successfully booked seats', status: 'success' });
     })
