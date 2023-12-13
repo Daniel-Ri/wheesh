@@ -52,6 +52,8 @@ export const getSchedules = (departureStationId, arrivalStationId, date) =>
   callAPI(`${urls.schedule}/${departureStationId}/${arrivalStationId}/${date}`, 'GET');
 export const getSchedule = (scheduleId) => callAPI(`${urls.schedule}/${scheduleId}`, 'GET');
 export const createOrder = (inputs) => {
-  console.log(inputs, '<<<<< API');
-  return callAPI(urls.order, 'POST', {}, {}, inputs);
+  const header = {
+    'Content-Type': 'application/json; charset=UTF-8',
+  };
+  return callAPI(urls.order, 'POST', header, {}, inputs);
 };

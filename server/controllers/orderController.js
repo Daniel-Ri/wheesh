@@ -2,12 +2,11 @@ const Joi = require("joi");
 const { Op } = require("sequelize");
 const crypto = require('crypto');
 
-const { Schedule, Train, Carriage, Seat, OrderedSeat, Order, Passenger, sequelize } = require("../models");
+const { Schedule, SchedulePrice, Train, Carriage, Seat, OrderedSeat, Order, Passenger, sequelize } = require("../models");
 const { handleServerError, handleClientError } = require("../utils/handleError");
 
 exports.createOrder = async (req, res) => {
   try {
-    console.log(req.body, '<< REQ BODY');
     const { scheduleId, orderedSeats } = req.body;
     const scheme = Joi.object({
       scheduleId: Joi.number().integer().required(),
@@ -55,6 +54,10 @@ exports.createOrder = async (req, res) => {
             {
               model: Order,
             },
+            {
+              model: SchedulePrice,
+              as: 'prices'
+            },
           ],
           transaction: t
         }
@@ -88,6 +91,15 @@ exports.createOrder = async (req, res) => {
           }
         }
       }
+
+      const orderedPrices = [];
+      for (const seatId of seatIds) {
+        const seat = await Seat.findByPk(seatId, {transaction: t});
+        const price = foundSchedule.prices.find(
+          (schedulePrice) => schedulePrice.seatClass === seat.seatClass
+        ).price;
+        orderedPrices.push(price);
+      }
       
       const newOrder = await Order.create(
         {
@@ -102,6 +114,7 @@ exports.createOrder = async (req, res) => {
           {
             orderId: newOrder.id,
             seatId: seatIds[i],
+            price: orderedPrices[i],
             gender: foundPassengers[i].gender,
             dateOfBirth: foundPassengers[i].dateOfBirth,
             idCard: foundPassengers[i].idCard,

@@ -1,9 +1,8 @@
 'use strict';
 
-const { Schedule, Order, Train, Carriage, Seat } = require("../models");
+const { Schedule, SchedulePrice, Order, Train, Carriage, Seat } = require("../models");
 const { Op } = require("sequelize");
 const { getRandomDOB, generateRandomId, generateRandomName, generateRandomEmail, generateOrderedSeatItem, select80PercentRandomly } = require("../utils/handleValue");
-const crypto = require('crypto');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -36,7 +35,11 @@ module.exports = {
               ]
             }
           ]
-        }
+        },
+        {
+          model: SchedulePrice,
+          as: 'prices'
+        },
       ]
     });
 
@@ -46,8 +49,11 @@ module.exports = {
     });
     seatIds = seatIds.flat();
 
-    for (const seatId of seatIds)
-      dummyData.push(generateOrderedSeatItem(order.id, seatId));
+    for (const seatId of seatIds) {
+      const seat = await Seat.findByPk(seatId);
+      const price = schedule.prices.find((schedulePrice) => schedulePrice.seatClass === seat.seatClass).price;
+      dummyData.push(generateOrderedSeatItem(order.id, seatId, price));
+    }
 
     /* 2: Order half all seats */
     schedule = await Schedule.findByPk(firstScheduleId, {
@@ -63,7 +69,11 @@ module.exports = {
               ]
             }
           ]
-        }
+        },
+        {
+          model: SchedulePrice,
+          as: 'prices'
+        },
       ]
     });
 
@@ -72,8 +82,11 @@ module.exports = {
       return carriage.Seats.map((seat) => seat.id);
     });
     seatIds = seatIds.flat();
-    for (const seatId of seatIds)
-      dummyData.push(generateOrderedSeatItem(2, seatId));
+    for (const seatId of seatIds) {
+      const seat = await Seat.findByPk(seatId);
+      const price = schedule.prices.find((schedulePrice) => schedulePrice.seatClass === seat.seatClass).price;
+      dummyData.push(generateOrderedSeatItem(2, seatId, price));
+    }
     
     /* 3: Order all first class seats */
     order = await Order.findByPk(3);
@@ -93,7 +106,11 @@ module.exports = {
               ]
             }
           ]
-        }
+        },
+        {
+          model: SchedulePrice,
+          as: 'prices'
+        },
       ]
     });
 
@@ -102,8 +119,11 @@ module.exports = {
       return carriage.Seats.map((seat) => seat.id);
     });
     seatIds = seatIds.flat();
-    for (const seatId of seatIds)
-      dummyData.push(generateOrderedSeatItem(order.id, seatId));
+    for (const seatId of seatIds) {
+      const seat = await Seat.findByPk(seatId);
+      const price = schedule.prices.find((schedulePrice) => schedulePrice.seatClass === seat.seatClass).price;
+      dummyData.push(generateOrderedSeatItem(order.id, seatId, price));
+    }
 
     /* 4: Order all business class seats */
     order = await Order.findByPk(4);
@@ -123,7 +143,11 @@ module.exports = {
               ]
             }
           ]
-        }
+        },
+        {
+          model: SchedulePrice,
+          as: 'prices'
+        },
       ]
     });
 
@@ -132,8 +156,11 @@ module.exports = {
       return carriage.Seats.map((seat) => seat.id);
     });
     seatIds = seatIds.flat();
-    for (const seatId of seatIds)
-      dummyData.push(generateOrderedSeatItem(order.id, seatId));
+    for (const seatId of seatIds) {
+      const seat = await Seat.findByPk(seatId);
+      const price = schedule.prices.find((schedulePrice) => schedulePrice.seatClass === seat.seatClass).price;
+      dummyData.push(generateOrderedSeatItem(order.id, seatId, price));
+    }
 
     /* 5: Order all economy class seats */
     order = await Order.findByPk(5);
@@ -153,7 +180,11 @@ module.exports = {
               ]
             }
           ]
-        }
+        },
+        {
+          model: SchedulePrice,
+          as: 'prices'
+        },
       ]
     });
 
@@ -162,8 +193,11 @@ module.exports = {
       return carriage.Seats.map((seat) => seat.id);
     });
     seatIds = seatIds.flat();
-    for (const seatId of seatIds)
-      dummyData.push(generateOrderedSeatItem(order.id, seatId));
+    for (const seatId of seatIds) {
+      const seat = await Seat.findByPk(seatId);
+      const price = schedule.prices.find((schedulePrice) => schedulePrice.seatClass === seat.seatClass).price;
+      dummyData.push(generateOrderedSeatItem(order.id, seatId, price));
+    }
 
     /* 6: Order 80% of first class seats */
     order = await Order.findByPk(6);
@@ -183,7 +217,11 @@ module.exports = {
               ]
             }
           ]
-        }
+        },
+        {
+          model: SchedulePrice,
+          as: 'prices'
+        },
       ]
     });
 
@@ -193,8 +231,11 @@ module.exports = {
     });
     seatIds = seatIds.flat();
     seatIds = select80PercentRandomly(seatIds);
-    for (const seatId of seatIds)
-      dummyData.push(generateOrderedSeatItem(order.id, seatId));
+    for (const seatId of seatIds) {
+      const seat = await Seat.findByPk(seatId);
+      const price = schedule.prices.find((schedulePrice) => schedulePrice.seatClass === seat.seatClass).price;
+      dummyData.push(generateOrderedSeatItem(order.id, seatId, price));
+    }
 
     /* 7: Order 80% of business class seats */
     order = await Order.findByPk(7);
@@ -214,7 +255,11 @@ module.exports = {
               ]
             }
           ]
-        }
+        },
+        {
+          model: SchedulePrice,
+          as: 'prices'
+        },
       ]
     });
 
@@ -224,8 +269,11 @@ module.exports = {
     });
     seatIds = seatIds.flat();
     seatIds = select80PercentRandomly(seatIds);
-    for (const seatId of seatIds)
-      dummyData.push(generateOrderedSeatItem(order.id, seatId));
+    for (const seatId of seatIds) {
+      const seat = await Seat.findByPk(seatId);
+      const price = schedule.prices.find((schedulePrice) => schedulePrice.seatClass === seat.seatClass).price;
+      dummyData.push(generateOrderedSeatItem(order.id, seatId, price));
+    }
 
     /* 8: Order 80% of economy class seats */
     order = await Order.findByPk(8);
@@ -245,7 +293,11 @@ module.exports = {
               ]
             }
           ]
-        }
+        },
+        {
+          model: SchedulePrice,
+          as: 'prices'
+        },
       ]
     });
 
@@ -255,8 +307,11 @@ module.exports = {
     });
     seatIds = seatIds.flat();
     seatIds = select80PercentRandomly(seatIds);
-    for (const seatId of seatIds)
-      dummyData.push(generateOrderedSeatItem(order.id, seatId));
+    for (const seatId of seatIds) {
+      const seat = await Seat.findByPk(seatId);
+      const price = schedule.prices.find((schedulePrice) => schedulePrice.seatClass === seat.seatClass).price;
+      dummyData.push(generateOrderedSeatItem(order.id, seatId, price));
+    }
 
     await queryInterface.bulkInsert('OrderedSeats', dummyData);
   },

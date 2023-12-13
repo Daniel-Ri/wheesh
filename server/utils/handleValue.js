@@ -52,10 +52,11 @@ const generateRandomEmail = () => {
   return email;
 }
 
-exports.generateOrderedSeatItem = (orderId, seatId) => {
+exports.generateOrderedSeatItem = (orderId, seatId, price) => {
   return {
     orderId,
     seatId,
+    price,
     gender: Math.random() > 0.5 ? 'Male' : 'Female',
     dateOfBirth: getRandomDOB(),
     idCard: generateRandomId(),

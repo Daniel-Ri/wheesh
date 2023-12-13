@@ -31,13 +31,6 @@ const ChooseSeat = ({ step, schedule, myPassengers, passengerIds, chosenSeats })
   const [availableCarriages, setAvailableCarriages] = useState([]);
   const [activeCarriageNumber, setActiveCarriageNumber] = useState(0);
 
-  console.log(schedule, '<< SCHEDULE');
-  console.log(myPassengers, '<< MY PASSENGERS');
-  console.log(passengerIds, '<< PASSENGER IDS');
-  console.log(chosenSeats, '<< CHOSEN SEATS');
-  console.log(availableCarriages, '<< AVAILABLE CARRIAGES');
-  console.log(activeCarriageNumber, '<< ACTIVE CARRIAGE NUMBER');
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -101,20 +94,17 @@ const ChooseSeat = ({ step, schedule, myPassengers, passengerIds, chosenSeats })
       return;
     }
 
-    const formattedOrderedSeats = [];
-    console.log(chosenSeats, '<<<< CHOSEN');
+    const orderedSeats = [];
     // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of chosenSeats) {
-      formattedOrderedSeats.push({
+      orderedSeats.push({
         seatId: value.seatId,
         passengerId: key,
       });
     }
 
-    console.log(formattedOrderedSeats, '<< ORDERED SEATS');
-
     // eslint-disable-next-line prettier/prettier
-    const formattedInputs = { scheduleId, "orderedSeats": formattedOrderedSeats };
+    const formattedInputs = { scheduleId, orderedSeats };
     dispatch(createOrder(formattedInputs, handleSuccessOrder, handleErrorOrder));
   };
 

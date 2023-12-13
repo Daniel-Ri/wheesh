@@ -27,6 +27,10 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
+      price: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+      },
       gender: {
         allowNull: false,
         type: Sequelize.STRING
