@@ -9,6 +9,9 @@ import homeReducer, { storedKey as storedHomeState } from '@pages/Home/reducer';
 import scheduleReducer, { storedKey as storedScheduleState } from '@pages/Schedule/reducer';
 import bookReducer, { storedKey as storedBookState } from '@pages/Book/reducer';
 import myTicketsReducer, { storedKey as storedMyTicketsState } from '@pages/MyTickets/reducer';
+import unpaidReducer, { storedKey as storedUnpaidState } from '@pages/Unpaid/reducer';
+import orderReducer, { storedKey as storedOrderState } from '@pages/Order/reducer';
+import historyReducer, { storedKey as storedHistoryState } from '@pages/History/reducer';
 import languageReducer from '@containers/Language/reducer';
 
 import { mapWithPersistor } from './persistence';
@@ -23,6 +26,9 @@ const storedReducers = {
   schedule: { reducer: scheduleReducer, whitelist: storedScheduleState },
   book: { reducer: bookReducer, whitelist: storedBookState },
   myTickets: { reducer: myTicketsReducer, whitelist: storedMyTicketsState },
+  unpaid: { reducer: unpaidReducer, whitelist: storedUnpaidState },
+  order: { reducer: orderReducer, whitelist: storedOrderState },
+  history: { reducer: historyReducer, whitelist: storedHistoryState },
 };
 
 const temporaryReducers = {

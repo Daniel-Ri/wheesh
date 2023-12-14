@@ -12,6 +12,9 @@ import homeSaga from '@pages/Home/saga';
 import scheduleSaga from '@pages/Schedule/saga';
 import bookSaga from '@pages/Book/saga';
 import myTicketsSaga from '@pages/MyTickets/saga';
+import unpaidSaga from '@pages/Unpaid/saga';
+import orderSaga from '@pages/Order/saga';
+import historySaga from '@pages/History/saga';
 
 export default function* rootSaga() {
   yield all([
@@ -27,5 +30,8 @@ export default function* rootSaga() {
     scheduleSaga(),
     bookSaga(),
     myTicketsSaga(),
+    unpaidSaga(),
+    orderSaga(),
+    historySaga(),
   ]);
 }

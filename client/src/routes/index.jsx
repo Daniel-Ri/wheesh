@@ -15,6 +15,9 @@ import ChangeEmail from '@pages/ChangeEmail';
 import Test from '@pages/Test';
 import Schedule from '@pages/Schedule';
 import Book from '@pages/Book';
+import Unpaid from '@pages/Unpaid';
+import Order from '@pages/Order';
+import History from '@pages/History';
 
 const routes = [
   {
@@ -106,6 +109,27 @@ const routes = [
     name: 'Book',
     protected: true,
     component: Book,
+    layout: MainLayout,
+  },
+  {
+    path: '/unpaid/:orderId',
+    name: 'Unpaid',
+    protected: true,
+    component: Unpaid,
+    layout: MainLayout,
+  },
+  {
+    path: '/order/:orderId',
+    name: 'Order',
+    protected: true,
+    component: Order,
+    layout: MainLayout,
+  },
+  {
+    path: '/history/:orderId',
+    name: 'History',
+    protected: true,
+    component: History,
     layout: MainLayout,
   },
   {

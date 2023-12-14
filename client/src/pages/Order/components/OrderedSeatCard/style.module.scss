@@ -1,0 +1,79 @@
+@import '@styles/base';
+
+.card {
+  @include directionX;
+  justify-content: space-between;
+  cursor: pointer;
+
+  .leftCard {
+    flex-grow: 1;
+    @include directionY;
+    gap: 0.25rem;
+
+    .name {
+      font-size: 70%;
+    }
+
+    .description {
+      font-size: 60%;
+      color: $color-cool-gray;
+      @include directionX;
+      gap: 0.5rem;
+
+      .seatClass {
+        text-transform: capitalize;
+      }
+    }
+  }
+
+  .price {
+    font-size: 70%;
+  }
+
+  .iconButton {
+    font-size: 100%;
+    color: $color-strawberry-red;
+  }
+}
+
+.card:hover {
+  font-weight: 500;
+}
+
+.dialog {
+  width: 14rem;
+  padding: 1rem;
+  @include directionY;
+
+  .content {
+    @include directionY;
+
+    h2 {
+      text-align: center;
+      color: $color-marine-blue;
+      font-size: 120%;
+      margin-bottom: 0.5rem;
+    }
+
+    img {
+      align-self: center;
+      width: 10rem;
+      height: 10rem;
+    }
+
+    .name {
+      font-size: 75%;
+    }
+
+    .description {
+      font-size: 65%;
+      color: $color-cool-gray;
+      @include directionX;
+      gap: 0.5rem;
+
+      .seatClass {
+        text-transform: capitalize;
+      }
+    }
+  }
+}

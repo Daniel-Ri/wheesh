@@ -1,0 +1,36 @@
+@import '@styles/base';
+
+.card {
+  @include directionX;
+  justify-content: space-between;
+
+  .leftCard {
+    flex-grow: 1;
+    @include directionY;
+    gap: 0.25rem;
+
+    .name {
+      font-size: 70%;
+    }
+
+    .description {
+      font-size: 60%;
+      color: $color-cool-gray;
+      @include directionX;
+      gap: 0.5rem;
+
+      .seatClass {
+        text-transform: capitalize;
+      }
+    }
+  }
+
+  .price {
+    font-size: 70%;
+  }
+
+  .iconButton {
+    font-size: 100%;
+    color: $color-strawberry-red;
+  }
+}

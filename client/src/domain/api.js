@@ -54,6 +54,9 @@ export const getSchedule = (scheduleId) => callAPI(`${urls.schedule}/${scheduleI
 export const getUnpaidOrders = () => callAPI(`${urls.order}/unpaid`, 'GET');
 export const getPaidOrders = () => callAPI(`${urls.order}/paid`, 'GET');
 export const getHistoryOrders = () => callAPI(`${urls.order}/history`, 'GET');
+export const getOrder = (orderId) => callAPI(`${urls.order}/${orderId}`, 'GET');
+export const payOrder = (orderId) => callAPI(`${urls.order}/${orderId}`, 'PUT');
+export const cancelOrder = (orderId) => callAPI(`${urls.order}/${orderId}`, 'DELETE');
 export const createOrder = (inputs) => {
   const header = {
     'Content-Type': 'application/json; charset=UTF-8',
