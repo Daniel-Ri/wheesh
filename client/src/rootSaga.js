@@ -11,6 +11,7 @@ import changeEmailSaga from '@pages/ChangeEmail/saga';
 import homeSaga from '@pages/Home/saga';
 import scheduleSaga from '@pages/Schedule/saga';
 import bookSaga from '@pages/Book/saga';
+import myTicketsSaga from '@pages/MyTickets/saga';
 
 export default function* rootSaga() {
   yield all([
@@ -25,5 +26,6 @@ export default function* rootSaga() {
     homeSaga(),
     scheduleSaga(),
     bookSaga(),
+    myTicketsSaga(),
   ]);
 }

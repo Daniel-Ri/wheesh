@@ -71,6 +71,18 @@ module.exports = {
         scheduleId: afterTodaySchedules[6].id,
         createdAt: new Date(),
         updatedAt: new Date(),
+      },
+      {
+        userId: 1,
+        scheduleId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        userId: 1,
+        scheduleId: 2,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       }
     ])
   },

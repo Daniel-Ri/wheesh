@@ -89,3 +89,13 @@ exports.select80PercentRandomly = (inputArray) => {
 
   return selectedArray;
 }
+
+exports.selectRandomly = (inputArray, selectionSize) => {
+  // Clone the array to avoid modifying the original array
+  const shuffledArray = shuffleArray([...inputArray]);
+
+  // Slice the array to get the first 80% of the shuffled array
+  const selectedArray = shuffledArray.slice(0, selectionSize);
+
+  return selectedArray;
+}

@@ -2,8 +2,253 @@ const Joi = require("joi");
 const { Op } = require("sequelize");
 const crypto = require('crypto');
 
-const { Schedule, SchedulePrice, Train, Carriage, Seat, OrderedSeat, Order, Passenger, Payment, sequelize } = require("../models");
+const { Schedule, SchedulePrice, Train, Carriage, Seat, Station,
+        OrderedSeat, Order, Passenger, Payment, sequelize } = require("../models");
 const { handleServerError, handleClientError } = require("../utils/handleError");
+
+exports.getUnpaidOrders = async (req, res) => {
+  try {
+    const orders = await Order.findAll({ 
+      where: { 
+        userId: req.user.id 
+      },
+      attributes: { exclude: ['updatedAt'] },
+      include: [
+        {
+          model: Payment,
+          attributes: { exclude: ['isNotified', 'createdAt', 'updatedAt'] }
+        },
+        {
+          model: Schedule,
+          attributes: { exclude: ['createdAt', 'updatedAt'] },
+          include: [
+            {
+              model: Station,
+              as: 'departureStation',
+              attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
+            },
+            {
+              model: Station,
+              as: 'arrivalStation',
+              attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
+            },
+            {
+              model: Train,
+              attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
+            },
+          ]
+        },
+        {
+          model: OrderedSeat,
+          attributes: ['name']
+        }
+      ],
+      order: [
+        ['id', 'DESC']
+      ]
+    });
+
+    const filteredOrders = orders.filter((order) => 
+      !order.Payment.isPaid && order.Payment.duePayment > new Date()
+    );
+
+    return res.status(200).json({ data: filteredOrders, status: 'Success' });
+
+  } catch (error) {
+    console.error(error);
+    handleServerError(res);
+  }
+}
+
+exports.getPaidOrders = async (req, res) => {
+  try {
+    const orders = await Order.findAll({ 
+      where: { 
+        userId: req.user.id 
+      },
+      attributes: { exclude: ['updatedAt'] },
+      include: [
+        {
+          model: Payment,
+          attributes: { exclude: ['isNotified', 'createdAt', 'updatedAt'] }
+        },
+        {
+          model: Schedule,
+          attributes: { exclude: ['createdAt', 'updatedAt'] },
+          include: [
+            {
+              model: Station,
+              as: 'departureStation',
+              attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
+            },
+            {
+              model: Station,
+              as: 'arrivalStation',
+              attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
+            },
+            {
+              model: Train,
+              attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
+            },
+          ]
+        },
+        {
+          model: OrderedSeat,
+          attributes: ['name']
+        }
+      ],
+      order: [
+        ['id', 'DESC']
+      ]
+    });
+
+    const filteredOrders = orders.filter((order) =>
+      order.Payment.isPaid && 
+      order.Schedule.arrivalTime >= new Date(new Date().getTime() - 6 * 60 * 60 * 1000)
+    );
+    return res.status(200).json({ data: filteredOrders, status: 'Success' });
+
+  } catch (error) {
+    console.error(error);
+    handleServerError(res);
+  }
+}
+
+exports.getHistoryOrders = async (req, res) => {
+  try {
+    const orders = await Order.findAll({
+      where: { 
+        userId: req.user.id 
+      },
+      attributes: { exclude: ['updatedAt'] },
+      include: [
+        {
+          model: Payment,
+          attributes: { exclude: ['isNotified', 'createdAt', 'updatedAt'] }
+        },
+        {
+          model: Schedule,
+          attributes: { exclude: ['createdAt', 'updatedAt'] },
+          include: [
+            {
+              model: Station,
+              as: 'departureStation',
+              attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
+            },
+            {
+              model: Station,
+              as: 'arrivalStation',
+              attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
+            },
+            {
+              model: Train,
+              attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
+            },
+          ]
+        },
+        {
+          model: OrderedSeat,
+          attributes: ['name']
+        }
+      ],
+      order: [
+        ['id', 'DESC']
+      ]
+    });
+
+    const filteredOrders = orders.filter((order) =>
+      order.Payment.isPaid && 
+      order.Schedule.arrivalTime < new Date(new Date().getTime() - 6 * 60 * 60 * 1000)
+    );
+    return res.status(200).json({ data: filteredOrders, status: 'Success' });
+  
+  } catch (error) {
+    console.error(error);
+    handleServerError(res);
+  }
+}
+
+exports.getOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const foundOrder = await Order.findByPk(
+      orderId,
+      {
+        attributes: { exclude: ['updatedAt'] },
+        include: [
+          {
+            model: Payment,
+            attributes: { exclude: ['isNotified', 'createdAt', 'updatedAt'] }
+          },
+          {
+            model: Schedule,
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+            include: [
+              {
+                model: Station,
+                as: 'departureStation',
+                attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
+              },
+              {
+                model: Station,
+                as: 'arrivalStation',
+                attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
+              },
+              {
+                model: Train,
+                attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
+              },
+            ]
+          },
+          {
+            model: OrderedSeat,
+            attributes: { exclude: [ 'createdAt', 'updatedAt'] },
+            include: [
+              {
+                model: Seat,
+                attributes: { exclude: [ 'createdAt', 'updatedAt' ] },
+                include: [
+                  {
+                    model: Carriage,
+                    attributes: { exclude: [ 'createdAt', 'updatedAt' ] },
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        order: [
+          ['id', 'DESC']
+        ]
+      }
+    );
+
+    if (!foundOrder)
+      return handleClientError(res, 404, 'Order Not Found');
+
+    if (foundOrder.userId !== req.user.id)
+      return handleClientError(res, 400, 'Not Authorized');
+
+    if (!foundOrder.Payment.isPaid || 
+        foundOrder.Schedule.arrivalTime < new Date(new Date().getTime() - 6 * 60 * 60 * 1000)) {
+      console.log('Cannot get secret');
+      const formattedOrder = foundOrder.toJSON();
+      formattedOrder.OrderedSeats = formattedOrder.OrderedSeats.map((orderedSeat) => {
+        const {secret, ...rest} = orderedSeat;
+        return rest;
+      })
+      return res.status(200).json({ data: formattedOrder, status: 'Success' });
+
+    } else {
+      console.log('Can get secret');
+      return res.status(200).json({ data: foundOrder, status: 'Success' });
+    }
+
+  } catch (error) {
+    console.error(error);
+    handleServerError(res);
+  }
+}
 
 exports.createOrder = async (req, res) => {
   try {
@@ -141,6 +386,60 @@ exports.createOrder = async (req, res) => {
 
       return res.status(201).json({ data: newOrder.id, message: 'Successfully booked seats', status: 'success' });
     })
+
+  } catch (error) {
+    console.error(error);
+    handleServerError(res);
+  }
+}
+
+exports.payOrder = async (req, res) => {
+  try { 
+    const { orderId } = req.params;
+    const foundOrder = await Order.findByPk(orderId);
+    if (!foundOrder)
+      return handleClientError(res, 404, 'Order Not Found');
+
+    if (foundOrder.userId !== req.user.id)
+      return handleClientError(res, 400, 'Not Authorized');
+
+    const payment = await Payment.findOne({ where: {orderId} });
+    if (payment.isPaid)
+      return handleClientError(res, 400, 'The order was paid');
+
+    if (payment.duePayment < new Date())
+      return handleClientError(res, 400, 'The order has passed payment due time');
+
+    payment.isPaid = true;
+    await payment.save();
+
+    return res.status(200).json({ message: 'Successfully paid the order', status: 'Success' });
+
+  } catch (error) {
+    console.error(error);
+    handleServerError(res);
+  }
+}
+
+exports.cancelOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const foundOrder = await Order.findByPk(orderId, {
+      include: [
+        { model: Payment }
+      ]
+    });
+    if (!foundOrder)
+      return handleClientError(res, 404, 'Order Not Found');
+
+    if (foundOrder.userId !== req.user.id)
+      return handleClientError(res, 400, 'Not Authorized');
+
+    if (foundOrder.Payment.isPaid)
+      return handleClientError(res, 400, 'Cannot cancel paid order');
+
+    await Order.destroy({ where: {id: orderId} });
+    return res.status(200).json({ message: 'Successfully cancel the order', status: 'Success' });
 
   } catch (error) {
     console.error(error);

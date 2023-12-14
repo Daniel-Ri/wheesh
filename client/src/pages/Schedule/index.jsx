@@ -142,7 +142,7 @@ const Schedule = ({ stations, latestDateSchedule, schedules }) => {
           {schedules.length === 0 ? (
             <div className={classes.sectionImage}>
               <div className={classes.image}>
-                <img src={thinkingImage} alt="Sad" />
+                <img src={thinkingImage} alt="Thinking" />
               </div>
               <div className={classes.message}>No schedules</div>
             </div>

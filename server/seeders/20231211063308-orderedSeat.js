@@ -2,7 +2,8 @@
 
 const { Schedule, SchedulePrice, Order, Train, Carriage, Seat } = require("../models");
 const { Op } = require("sequelize");
-const { getRandomDOB, generateRandomId, generateRandomName, generateRandomEmail, generateOrderedSeatItem, select80PercentRandomly } = require("../utils/handleValue");
+const { getRandomDOB, generateRandomId, generateRandomName, generateRandomEmail, generateOrderedSeatItem, 
+        select80PercentRandomly, selectRandomly} = require("../utils/handleValue");
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -307,6 +308,82 @@ module.exports = {
     });
     seatIds = seatIds.flat();
     seatIds = select80PercentRandomly(seatIds);
+    for (const seatId of seatIds) {
+      const seat = await Seat.findByPk(seatId);
+      const price = schedule.prices.find((schedulePrice) => schedulePrice.seatClass === seat.seatClass).price;
+      dummyData.push(generateOrderedSeatItem(order.id, seatId, price));
+    }
+
+    /* 9: Order 3 of economy class seats */
+    order = await Order.findByPk(9);
+    scheduleId = order.scheduleId;
+    schedule = await Schedule.findByPk(scheduleId, {
+      include: [
+        {
+          model: Train,
+          include: [
+            {
+              model: Carriage,
+              include: [
+                {
+                  model: Seat,
+                  where: { seatClass: 'economy' }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          model: SchedulePrice,
+          as: 'prices'
+        },
+      ]
+    });
+
+    carriages = schedule.toJSON().Train.Carriages;
+    seatIds = carriages.map((carriage) => {
+      return carriage.Seats.map((seat) => seat.id);
+    });
+    seatIds = seatIds.flat();
+    seatIds = selectRandomly(seatIds, 3);
+    for (const seatId of seatIds) {
+      const seat = await Seat.findByPk(seatId);
+      const price = schedule.prices.find((schedulePrice) => schedulePrice.seatClass === seat.seatClass).price;
+      dummyData.push(generateOrderedSeatItem(order.id, seatId, price));
+    }
+
+    /* 10: Order 3 of business class seats */
+    order = await Order.findByPk(10);
+    scheduleId = order.scheduleId;
+    schedule = await Schedule.findByPk(scheduleId, {
+      include: [
+        {
+          model: Train,
+          include: [
+            {
+              model: Carriage,
+              include: [
+                {
+                  model: Seat,
+                  where: { seatClass: 'business' }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          model: SchedulePrice,
+          as: 'prices'
+        },
+      ]
+    });
+
+    carriages = schedule.toJSON().Train.Carriages;
+    seatIds = carriages.map((carriage) => {
+      return carriage.Seats.map((seat) => seat.id);
+    });
+    seatIds = seatIds.flat();
+    seatIds = selectRandomly(seatIds, 3);
     for (const seatId of seatIds) {
       const seat = await Seat.findByPk(seatId);
       const price = schedule.prices.find((schedulePrice) => schedulePrice.seatClass === seat.seatClass).price;

@@ -11,6 +11,15 @@ export const formatDate = (date) => {
   return `${year}-${month}-${day}`;
 };
 
+export const formatOrderDate = (dateString) => {
+  const inputDate = new Date(dateString);
+  const year = inputDate.getFullYear();
+  const month = String(inputDate.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+  const day = String(inputDate.getDate()).padStart(2, '0');
+
+  return `${day}/${month}/${year}`;
+};
+
 export const formatDateWithDay = (date) => {
   const inputDate = new Date(date);
 

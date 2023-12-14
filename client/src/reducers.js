@@ -8,6 +8,7 @@ import profileReducer, { storedKey as storedProfileState } from '@pages/Profile/
 import homeReducer, { storedKey as storedHomeState } from '@pages/Home/reducer';
 import scheduleReducer, { storedKey as storedScheduleState } from '@pages/Schedule/reducer';
 import bookReducer, { storedKey as storedBookState } from '@pages/Book/reducer';
+import myTicketsReducer, { storedKey as storedMyTicketsState } from '@pages/MyTickets/reducer';
 import languageReducer from '@containers/Language/reducer';
 
 import { mapWithPersistor } from './persistence';
@@ -21,6 +22,7 @@ const storedReducers = {
   home: { reducer: homeReducer, whitelist: storedHomeState },
   schedule: { reducer: scheduleReducer, whitelist: storedScheduleState },
   book: { reducer: bookReducer, whitelist: storedBookState },
+  myTickets: { reducer: myTicketsReducer, whitelist: storedMyTicketsState },
 };
 
 const temporaryReducers = {

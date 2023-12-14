@@ -51,6 +51,9 @@ export const getLatestDateSchedule = () => callAPI(`${urls.schedule}/latestDate`
 export const getSchedules = (departureStationId, arrivalStationId, date) =>
   callAPI(`${urls.schedule}/${departureStationId}/${arrivalStationId}/${date}`, 'GET');
 export const getSchedule = (scheduleId) => callAPI(`${urls.schedule}/${scheduleId}`, 'GET');
+export const getUnpaidOrders = () => callAPI(`${urls.order}/unpaid`, 'GET');
+export const getPaidOrders = () => callAPI(`${urls.order}/paid`, 'GET');
+export const getHistoryOrders = () => callAPI(`${urls.order}/history`, 'GET');
 export const createOrder = (inputs) => {
   const header = {
     'Content-Type': 'application/json; charset=UTF-8',
