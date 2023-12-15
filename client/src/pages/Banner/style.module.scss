@@ -1,0 +1,96 @@
+@import '@styles/base';
+
+// Reset
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Poppins;
+}
+
+.main {
+  margin-left: 200px;
+  position: relative;
+  background: $color-alabaster;
+  display: flex;
+  justify-content: center;
+  width: calc(100vw - 200px);
+  height: 100%;
+  min-height: 100vh;
+
+  .container {
+    width: 90%;
+    max-width: 40rem;
+    @include directionY;
+
+    header {
+      width: 100%;
+      margin-top: 5vh;
+      @include directionX;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+
+      h1 {
+        font-size: 120%;
+        width: 60%;
+        text-align: center;
+      }
+    }
+
+    .button {
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+      @include directionX;
+      justify-content: flex-end;
+
+      .btn {
+        @include directionX;
+        align-items: center;
+        gap: 0.25rem;
+        text-transform: capitalize;
+
+        .icon {
+          font-size: 150%;
+        }
+      }
+    }
+
+    table.banners {
+      font-size: 80%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+
+      td, th {
+        border-collapse: collapse;
+        border: 1px solid $color-cool-gray;
+        padding: 0.5rem;
+      }
+    }
+  }
+
+  @media screen and (max-width: $screen-lg-limit) {
+    margin-left: 192px;
+    width: calc(100vw - 192px);
+  }
+
+  @media screen and (max-width: $screen-md-limit) {
+    margin-left: 10rem;
+    width: calc(100vw - 10rem);
+  }
+
+  @media screen and (max-width: $screen-sm-limit) {
+    margin-left: 0;
+    width: 100vw;
+    margin-bottom: 76px;
+    height: 100%;
+    min-height: calc(100vh - 76px);
+
+    .container {
+      header {
+        height: 3rem;
+      }
+    }
+  }
+}

@@ -10,6 +10,7 @@ const urls = {
   station: 'station',
   schedule: 'schedule',
   order: 'order',
+  banner: 'banner',
 };
 
 export const callAPI = async (endpoint, method, header = {}, params = {}, data = {}) => {
@@ -64,3 +65,7 @@ export const createOrder = (inputs) => {
   };
   return callAPI(urls.order, 'POST', header, {}, inputs);
 };
+export const getAllBanners = () => callAPI(urls.banner, 'GET');
+export const createBanner = (inputs) => callAPI(urls.banner, 'POST', {}, {}, inputs);
+export const updateBanner = (bannerId, inputs) => callAPI(`${urls.banner}/${bannerId}`, 'PUT', {}, {}, inputs);
+export const deleteBanner = (bannerId) => callAPI(`${urls.banner}/${bannerId}`, 'DELETE');

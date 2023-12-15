@@ -15,6 +15,7 @@ import myTicketsSaga from '@pages/MyTickets/saga';
 import unpaidSaga from '@pages/Unpaid/saga';
 import orderSaga from '@pages/Order/saga';
 import historySaga from '@pages/History/saga';
+import bannerSaga from '@pages/Banner/saga';
 
 export default function* rootSaga() {
   yield all([
@@ -33,5 +34,6 @@ export default function* rootSaga() {
     unpaidSaga(),
     orderSaga(),
     historySaga(),
+    bannerSaga(),
   ]);
 }

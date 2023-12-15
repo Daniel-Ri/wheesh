@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { createStructuredSelector } from 'reselect';
 import { selectUser } from '@containers/Client/selectors';
 import RecentActorsOutlinedIcon from '@mui/icons-material/RecentActorsOutlined';
+import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
 import KeyIcon from '@mui/icons-material/Key';
 import MailIcon from '@mui/icons-material/Mail';
 
@@ -77,6 +78,21 @@ const Me = ({ user }) => {
             </div>
           </div>
         </section>
+
+        {user && user.role === 'admin' && (
+          <section>
+            <h2>Website Management</h2>
+            <hr />
+            <div className={classes.sectionDesc}>
+              <div className={classes.links}>
+                <div className={classes.link} onClick={() => navigate('/banner')}>
+                  <PhotoSizeSelectActualOutlinedIcon className={classes.icon} />
+                  <div className={classes.namePage}>Banner</div>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
 
         {user && (
           <section>

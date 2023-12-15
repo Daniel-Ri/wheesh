@@ -18,6 +18,7 @@ import Book from '@pages/Book';
 import Unpaid from '@pages/Unpaid';
 import Order from '@pages/Order';
 import History from '@pages/History';
+import Banner from '@pages/Banner';
 
 const routes = [
   {
@@ -130,6 +131,13 @@ const routes = [
     name: 'History',
     protected: true,
     component: History,
+    layout: MainLayout,
+  },
+  {
+    path: '/banner',
+    name: 'Banner',
+    protected: true,
+    component: Banner,
     layout: MainLayout,
   },
   {

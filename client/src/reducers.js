@@ -12,6 +12,7 @@ import myTicketsReducer, { storedKey as storedMyTicketsState } from '@pages/MyTi
 import unpaidReducer, { storedKey as storedUnpaidState } from '@pages/Unpaid/reducer';
 import orderReducer, { storedKey as storedOrderState } from '@pages/Order/reducer';
 import historyReducer, { storedKey as storedHistoryState } from '@pages/History/reducer';
+import bannerReducer, { storedKey as storedBannerState } from '@pages/Banner/reducer';
 import languageReducer from '@containers/Language/reducer';
 
 import { mapWithPersistor } from './persistence';
@@ -29,6 +30,7 @@ const storedReducers = {
   unpaid: { reducer: unpaidReducer, whitelist: storedUnpaidState },
   order: { reducer: orderReducer, whitelist: storedOrderState },
   history: { reducer: historyReducer, whitelist: storedHistoryState },
+  banner: { reducer: bannerReducer, whitelist: storedBannerState },
 };
 
 const temporaryReducers = {
