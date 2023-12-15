@@ -17,6 +17,7 @@ import orderSaga from '@pages/Order/saga';
 import historySaga from '@pages/History/saga';
 import bannerSaga from '@pages/Banner/saga';
 import addBannerSaga from '@pages/AddBanner/saga';
+import changeBannerSaga from '@pages/ChangeBanner/saga';
 
 export default function* rootSaga() {
   yield all([
@@ -37,5 +38,6 @@ export default function* rootSaga() {
     historySaga(),
     bannerSaga(),
     addBannerSaga(),
+    changeBannerSaga(),
   ]);
 }

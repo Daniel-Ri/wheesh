@@ -20,6 +20,7 @@ import Order from '@pages/Order';
 import History from '@pages/History';
 import Banner from '@pages/Banner';
 import AddBanner from '@pages/AddBanner';
+import ChangeBanner from '@pages/ChangeBanner';
 
 const routes = [
   {
@@ -146,6 +147,13 @@ const routes = [
     name: 'Add Banner',
     protected: true,
     component: AddBanner,
+    layout: MainLayout,
+  },
+  {
+    path: '/changeBanner/:bannerId',
+    name: 'Change Banner',
+    protected: true,
+    component: ChangeBanner,
     layout: MainLayout,
   },
   {

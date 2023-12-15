@@ -2,21 +2,21 @@
 import BackBtn from '@components/BackBtn';
 import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-
-import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { createStructuredSelector } from 'reselect';
-import { selectUser } from '@containers/Client/selectors';
-
+import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { useEffect, useState } from 'react';
+import { selectUser } from '@containers/Client/selectors';
+import { createStructuredSelector } from 'reselect';
 import { Button } from '@mui/material';
-import { createBanner } from './actions';
+import { getBanner, updateBanner } from './actions';
 
 import classes from './style.module.scss';
 
-const AddBanner = ({ user }) => {
-  const dispatch = useDispatch();
+const ChangeBanner = ({ user }) => {
+  const { bannerId } = useParams();
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [imageDesktop, setImageDesktop] = useState(null);
   const [imageMobile, setImageMobile] = useState(null);
@@ -31,16 +31,21 @@ const AddBanner = ({ user }) => {
     setImageMobile(file);
   };
 
-  const handleSuccess = () => {
-    toast.success('Success add banner');
+  const handleErrorGet = (errorMsg) => {
+    toast.error(errorMsg);
     navigate('/banner');
   };
 
-  const handleError = (errorMsg) => {
+  const handleSuccessUpdate = () => {
+    toast.success('Success change banner');
+    navigate('/banner');
+  };
+
+  const handleErrorUpdate = (errorMsg) => {
     toast.error(errorMsg);
   };
 
-  const handleSubmit = () => {
+  const handleUpdate = () => {
     if (!imageDesktop || !imageMobile) {
       toast.error('You need to upload desktop & mobile images');
       return;
@@ -50,8 +55,13 @@ const AddBanner = ({ user }) => {
     formData.append('imageDesktop', imageDesktop);
     formData.append('imageMobile', imageMobile);
 
-    dispatch(createBanner(formData, handleSuccess, handleError));
+    dispatch(updateBanner(bannerId, formData, handleSuccessUpdate, handleErrorUpdate));
   };
+
+  useEffect(() => {
+    if (user?.role === 'admin') dispatch(getBanner(bannerId, handleErrorGet));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bannerId]);
 
   useEffect(() => {
     if (user?.role !== 'admin') {
@@ -66,7 +76,7 @@ const AddBanner = ({ user }) => {
       <div className={classes.container}>
         <header>
           <BackBtn handleClickBack={() => navigate('/banner')} />
-          <h1>Add Banner</h1>
+          <h1>Change Banner</h1>
         </header>
 
         <div className={classes.form}>
@@ -104,8 +114,8 @@ const AddBanner = ({ user }) => {
         </div>
 
         <div className={classes.button}>
-          <Button variant="contained" onClick={handleSubmit}>
-            Submit
+          <Button variant="contained" onClick={handleUpdate}>
+            Change
           </Button>
         </div>
       </div>
@@ -113,7 +123,7 @@ const AddBanner = ({ user }) => {
   );
 };
 
-AddBanner.propTypes = {
+ChangeBanner.propTypes = {
   user: PropTypes.object,
 };
 
@@ -121,4 +131,4 @@ const mapStateToProps = createStructuredSelector({
   user: selectUser,
 });
 
-export default connect(mapStateToProps)(AddBanner);
+export default connect(mapStateToProps)(ChangeBanner);

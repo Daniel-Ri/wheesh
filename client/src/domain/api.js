@@ -66,6 +66,7 @@ export const createOrder = (inputs) => {
   return callAPI(urls.order, 'POST', header, {}, inputs);
 };
 export const getAllBanners = () => callAPI(urls.banner, 'GET');
+export const getBanner = (bannerId) => callAPI(`${urls.banner}/${bannerId}`, 'GET');
 export const createBanner = (inputs) => callAPI(urls.banner, 'POST', {}, {}, inputs);
 export const updateBanner = (bannerId, inputs) => callAPI(`${urls.banner}/${bannerId}`, 'PUT', {}, {}, inputs);
 export const deleteBanner = (bannerId) => callAPI(`${urls.banner}/${bannerId}`, 'DELETE');
