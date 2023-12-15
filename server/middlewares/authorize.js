@@ -1,5 +1,4 @@
-const { handleClientError } = require("../helper/handleError");
-
+const { handleClientError } = require("../utils/handleError");
 
 exports.authorize = (roles) => {
   return async (req, res, next) => {
