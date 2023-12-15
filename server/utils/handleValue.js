@@ -99,3 +99,29 @@ exports.selectRandomly = (inputArray, selectionSize) => {
 
   return selectedArray;
 }
+
+exports.formatDateWithDay = (date) => {
+  const inputDate = new Date(date);
+
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const dayOfWeek = days[inputDate.getDay()];
+
+  const day = inputDate.getDate();
+  const month = inputDate.toLocaleString('en-US', { month: 'short' });
+  const year = inputDate.getFullYear();
+
+  const formattedDate = `${dayOfWeek}, ${day} ${month} ${year}`;
+  return formattedDate;
+};
+
+const optionsHour = {
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false,
+  timeZone: 'Asia/Jakarta',
+};
+
+exports.formatHour = (inputDateString) => {
+  const inputDate = new Date(inputDateString);
+  return inputDate.toLocaleTimeString('en-US', optionsHour);
+};

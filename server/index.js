@@ -5,6 +5,7 @@ const cors = require('cors');
 const app = express()
 const port = process.env.PORT;
 const router = require('./routes/index');
+const { deleteNotPaidOrderPassedDueTime, remindUserBeforeOneHourOfDeparture } = require("./utils/handleJob");
 
 app.use(cors())
 app.use(express.json())
@@ -20,9 +21,10 @@ app.all('*', (req, res) => {
   res.status(404).json({ message: 'API Not Found' })
 });
 
-cron.schedule('* * * * *', () => {
+cron.schedule('* * * * *', async () => {
   console.log('Job running every minute.');
-  // Add your logic for the first job here
+  await deleteNotPaidOrderPassedDueTime();
+  await remindUserBeforeOneHourOfDeparture();
 });
 
 app.listen(port, () => {
