@@ -16,11 +16,11 @@ const authentication = async(req, res, next) => {
     }
     const { id, role } = decodedToken;
 
-    if (role === 'user') {
-      const foundUser = await User.findByPk(id);
-      if (!foundUser) {
-        return handleClientError(res, 400, "Token is invalid");
-      }
+    const foundUser = await User.findOne(
+      { where: {id, role}}
+    );
+    if (!foundUser) {
+      return handleClientError(res, 400, "Token is invalid");
     }
 
     req.user = { id, role };

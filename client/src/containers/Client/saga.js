@@ -1,6 +1,6 @@
-import { login, register, sendEmailToken } from '@domain/api';
+import { login, register, sendEmailToken, verifyToken } from '@domain/api';
 import { takeLatest, call, put } from 'redux-saga/effects';
-import { LOGIN_USER, REGISTER_USER, SEND_EMAIL_TOKEN } from './constants';
+import { LOGIN_USER, REGISTER_USER, SEND_EMAIL_TOKEN, VERIFY_TOKEN } from './constants';
 import { setLogin, setToken, setUser } from './actions';
 
 function* doLoginUser({ inputs, handleSuccess, handleError }) {
@@ -34,8 +34,17 @@ function* doRegisterUser({ inputs, handleSuccess, handleError }) {
   }
 }
 
+function* doVerifyToken({ handleError }) {
+  try {
+    yield call(verifyToken);
+  } catch (error) {
+    yield call(handleError);
+  }
+}
+
 export default function* clientSaga() {
   yield takeLatest(LOGIN_USER, doLoginUser);
   yield takeLatest(SEND_EMAIL_TOKEN, doSendEmailToken);
   yield takeLatest(REGISTER_USER, doRegisterUser);
+  yield takeLatest(VERIFY_TOKEN, doVerifyToken);
 }

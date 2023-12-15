@@ -36,6 +36,7 @@ export const ping = () => callAPI(urls.ping, 'get');
 export const login = (inputs) => callAPI(`${urls.user}/login`, 'POST', {}, {}, inputs);
 export const sendEmailToken = (inputs) => callAPI(`${urls.user}/sendEmailToken`, 'POST', {}, {}, inputs);
 export const register = (inputs) => callAPI(`${urls.user}/register`, 'POST', {}, {}, inputs);
+export const verifyToken = () => callAPI(`${urls.user}/verifyToken`, 'POST');
 export const getProfile = () => callAPI(urls.user, 'GET');
 export const updateProfile = (inputs) => callAPI(urls.user, 'PUT', {}, {}, inputs);
 export const changePassword = (inputs) => callAPI(`${urls.user}/changePassword`, 'PUT', {}, {}, inputs);

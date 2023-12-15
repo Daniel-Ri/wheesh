@@ -16,8 +16,17 @@ module.exports = {
     */
     return queryInterface.bulkInsert('Users', [
       {
+        username: "bangjoe",
+        password: hash("123456"),
+        role: "admin",
+        email: "bangjoe@gmail.com",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
         username: "johndoe",
         password: hash("123456"),
+        role: "user",
         email: "johndoe@gmail.com",
         createdAt: new Date(),
         updatedAt: new Date()
@@ -25,6 +34,7 @@ module.exports = {
       {
         username: "jeandoe",
         password: hash("123456"),
+        role: "user",
         email: "jeandoe@gmail.com",
         createdAt: new Date(),
         updatedAt: new Date()
@@ -32,6 +42,7 @@ module.exports = {
       {
         username: "agus",
         password: hash("123456"),
+        role: "user",
         email: "agus@gmail.com",
         createdAt: new Date(),
         updatedAt: new Date()
@@ -39,6 +50,7 @@ module.exports = {
       {
         username: "asep",
         password: hash("123456"),
+        role: "user",
         email: "asep@gmail.com",
         createdAt: new Date(),
         updatedAt: new Date()
@@ -46,6 +58,7 @@ module.exports = {
       {
         username: "slamet",
         password: hash("123456"),
+        role: "user",
         email: "slamet@gmail.com",
         createdAt: new Date(),
         updatedAt: new Date()

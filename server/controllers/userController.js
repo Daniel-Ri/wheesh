@@ -36,10 +36,9 @@ exports.login = async(req, res) => {
     if (!compare(dataReq.password, hashPassword))
       return handleClientError(res, 400, "Username or password is invalid");
     
-    const token = signToken(foundUser.id, 'user');
+    const token = signToken(foundUser.id, foundUser.role);
 
     const formattedUser = foundUser.toJSON();
-    formattedUser.role = 'user';
     delete formattedUser.password;
 
     return res.status(200).json({ token, user: formattedUser, status: 'Success' });
@@ -178,7 +177,8 @@ exports.register = async(req, res) => {
         {
           username: newData.username,
           email: newData.email,
-          password: newData.password,  
+          password: newData.password,
+          role: 'user',  
         },
         { transaction: t }
       );
@@ -219,6 +219,16 @@ exports.register = async(req, res) => {
     handleServerError(res);
   }
 }
+
+exports.verifyToken = async (req, res) => {
+  try {
+    return res.status(200).json({ status: 'Success' });
+
+  } catch (error) {
+    console.error(error);
+    handleServerError(res);
+  }
+};
 
 exports.getProfile = async(req, res) => {
   try {
@@ -315,10 +325,7 @@ exports.updateProfile = async(req, res) => {
         transaction: t
       });
 
-      const formateedUser = reloadedUser.toJSON();
-      formateedUser.role = 'user';
-
-      return res.status(200).json({ data: formateedUser, status: 'Success' });
+      return res.status(200).json({ data: reloadedUser, status: 'Success' });
     });
 
   } catch (error) {
@@ -400,10 +407,7 @@ exports.changeEmail = async (req, res) => {
         transaction: t
       });
 
-      const formateedUser = reloadedUser.toJSON();
-      formateedUser.role = 'user';
-
-      return res.status(200).json({ data: formateedUser, status: 'Success' });
+      return res.status(200).json({ data: reloadedUser, status: 'Success' });
     });
     
   } catch (error) {

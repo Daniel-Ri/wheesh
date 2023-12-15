@@ -39,6 +39,10 @@ module.exports = (sequelize, DataTypes) => {
         this.setDataValue('password', hash(value));
       }
     },
+    role: {
+      defaultValue: 'user',
+      type: DataTypes.STRING,
+    },
     email: {
       allowNull: false,
       unique: true,

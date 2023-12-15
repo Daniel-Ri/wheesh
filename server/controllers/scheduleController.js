@@ -32,7 +32,6 @@ const findStationById = async (res, stationId, errorMessage) => {
   if (!foundStation) {
     handleClientError(res, 400, errorMessage);
   }
-  return foundStation;
 }
 
 const countSeats = async (carriages, seatClass) => {
@@ -52,7 +51,12 @@ exports.getSchedules = async(req, res) => {
   try {
     const { departureStationId, arrivalStationId, date } = req.params;
     let startLimit, endLimit;
-    if (new Date(date).toDateString() === new Date().toDateString()) {
+
+    const inputDate = new Date(date);
+    const nowDate = new Date();
+    if (inputDate < nowDate && inputDate.toDateString() !== nowDate.toDateString()) {
+      return handleClientError(res, 400, "Cannot get before today's schedules")
+    } else if (inputDate.toDateString() === nowDate.toDateString()) {
       startLimit = new Date(new Date().getTime() + 30 * 60 * 1000);
       endLimit = new Date(new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000);
     } else {
@@ -60,8 +64,8 @@ exports.getSchedules = async(req, res) => {
       endLimit = new Date(startLimit.getTime() + 24 * 60 * 60 * 1000);
     }
 
-    const foundDepartureStation = await findStationById(res, departureStationId, 'Departure Station Not Found');
-    const foundArrivalStation = await findStationById(res, arrivalStationId, 'Arrival Station Not Found');
+    await findStationById(res, departureStationId, 'Departure Station Not Found');
+    await findStationById(res, arrivalStationId, 'Arrival Station Not Found');
 
     const schedules = await Schedule.findAll({
       where: {

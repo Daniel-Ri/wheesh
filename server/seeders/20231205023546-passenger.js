@@ -17,6 +17,17 @@ module.exports = {
         userId: 1,
         isUser: true,
         gender: 'Male',
+        dateOfBirth: new Date(1995, 9, 14),
+        idCard: '1243567890123456',
+        name: 'Bang Joe',
+        email: 'bangjoe@gmail.com',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        userId: 2,
+        isUser: true,
+        gender: 'Male',
         dateOfBirth: new Date(1995, 10, 12),
         idCard: '1234567890123456',
         name: 'John Doe',
@@ -25,7 +36,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        userId: 1,
+        userId: 2,
         isUser: false,
         gender: 'Female',
         dateOfBirth: new Date(1997, 1, 1),
@@ -36,7 +47,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        userId: 2,
+        userId: 3,
         isUser: true,
         gender: 'Female',
         dateOfBirth: new Date(1997, 1, 1),
@@ -47,7 +58,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        userId: 3,
+        userId: 4,
         isUser: true,
         gender: 'Male',
         dateOfBirth: new Date(1995, 10, 12),
@@ -58,7 +69,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        userId: 3,
+        userId: 4,
         isUser: false,
         gender: 'Male',
         dateOfBirth: new Date(1997, 2, 3),
@@ -69,7 +80,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        userId: 3,
+        userId: 4,
         isUser: false,
         gender: 'Male',
         dateOfBirth: new Date(1998, 1, 30),
@@ -80,7 +91,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        userId: 3,
+        userId: 4,
         isUser: false,
         gender: 'Female',
         dateOfBirth: new Date(1998, 1, 30),
@@ -91,7 +102,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        userId: 3,
+        userId: 4,
         isUser: false,
         gender: 'Female',
         dateOfBirth: new Date(1998, 1, 30),
@@ -102,7 +113,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        userId: 3,
+        userId: 4,
         isUser: false,
         gender: 'Female',
         dateOfBirth: new Date(1998, 1, 30),
@@ -113,7 +124,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        userId: 3,
+        userId: 4,
         isUser: false,
         gender: 'Female',
         dateOfBirth: new Date(1998, 1, 30),
@@ -124,7 +135,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        userId: 3,
+        userId: 4,
         isUser: false,
         gender: 'Female',
         dateOfBirth: new Date(1998, 1, 30),
@@ -135,7 +146,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        userId: 3,
+        userId: 4,
         isUser: false,
         gender: 'Female',
         dateOfBirth: new Date(1998, 1, 30),
@@ -146,7 +157,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        userId: 3,
+        userId: 4,
         isUser: false,
         gender: 'Female',
         dateOfBirth: new Date(1998, 1, 30),
@@ -157,7 +168,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        userId: 3,
+        userId: 4,
         isUser: false,
         gender: 'Female',
         dateOfBirth: new Date(1998, 1, 30),
@@ -168,7 +179,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        userId: 3,
+        userId: 4,
         isUser: false,
         gender: 'Female',
         dateOfBirth: new Date(1998, 1, 30),
@@ -179,7 +190,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        userId: 3,
+        userId: 4,
         isUser: false,
         gender: 'Female',
         dateOfBirth: new Date(1998, 1, 30),
@@ -190,7 +201,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        userId: 3,
+        userId: 4,
         isUser: false,
         gender: 'Male',
         dateOfBirth: new Date(1998, 1, 30),
@@ -200,7 +211,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        userId: 3,
+        userId: 4,
         isUser: false,
         gender: 'Male',
         dateOfBirth: new Date(1998, 1, 30),
@@ -210,7 +221,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        userId: 4,
+        userId: 5,
         isUser: true,
         gender: 'Male',
         dateOfBirth: new Date(1997, 2, 3),
@@ -221,7 +232,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        userId: 5,
+        userId: 6,
         isUser: true,
         gender: 'Male',
         dateOfBirth: new Date(1998, 1, 30),

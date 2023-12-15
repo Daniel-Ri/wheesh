@@ -6,6 +6,7 @@ import {
   SET_LOGIN,
   SET_TOKEN,
   SET_USER,
+  VERIFY_TOKEN,
 } from '@containers/Client/constants';
 
 export const setLogin = (login) => ({
@@ -41,6 +42,11 @@ export const sendEmailToken = (inputs, handleSuccess, handleError) => ({
   type: SEND_EMAIL_TOKEN,
   inputs,
   handleSuccess,
+  handleError,
+});
+
+export const verifyToken = (handleError) => ({
+  type: VERIFY_TOKEN,
   handleError,
 });
 
