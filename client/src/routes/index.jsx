@@ -19,6 +19,7 @@ import Unpaid from '@pages/Unpaid';
 import Order from '@pages/Order';
 import History from '@pages/History';
 import Banner from '@pages/Banner';
+import AddBanner from '@pages/AddBanner';
 
 const routes = [
   {
@@ -138,6 +139,13 @@ const routes = [
     name: 'Banner',
     protected: true,
     component: Banner,
+    layout: MainLayout,
+  },
+  {
+    path: '/addBanner',
+    name: 'Add Banner',
+    protected: true,
+    component: AddBanner,
     layout: MainLayout,
   },
   {

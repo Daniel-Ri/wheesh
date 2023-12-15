@@ -1,0 +1,129 @@
+@import '@styles/base';
+
+// Reset
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Poppins;
+}
+
+.main {
+  margin-left: 200px;
+  position: relative;
+  background: $color-alabaster;
+  display: flex;
+  justify-content: center;
+  width: calc(100vw - 200px);
+  height: 100%;
+  min-height: 100vh;
+
+  .container {
+    width: 90%;
+    max-width: 40rem;
+    @include directionY;
+
+    header {
+      width: 100%;
+      margin-top: 5vh;
+      @include directionX;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+
+      h1 {
+        font-size: 120%;
+        width: 60%;
+        text-align: center;
+      }
+    }
+
+    .form {
+      @include directionY;
+      gap: 1rem;
+      margin-bottom: 1rem;
+
+      .input {
+        @include directionY;
+        gap: 0.5rem;
+      }
+
+      .preview {
+        @include directionY;
+
+        p {
+          font-size: 90%;
+        }
+
+        .imageDesktop {
+          @include directionX;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid $color-cool-gray;
+          width: 85rem;
+          max-width: 100%;
+          height: 15rem;
+        }
+
+        .imageMobile {
+          align-self: center;
+          @include directionX;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid $color-cool-gray;
+          width: 18rem;
+          max-width: 100%;
+          height: 12rem;
+        }
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: fill;
+        }
+      }
+    }
+
+    .button {
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+      @include directionX;
+      justify-content: flex-end;
+
+      .btn {
+        @include directionX;
+        align-items: center;
+        gap: 0.25rem;
+        text-transform: capitalize;
+
+        .icon {
+          font-size: 150%;
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: $screen-lg-limit) {
+    margin-left: 192px;
+    width: calc(100vw - 192px);
+  }
+
+  @media screen and (max-width: $screen-md-limit) {
+    margin-left: 10rem;
+    width: calc(100vw - 10rem);
+  }
+
+  @media screen and (max-width: $screen-sm-limit) {
+    margin-left: 0;
+    width: 100vw;
+    margin-bottom: 76px;
+    height: 100%;
+    min-height: calc(100vh - 76px);
+
+    .container {
+      header {
+        height: 3rem;
+      }
+    }
+  }
+}
