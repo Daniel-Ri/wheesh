@@ -1,4 +1,11 @@
-import { GET_ALL_STATIONS, GET_LATEST_DATE_SCHEDULE, SET_LATEST_DATE_SCHEDULE, SET_STATIONS } from './constants';
+import {
+  GET_ALL_STATIONS,
+  GET_BANNERS,
+  GET_LATEST_DATE_SCHEDULE,
+  SET_BANNERS,
+  SET_LATEST_DATE_SCHEDULE,
+  SET_STATIONS,
+} from './constants';
 
 export const getAllStations = () => ({
   type: GET_ALL_STATIONS,
@@ -16,4 +23,13 @@ export const getLatestDateSchedule = () => ({
 export const setLatestDateSchedule = (latestDateSchedule) => ({
   type: SET_LATEST_DATE_SCHEDULE,
   latestDateSchedule,
+});
+
+export const getBanners = () => ({
+  type: GET_BANNERS,
+});
+
+export const setBanners = (banners) => ({
+  type: SET_BANNERS,
+  banners,
 });

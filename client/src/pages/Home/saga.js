@@ -1,7 +1,7 @@
-import { getAllStations, getLatestDateSchedule } from '@domain/api';
+import { getAllBanners, getAllStations, getLatestDateSchedule } from '@domain/api';
 import { takeLatest, call, put } from 'redux-saga/effects';
-import { setLatestDateSchedule, setStations } from './actions';
-import { GET_ALL_STATIONS, GET_LATEST_DATE_SCHEDULE } from './constants';
+import { setBanners, setLatestDateSchedule, setStations } from './actions';
+import { GET_ALL_STATIONS, GET_BANNERS, GET_LATEST_DATE_SCHEDULE } from './constants';
 
 function* doGetAllStations() {
   try {
@@ -21,7 +21,17 @@ function* doGetLatestDateSchedule() {
   }
 }
 
+function* doGetBanners() {
+  try {
+    const response = yield call(getAllBanners);
+    yield put(setBanners(response.data));
+  } catch {
+    // error
+  }
+}
+
 export default function* homeSaga() {
   yield takeLatest(GET_ALL_STATIONS, doGetAllStations);
   yield takeLatest(GET_LATEST_DATE_SCHEDULE, doGetLatestDateSchedule);
+  yield takeLatest(GET_BANNERS, doGetBanners);
 }

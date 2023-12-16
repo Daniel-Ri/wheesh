@@ -13,12 +13,12 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { formatDate } from '@utils/handleValue';
 import ImageCarousel from './components/ImageCarousel';
-import { selectLatestDateSchedule, selectStations } from './selectors';
-import { getAllStations, getLatestDateSchedule } from './actions';
+import { selectBanners, selectLatestDateSchedule, selectStations } from './selectors';
+import { getAllStations, getBanners, getLatestDateSchedule } from './actions';
 
 import classes from './style.module.scss';
 
-const Home = ({ stations, latestDateSchedule }) => {
+const Home = ({ stations, latestDateSchedule, banners }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const today = new Date(new Date().setHours(0, 0, 0, 0));
@@ -77,12 +77,13 @@ const Home = ({ stations, latestDateSchedule }) => {
   useEffect(() => {
     dispatch(getAllStations());
     dispatch(getLatestDateSchedule());
+    dispatch(getBanners());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <main className={classes.main}>
-      <ImageCarousel />
+      <ImageCarousel banners={banners} />
       <div className={classes.container}>
         <section>
           <div className={classes.row}>
@@ -144,11 +145,13 @@ const Home = ({ stations, latestDateSchedule }) => {
 Home.propTypes = {
   stations: PropTypes.array,
   latestDateSchedule: PropTypes.string,
+  banners: PropTypes.array,
 };
 
 const mapStateToProps = createStructuredSelector({
   stations: selectStations,
   latestDateSchedule: selectLatestDateSchedule,
+  banners: selectBanners,
 });
 
 export default connect(mapStateToProps)(Home);

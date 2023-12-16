@@ -1,9 +1,10 @@
 import { produce } from 'immer';
-import { SET_LATEST_DATE_SCHEDULE, SET_STATIONS } from './constants';
+import { SET_BANNERS, SET_LATEST_DATE_SCHEDULE, SET_STATIONS } from './constants';
 
 export const initialState = {
   stations: [],
   latestDateSchedule: null,
+  banners: [],
 };
 
 export const storedKey = [];
@@ -16,6 +17,9 @@ const homeReducer = (state = initialState, action) =>
         break;
       case SET_LATEST_DATE_SCHEDULE:
         draft.latestDateSchedule = action.latestDateSchedule;
+        break;
+      case SET_BANNERS:
+        draft.banners = action.banners;
         break;
     }
   });

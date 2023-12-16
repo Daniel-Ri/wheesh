@@ -1,10 +1,6 @@
 import PropTypes from 'prop-types';
-import bannerImage1Desktop from '@static/images/Frame 1 - Desktop.png';
-import bannerImage2Desktop from '@static/images/Frame 2 - Desktop.png';
-import bannerImage1Mobile from '@static/images/Frame 1 - Mobile.png';
-import bannerImage2Mobile from '@static/images/Frame 2 - Mobile.png';
+import config from '@config/index';
 
-import { Paper } from '@mui/material';
 import { useMediaQuery } from 'react-responsive';
 import { Swiper, SwiperSlide } from 'swiper/react';
 // Import Swiper styles
@@ -16,28 +12,14 @@ import { Pagination, Navigation, Autoplay } from 'swiper/modules';
 
 import classes from './style.module.scss';
 
-const ImageCarousel = () => {
-  const dekstopItems = [
-    {
-      img: bannerImage1Desktop,
-      // You can add additional properties like caption, alt text, etc.
-    },
-    {
-      img: bannerImage2Desktop,
-    },
-    // Add more items as needed
-  ];
-
-  const mobileItems = [
-    {
-      img: bannerImage1Mobile,
-    },
-    {
-      img: bannerImage2Mobile,
-    },
-  ];
+const ImageCarousel = ({ banners }) => {
+  const desktopImages = banners.map((banner) => banner.imageDesktop);
+  const mobileImages = banners.map((banner) => banner.imageMobile);
 
   const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
+
+  // Setup this for Swiper
+  if (banners.length === 0) return;
 
   return (
     <Swiper
@@ -58,28 +40,22 @@ const ImageCarousel = () => {
       className={classes.mySwapper}
     >
       {!isMobile
-        ? dekstopItems.map((item, index) => (
+        ? desktopImages.map((imageURL, index) => (
             <SwiperSlide key={index} className={classes.swiperSlide}>
-              <img src={item.img} alt={item.alt} />{' '}
+              <img src={`${config.api.host}${imageURL}`} alt="" />
             </SwiperSlide>
           ))
-        : mobileItems.map((item, index) => (
+        : mobileImages.map((imageURL, index) => (
             <SwiperSlide key={index} className={classes.swiperSlide}>
-              <img src={item.img} alt={item.alt} />
+              <img src={`${config.api.host}${imageURL}`} alt="" />
             </SwiperSlide>
           ))}
     </Swiper>
   );
 };
 
-export default ImageCarousel;
-
-const Item = ({ item }) => (
-  <Paper>
-    <img src={item.img} alt={item.alt} style={{ width: '100%' }} />
-  </Paper>
-);
-
-Item.propTypes = {
-  item: PropTypes.object.isRequired,
+ImageCarousel.propTypes = {
+  banners: PropTypes.array,
 };
+
+export default ImageCarousel;
