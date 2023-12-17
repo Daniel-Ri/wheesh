@@ -1,5 +1,7 @@
 import { Button, Dialog } from '@mui/material';
 import PropTypes from 'prop-types';
+import { FormattedMessage, injectIntl } from 'react-intl';
+
 import { useNavigate } from 'react-router-dom';
 import ModeEditOutlinedIcon from '@mui/icons-material/ModeEditOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -12,7 +14,7 @@ import toast from 'react-hot-toast';
 import { deleteBanner } from '@pages/Banner/actions';
 import classes from './style.module.scss';
 
-const BannerRow = ({ banner }) => {
+const BannerRow = ({ banner, intl: { formatMessage } }) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -24,7 +26,7 @@ const BannerRow = ({ banner }) => {
   };
 
   const handleSuccessDelete = () => {
-    toast.success('Success delete banner');
+    toast.success(formatMessage({ id: 'app_success_delete_banner' }));
   };
 
   const handleErrorDelete = (errorMsg) => {
@@ -95,15 +97,19 @@ const BannerRow = ({ banner }) => {
       <Dialog open={open} onClose={handleClose}>
         <div className={classes.dialog}>
           <div className={classes.content}>
-            <h2>Verification</h2>
-            <div className={classes.message}>Are you sure about deleting the banner?</div>
+            <h2>
+              <FormattedMessage id="app_verification" />
+            </h2>
+            <div className={classes.message}>
+              <FormattedMessage id="app_sure_deleting_the_banner" />
+            </div>
           </div>
           <div className={classes.buttons}>
             <Button variant="outlined" className={classes.cancel} onClick={handleClose}>
-              Cancel
+              <FormattedMessage id="app_cancel" />
             </Button>
             <Button variant="contained" className={classes.confirm} onClick={handleDeleteBanner}>
-              Confirm
+              <FormattedMessage id="app_confirm" />
             </Button>
           </div>
         </div>
@@ -114,6 +120,7 @@ const BannerRow = ({ banner }) => {
 
 BannerRow.propTypes = {
   banner: PropTypes.object.isRequired,
+  intl: PropTypes.object,
 };
 
-export default BannerRow;
+export default injectIntl(BannerRow);

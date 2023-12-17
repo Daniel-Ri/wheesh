@@ -1,5 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import { useDispatch } from 'react-redux';
+import PropTypes from 'prop-types';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 import BackBtn from '@components/BackBtn';
 import { useNavigate } from 'react-router-dom';
@@ -8,10 +10,11 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { sendEmailToken } from '@containers/Client/actions';
 import { Button } from '@mui/material';
-import classes from './style.module.scss';
 import { changeEmail } from './actions';
 
-const ChangeEmail = () => {
+import classes from './style.module.scss';
+
+const ChangeEmail = ({ intl: { formatMessage } }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -26,12 +29,12 @@ const ChangeEmail = () => {
 
   const validateEmail = () => {
     if (!inputs.email) {
-      toast.error('You must insert email');
+      toast.error(formatMessage({ id: 'app_you_must_insert_email' }));
       return false;
     }
 
     if (!/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(inputs.email)) {
-      toast.error('Incorrect E-mail format');
+      toast.error(formatMessage({ id: 'app_incorrect_email_format' }));
       return false;
     }
 
@@ -39,7 +42,7 @@ const ChangeEmail = () => {
   };
 
   const handleSuccessChange = () => {
-    toast.success('Success modify email');
+    toast.success(formatMessage({ id: 'app_success_modify_email' }));
     navigate('/me');
   };
 
@@ -54,7 +57,7 @@ const ChangeEmail = () => {
   };
 
   const handleSuccessSendEmailToken = () => {
-    toast.success('Sent a token via email');
+    toast.success(formatMessage({ id: 'app_sent_a_token_email' }));
   };
 
   const handleErrorSendEmailToken = (errorMsg) => {
@@ -74,7 +77,9 @@ const ChangeEmail = () => {
       <div className={classes.container}>
         <header>
           <BackBtn handleClickBack={() => navigate('/me')} />
-          <h1>Change Email</h1>
+          <h1>
+            <FormattedMessage id="app_change_email" />
+          </h1>
         </header>
 
         <form>
@@ -86,7 +91,7 @@ const ChangeEmail = () => {
               id="email"
               value={inputs.email}
               onChange={handleInputChange}
-              placeholder="Please enter new email address"
+              placeholder={formatMessage({ id: 'app_please_enter_new_email' })}
               autoComplete="off"
             />
           </div>
@@ -98,12 +103,12 @@ const ChangeEmail = () => {
               id="emailToken"
               value={inputs.emailToken}
               onChange={handleInputChange}
-              placeholder="Please enter the verification code"
+              placeholder={formatMessage({ id: 'app_please_enter_verification_code' })}
               autoComplete="off"
             />
             <div className={classes.button}>
               <Button variant="contained" className={classes.btn} onClick={handleGenerateEmailToken}>
-                Generate
+                <FormattedMessage id="app_generate" />
               </Button>
             </div>
           </div>
@@ -111,7 +116,7 @@ const ChangeEmail = () => {
 
         <div className={classes.buttons}>
           <Button variant="contained" className={classes.submit} onClick={handleSubmit}>
-            Submit
+            <FormattedMessage id="app_submit" />
           </Button>
         </div>
       </div>
@@ -119,4 +124,8 @@ const ChangeEmail = () => {
   );
 };
 
-export default ChangeEmail;
+ChangeEmail.propTypes = {
+  intl: PropTypes.object,
+};
+
+export default injectIntl(ChangeEmail);

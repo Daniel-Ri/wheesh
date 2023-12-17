@@ -2,6 +2,7 @@
 import BackBtn from '@components/BackBtn';
 import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useEffect, useState } from 'react';
@@ -12,7 +13,7 @@ import { getBanner, updateBanner } from './actions';
 
 import classes from './style.module.scss';
 
-const ChangeBanner = ({ user }) => {
+const ChangeBanner = ({ user, intl: { formatMessage } }) => {
   const { bannerId } = useParams();
 
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ const ChangeBanner = ({ user }) => {
   };
 
   const handleSuccessUpdate = () => {
-    toast.success('Success change banner');
+    toast.success(formatMessage({ id: 'app_success_change_banner' }));
     navigate('/banner');
   };
 
@@ -47,7 +48,7 @@ const ChangeBanner = ({ user }) => {
 
   const handleUpdate = () => {
     if (!imageDesktop || !imageMobile) {
-      toast.error('You need to upload desktop & mobile images');
+      toast.error(formatMessage({ id: 'app_need_to_upload_images' }));
       return;
     }
 
@@ -65,7 +66,7 @@ const ChangeBanner = ({ user }) => {
 
   useEffect(() => {
     if (user?.role !== 'admin') {
-      toast.error('Not Authorized');
+      toast.error(formatMessage({ id: 'app_not_authorized' }));
       navigate('/');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -76,37 +77,51 @@ const ChangeBanner = ({ user }) => {
       <div className={classes.container}>
         <header>
           <BackBtn handleClickBack={() => navigate('/banner')} />
-          <h1>Change Banner</h1>
+          <h1>
+            <FormattedMessage id="app_change_banner" />
+          </h1>
         </header>
 
         <div className={classes.form}>
           <div className={classes.input}>
-            <label htmlFor="imageDesktop">Desktop Image:</label>
+            <label htmlFor="imageDesktop">
+              <FormattedMessage id="app_desktop_image" />:
+            </label>
             <input type="file" id="imageDesktop" accept="image/*" onChange={handleImageDesktopChange} />
 
             <div className={classes.preview}>
-              <p>Preview:</p>
+              <p>
+                <FormattedMessage id="app_preview" />:
+              </p>
               <div className={classes.imageDesktop}>
                 {imageDesktop ? (
                   <img src={URL.createObjectURL(imageDesktop)} alt="Desktop Preview" />
                 ) : (
-                  <div className={classes.message}>Haven&lsquo;t choose the image</div>
+                  <div className={classes.message}>
+                    <FormattedMessage id="app_havent_choose_the_image" />
+                  </div>
                 )}
               </div>
             </div>
           </div>
 
           <div className={classes.input}>
-            <label htmlFor="imageMobile">Mobile Image:</label>
+            <label htmlFor="imageMobile">
+              <FormattedMessage id="app_mobile_image" />:
+            </label>
             <input type="file" id="imageMobile" accept="image/*" onChange={handleImageMobileChange} />
 
             <div className={classes.preview}>
-              <p>Preview:</p>
+              <p>
+                <FormattedMessage id="app_preview" />:
+              </p>
               <div className={classes.imageMobile}>
                 {imageMobile ? (
                   <img src={URL.createObjectURL(imageMobile)} alt="Mobile Preview" />
                 ) : (
-                  <div className={classes.message}>Haven&lsquo;t choose the image</div>
+                  <div className={classes.message}>
+                    <FormattedMessage id="app_havent_choose_the_image" />
+                  </div>
                 )}
               </div>
             </div>
@@ -115,7 +130,7 @@ const ChangeBanner = ({ user }) => {
 
         <div className={classes.button}>
           <Button variant="contained" onClick={handleUpdate}>
-            Change
+            <FormattedMessage id="app_change" />
           </Button>
         </div>
       </div>
@@ -125,10 +140,11 @@ const ChangeBanner = ({ user }) => {
 
 ChangeBanner.propTypes = {
   user: PropTypes.object,
+  intl: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
   user: selectUser,
 });
 
-export default connect(mapStateToProps)(ChangeBanner);
+export default injectIntl(connect(mapStateToProps)(ChangeBanner));

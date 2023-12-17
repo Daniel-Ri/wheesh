@@ -1,4 +1,6 @@
 import { useDispatch } from 'react-redux';
+import PropTypes from 'prop-types';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 import BackBtn from '@components/BackBtn';
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +11,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import classes from './style.module.scss';
 import { changePassword } from './actions';
 
-const ChangePassword = () => {
+const ChangePassword = ({ intl: { formatMessage } }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -47,7 +49,7 @@ const ChangePassword = () => {
 
   const validateOldPassword = () => {
     if (!inputs.oldPassword) {
-      toast.error('You must insert the original password');
+      toast.error(formatMessage({ id: 'app_must_insert_original_password' }));
       return false;
     }
 
@@ -56,12 +58,12 @@ const ChangePassword = () => {
 
   const validateNewPassword = () => {
     if (!inputs.newPassword) {
-      toast.error('New password cannot be empty');
+      toast.error(formatMessage({ id: 'app_new_password_cannot_empty' }));
       return false;
     }
 
     if (inputs.newPassword.length < 6) {
-      toast.error('New password must have min 6 characters');
+      toast.error(formatMessage({ id: 'app_new_password_have_characters' }));
       return false;
     }
 
@@ -70,11 +72,11 @@ const ChangePassword = () => {
 
   const validateNewPasswordConfirmation = () => {
     if (!inputs.newPasswordConfirmation) {
-      toast.error('You must insert the password confirmation');
+      toast.error(formatMessage({ id: 'app_must_insert_password_confirmation' }));
       return false;
     }
     if (inputs.newPasswordConfirmation !== inputs.newPassword) {
-      toast.error('Password confirmation must have same value as new password');
+      toast.error(formatMessage({ id: 'app_confirmation_must_same_new' }));
       return false;
     }
 
@@ -102,7 +104,7 @@ const ChangePassword = () => {
   };
 
   const handleSuccess = () => {
-    toast.success('Success modify password');
+    toast.success(formatMessage({ id: 'app_success_modify_password' }));
     navigate('/me');
   };
 
@@ -125,14 +127,16 @@ const ChangePassword = () => {
       <div className={classes.container}>
         <header>
           <BackBtn handleClickBack={() => navigate('/me')} />
-          <h1>Change Password</h1>
+          <h1>
+            <FormattedMessage id="app_change_password" />
+          </h1>
         </header>
 
         <form>
           <OutlinedInput
             id="outlined-adornment-password"
             name="oldPassword"
-            placeholder="Enter the original password"
+            placeholder={formatMessage({ id: 'app_enter_the_original_password' })}
             value={inputs.oldPassword}
             onChange={handleInputChange}
             onBlur={handleFocusOut}
@@ -155,7 +159,7 @@ const ChangePassword = () => {
           <OutlinedInput
             id="outlined-adornment-password"
             name="newPassword"
-            placeholder="Enter new password"
+            placeholder={formatMessage({ id: 'app_enter_new_password' })}
             value={inputs.newPassword}
             onChange={handleInputChange}
             onBlur={handleFocusOut}
@@ -178,7 +182,7 @@ const ChangePassword = () => {
           <OutlinedInput
             id="outlined-adornment-password"
             name="newPasswordConfirmation"
-            placeholder="Re-enter your new password"
+            placeholder={formatMessage({ id: 'app_reenter_your_new_password' })}
             value={inputs.newPasswordConfirmation}
             onChange={handleInputChange}
             onBlur={handleFocusOut}
@@ -202,7 +206,7 @@ const ChangePassword = () => {
 
         <div className={classes.buttons}>
           <Button variant="contained" className={classes.submit} onClick={handleSubmit}>
-            Submit
+            <FormattedMessage id="app_submit" />
           </Button>
         </div>
       </div>
@@ -210,4 +214,8 @@ const ChangePassword = () => {
   );
 };
 
-export default ChangePassword;
+ChangePassword.propTypes = {
+  intl: PropTypes.object,
+};
+
+export default injectIntl(ChangePassword);

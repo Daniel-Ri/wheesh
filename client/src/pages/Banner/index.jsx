@@ -1,5 +1,7 @@
 import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
+import { FormattedMessage, injectIntl } from 'react-intl';
+
 import { useMediaQuery } from 'react-responsive';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
@@ -12,12 +14,12 @@ import { selectUser } from '@containers/Client/selectors';
 import toast from 'react-hot-toast';
 import { Button } from '@mui/material';
 import { getBanners } from './actions';
-
-import classes from './style.module.scss';
 import { selectBanners } from './selectors';
 import BannerRow from './components/BannerRow';
 
-const Banner = ({ user, banners }) => {
+import classes from './style.module.scss';
+
+const Banner = ({ user, banners, intl: { formatMessage } }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -30,7 +32,7 @@ const Banner = ({ user, banners }) => {
 
   useEffect(() => {
     if (user?.role !== 'admin') {
-      toast.error('Not Authorized');
+      toast.error(formatMessage({ id: 'app_not_authorized' }));
       navigate('/');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -41,13 +43,17 @@ const Banner = ({ user, banners }) => {
       <div className={classes.container}>
         <header>
           <BackBtn handleClickBack={() => navigate('/me')} />
-          <h1>Banner Management</h1>
+          <h1>
+            <FormattedMessage id="app_banner_management" />
+          </h1>
         </header>
 
         <div className={classes.button}>
           <Button variant="contained" className={classes.btn} onClick={() => navigate('/addBanner')}>
             <AddOutlinedIcon className={classes.icon} />
-            <div className={classes.message}>Add</div>
+            <div className={classes.message}>
+              <FormattedMessage id="app_add" />
+            </div>
           </Button>
         </div>
 
@@ -80,6 +86,7 @@ const Banner = ({ user, banners }) => {
 Banner.propTypes = {
   user: PropTypes.object,
   banners: PropTypes.array,
+  intl: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -87,4 +94,4 @@ const mapStateToProps = createStructuredSelector({
   banners: selectBanners,
 });
 
-export default connect(mapStateToProps)(Banner);
+export default injectIntl(connect(mapStateToProps)(Banner));
