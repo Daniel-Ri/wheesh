@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { FormattedMessage } from 'react-intl';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
 import { censorIdCard } from '@utils/handleValue';
@@ -13,7 +14,9 @@ const PassengerCard = ({ passenger }) => {
       <div className={classes.leftCard}>
         <div className={classes.name}>{passenger.name}</div>
         <div className={classes.description}>
-          <div>ID Card</div>
+          <div>
+            <FormattedMessage id="app_id_card" />
+          </div>
           <div>{censorIdCard(passenger.idCard)}</div>
         </div>
       </div>

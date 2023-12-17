@@ -1,5 +1,6 @@
 import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 import { createStructuredSelector } from 'reselect';
 import { selectUser } from '@containers/Client/selectors';
@@ -12,9 +13,10 @@ import { Avatar, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '@containers/Client/actions';
 import toast from 'react-hot-toast';
+
 import classes from './style.module.scss';
 
-const Me = ({ user }) => {
+const Me = ({ user, intl: { formatMessage } }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -28,7 +30,7 @@ const Me = ({ user }) => {
 
   const clickPassengerPage = () => {
     if (!user) {
-      toast.error('Need to login');
+      toast.error(formatMessage({ id: 'app_need_to_login' }));
     } else {
       navigate('/myPassengers');
     }
@@ -36,7 +38,7 @@ const Me = ({ user }) => {
 
   const clickChangePasswordPage = () => {
     if (!user) {
-      toast.error('Need to login');
+      toast.error(formatMessage({ id: 'app_need_to_login' }));
     } else {
       navigate('/changePassword');
     }
@@ -44,7 +46,7 @@ const Me = ({ user }) => {
 
   const clickChangeEmailPage = () => {
     if (!user) {
-      toast.error('Need to login');
+      toast.error(formatMessage({ id: 'app_need_to_login' }));
     } else {
       navigate('/changeEmail');
     }
@@ -59,17 +61,21 @@ const Me = ({ user }) => {
         </header>
 
         <section>
-          <h2>Informasi Akun</h2>
+          <h2>
+            <FormattedMessage id="app_account_information" />
+          </h2>
           <hr />
           <div className={classes.sectionDesc}>
             <div className={classes.links}>
               <div className={classes.link} onClick={clickPassengerPage}>
                 <RecentActorsOutlinedIcon className={classes.icon} />
-                <div className={classes.namePage}>Daftar Penumpang</div>
+                <div className={classes.namePage}>
+                  <FormattedMessage id="app_passenger_list" />
+                </div>
               </div>
               <div className={classes.link} onClick={clickChangePasswordPage}>
                 <KeyIcon className={classes.icon} />
-                <div className={classes.namePage}>Kata Sandi</div>
+                <div className={classes.namePage}>Password</div>
               </div>
               <div className={classes.link} onClick={clickChangeEmailPage}>
                 <MailIcon className={classes.icon} />
@@ -81,7 +87,9 @@ const Me = ({ user }) => {
 
         {user && user.role === 'admin' && (
           <section>
-            <h2>Website Management</h2>
+            <h2>
+              <FormattedMessage id="app_website_management" />
+            </h2>
             <hr />
             <div className={classes.sectionDesc}>
               <div className={classes.links}>
@@ -106,10 +114,11 @@ const Me = ({ user }) => {
 
 Me.propTypes = {
   user: PropTypes.object,
+  intl: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
   user: selectUser,
 });
 
-export default connect(mapStateToProps)(Me);
+export default injectIntl(connect(mapStateToProps)(Me));

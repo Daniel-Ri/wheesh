@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import PropTypes from 'prop-types';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './custom.css';
@@ -10,9 +11,10 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { updatePassenger } from '@pages/Passenger/actions';
 import { Button } from '@mui/material';
+
 import classes from './style.module.scss';
 
-const Editable = ({ passenger }) => {
+const Editable = ({ passenger, intl: { formatMessage } }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -30,11 +32,11 @@ const Editable = ({ passenger }) => {
 
   const validateIdCard = () => {
     if (!inputs.idCard) {
-      toast.error('You must insert ID Card');
+      toast.error(formatMessage({ id: 'app_must_insert_id_card' }));
       return false;
     }
     if (inputs.idCard.length !== 16 || !/^\d+$/.test(inputs.idCard)) {
-      toast.error('Incorrect ID Card format');
+      toast.error(formatMessage({ id: 'app_incorrect_id_card_format' }));
       return false;
     }
 
@@ -47,7 +49,7 @@ const Editable = ({ passenger }) => {
     }
 
     if (!/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(inputs.email)) {
-      toast.error('Incorrect E-mail format');
+      toast.error(formatMessage({ id: 'app_incorrect_email_format' }));
       return false;
     }
 
@@ -70,7 +72,7 @@ const Editable = ({ passenger }) => {
   };
 
   const handleSuccess = () => {
-    toast.success('Success modify passenger');
+    toast.success(formatMessage({ id: 'app_success_modify_passenger' }));
     navigate('/myPassengers');
   };
 
@@ -102,9 +104,13 @@ const Editable = ({ passenger }) => {
   return (
     <div className={classes.editable}>
       <form>
-        <div className={classes.header}>Personal Information</div>
+        <div className={classes.header}>
+          <FormattedMessage id="app_personal_information" />
+        </div>
         <div className={classes.input}>
-          <label htmlFor="gender">Gender</label>
+          <label htmlFor="gender">
+            <FormattedMessage id="app_gender" />
+          </label>
           <div className={classes.radios}>
             <div className={classes.radio} onClick={() => setInputs((prev) => ({ ...prev, gender: 'Male' }))}>
               <input
@@ -114,7 +120,9 @@ const Editable = ({ passenger }) => {
                 checked={inputs.gender === 'Male'}
                 onChange={handleInputChange}
               />
-              <label>Male</label>
+              <label>
+                <FormattedMessage id="app_male" />
+              </label>
             </div>
             <div className={classes.radio} onClick={() => setInputs((prev) => ({ ...prev, gender: 'Female' }))}>
               <input
@@ -124,15 +132,19 @@ const Editable = ({ passenger }) => {
                 checked={inputs.gender === 'Female'}
                 onChange={handleInputChange}
               />
-              <label>Female</label>
+              <label>
+                <FormattedMessage id="app_female" />
+              </label>
             </div>
           </div>
         </div>
         <div className={classes.input}>
-          <label htmlFor="dateOfBirth">Date of birth</label>
+          <label htmlFor="dateOfBirth">
+            <FormattedMessage id="app_date_of_birth" />
+          </label>
           <DatePicker
             name="dateOfBirth"
-            placeholderText="Select your date of birth"
+            placeholderText={formatMessage({ id: 'app_select_the_date_of_birth' })}
             selected={inputs.dateOfBirth}
             showMonthDropdown
             dropdownMode="select"
@@ -143,9 +155,13 @@ const Editable = ({ passenger }) => {
           />
         </div>
 
-        <div className={classes.header}>Certificate Information</div>
+        <div className={classes.header}>
+          <FormattedMessage id="app_certificate_information" />
+        </div>
         <div className={classes.input}>
-          <label htmlFor="idCard">ID Card</label>
+          <label htmlFor="idCard">
+            <FormattedMessage id="app_id_card" />
+          </label>
           <input
             type="text"
             name="idCard"
@@ -153,24 +169,28 @@ const Editable = ({ passenger }) => {
             value={inputs.idCard}
             onChange={handleInputChange}
             onBlur={handleFocusOut}
-            placeholder="Please enter Indonesia ID card"
+            placeholder={formatMessage({ id: 'app_please_enter_indonesia_id' })}
             autoComplete="off"
           />
         </div>
         <div className={classes.input}>
-          <label htmlFor="name">Name</label>
+          <label htmlFor="name">
+            <FormattedMessage id="app_name" />
+          </label>
           <input
             type="text"
             name="name"
             id="name"
             value={inputs.name}
             onChange={handleInputChange}
-            placeholder="Enter the name on your ID Card"
+            placeholder={formatMessage({ id: 'app_enter_name_on_id_card' })}
             autoComplete="off"
           />
         </div>
 
-        <div className={classes.header}>Contact Information</div>
+        <div className={classes.header}>
+          <FormattedMessage id="app_contact_information" />
+        </div>
         <div className={classes.input}>
           <label htmlFor="email">E-mail</label>
           <input
@@ -180,7 +200,7 @@ const Editable = ({ passenger }) => {
             value={inputs.email}
             onChange={handleInputChange}
             onBlur={handleFocusOut}
-            placeholder="(Optional) Enter the email address"
+            placeholder={formatMessage({ id: 'app_optional_enter_email_address' })}
             autoComplete="off"
           />
         </div>
@@ -188,7 +208,7 @@ const Editable = ({ passenger }) => {
 
       <div className={classes.buttons}>
         <Button variant="contained" className={classes.submit} onClick={handleSubmit}>
-          Submit Changes
+          <FormattedMessage id="app_submit_changes" />
         </Button>
       </div>
     </div>
@@ -197,6 +217,7 @@ const Editable = ({ passenger }) => {
 
 Editable.propTypes = {
   passenger: PropTypes.object.isRequired,
+  intl: PropTypes.object,
 };
 
-export default Editable;
+export default injectIntl(Editable);

@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 
 import { useEffect, useState } from 'react';
@@ -16,7 +17,7 @@ import classes from './style.module.scss';
 import { getProfile, updateProfile } from './actions';
 import { selectProfile } from './selectors';
 
-const Profile = ({ profile }) => {
+const Profile = ({ profile, intl: { formatMessage } }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -37,7 +38,7 @@ const Profile = ({ profile }) => {
 
   const validateUsername = () => {
     if (!inputs.username) {
-      toast.error('Username cannot be empty');
+      toast.error(formatMessage({ id: 'app_username_cannot_be_empty' }));
       return false;
     }
 
@@ -46,11 +47,11 @@ const Profile = ({ profile }) => {
 
   const validateIdCard = () => {
     if (!inputs.idCard) {
-      toast.error('You must insert ID Card');
+      toast.error(formatMessage({ id: 'app_must_insert_id_card' }));
       return false;
     }
     if (inputs.idCard.length !== 16 || !/^\d+$/.test(inputs.idCard)) {
-      toast.error('Incorrect ID Card format');
+      toast.error(formatMessage({ id: 'app_incorrect_id_card_format' }));
       return false;
     }
 
@@ -74,7 +75,7 @@ const Profile = ({ profile }) => {
   };
 
   const handleSuccess = () => {
-    toast.success('Success modify profile');
+    toast.success(formatMessage({ id: 'app_success_modify_profile' }));
     navigate('/me');
   };
 
@@ -128,9 +129,11 @@ const Profile = ({ profile }) => {
         </header>
 
         <form>
-          <div className={classes.header}>Personal Information</div>
+          <div className={classes.header}>
+            <FormattedMessage id="app_personal_information" />
+          </div>
           <div className={classes.input}>
-            <label htmlFor="username">User Name</label>
+            <label htmlFor="username">Username</label>
             <input
               type="text"
               name="username"
@@ -139,12 +142,14 @@ const Profile = ({ profile }) => {
               onChange={handleInputChange}
               onBlur={handleFocusOut}
               disabled={!isEdit}
-              placeholder="Enter the username"
+              placeholder={formatMessage({ id: 'app_enter_the_username' })}
               autoComplete="off"
             />
           </div>
           <div className={classes.input}>
-            <label htmlFor="gender">Gender</label>
+            <label htmlFor="gender">
+              <FormattedMessage id="app_gender" />
+            </label>
             <div className={classes.radios}>
               <div className={classes.radio} onClick={() => setInputs((prev) => ({ ...prev, gender: 'Male' }))}>
                 <input
@@ -155,7 +160,9 @@ const Profile = ({ profile }) => {
                   onChange={handleInputChange}
                   disabled={!isEdit}
                 />
-                <label>Male</label>
+                <label>
+                  <FormattedMessage id="app_male" />
+                </label>
               </div>
               <div className={classes.radio} onClick={() => setInputs((prev) => ({ ...prev, gender: 'Female' }))}>
                 <input
@@ -166,15 +173,19 @@ const Profile = ({ profile }) => {
                   onChange={handleInputChange}
                   disabled={!isEdit}
                 />
-                <label>Female</label>
+                <label>
+                  <FormattedMessage id="app_female" />
+                </label>
               </div>
             </div>
           </div>
           <div className={classes.input}>
-            <label htmlFor="dateOfBirth">Date of birth</label>
+            <label htmlFor="dateOfBirth">
+              <FormattedMessage id="app_date_of_birth" />
+            </label>
             <DatePicker
               name="dateOfBirth"
-              placeholderText="Select your date of birth"
+              placeholderText={formatMessage({ id: 'app_select_your_date_of_birth' })}
               selected={inputs.dateOfBirth}
               showMonthDropdown
               dropdownMode="select"
@@ -186,9 +197,13 @@ const Profile = ({ profile }) => {
             />
           </div>
 
-          <div className={classes.header}>Certificate Information</div>
+          <div className={classes.header}>
+            <FormattedMessage id="app_certificate_information" />
+          </div>
           <div className={classes.input}>
-            <label htmlFor="idCard">ID Card</label>
+            <label htmlFor="idCard">
+              <FormattedMessage id="app_id_card" />
+            </label>
             <input
               type="text"
               name="idCard"
@@ -197,12 +212,14 @@ const Profile = ({ profile }) => {
               onChange={handleInputChange}
               onBlur={handleFocusOut}
               disabled={!isEdit}
-              placeholder="Please enter your Indonesia ID card"
+              placeholder={formatMessage({ id: 'app_please_enter_your_id' })}
               autoComplete="off"
             />
           </div>
           <div className={classes.input}>
-            <label htmlFor="name">Name</label>
+            <label htmlFor="name">
+              <FormattedMessage id="app_name" />
+            </label>
             <input
               type="text"
               name="name"
@@ -210,12 +227,14 @@ const Profile = ({ profile }) => {
               value={inputs.name}
               onChange={handleInputChange}
               disabled={!isEdit}
-              placeholder="Enter your name on your ID Card"
+              placeholder={formatMessage({ id: 'app_enter_name_on_your_id' })}
               autoComplete="off"
             />
           </div>
 
-          <div className={classes.header}>Contact Information</div>
+          <div className={classes.header}>
+            <FormattedMessage id="app_contact_information" />
+          </div>
           <div className={classes.input}>
             <label htmlFor="email">E-mail</label>
             <input
@@ -226,7 +245,6 @@ const Profile = ({ profile }) => {
               onChange={handleInputChange}
               onBlur={handleFocusOut}
               disabled
-              placeholder="Please enter your email address"
               autoComplete="off"
             />
           </div>
@@ -235,7 +253,7 @@ const Profile = ({ profile }) => {
         {isEdit && (
           <div className={classes.buttons}>
             <Button variant="contained" className={classes.submit} onClick={handleSubmit}>
-              Submit Changes
+              <FormattedMessage id="app_submit_changes" />
             </Button>
           </div>
         )}
@@ -246,10 +264,11 @@ const Profile = ({ profile }) => {
 
 Profile.propTypes = {
   profile: PropTypes.object,
+  intl: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
   profile: selectProfile,
 });
 
-export default connect(mapStateToProps)(Profile);
+export default injectIntl(connect(mapStateToProps)(Profile));

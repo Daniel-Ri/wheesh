@@ -1,5 +1,6 @@
 import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
+import { FormattedMessage } from 'react-intl';
 
 import BackBtn from '@components/BackBtn';
 import { useEffect } from 'react';
@@ -27,13 +28,19 @@ const MyPassengers = ({ myPassengers }) => {
       <div className={classes.container}>
         <header>
           <BackBtn handleClickBack={() => navigate('/me')} />
-          <h1>My Passengers</h1>
+          <h1>
+            <FormattedMessage id="app_my_passengers" />
+          </h1>
         </header>
-        <div className={classes.message}>{myPassengers.length}/15 (Up to 15 passengers can be added)</div>
+        <div className={classes.message}>
+          {myPassengers.length}/15 <FormattedMessage id="app_up_to_15_passengers" />
+        </div>
         {myPassengers.length < 15 && (
           <Button variant="outlined" className={classes.addBtn} onClick={() => navigate('/createPassenger')}>
             <AddCircleOutlineIcon />
-            <div className={classes.name}>Add Passenger</div>
+            <div className={classes.name}>
+              <FormattedMessage id="app_add_passenger" />
+            </div>
           </Button>
         )}
         <div className={classes.passengers}>

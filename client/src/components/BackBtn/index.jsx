@@ -1,11 +1,12 @@
 import { Button } from '@mui/material';
 import PropTypes from 'prop-types';
+import { FormattedMessage } from 'react-intl';
 
 import classes from './style.module.scss';
 
 const BackBtn = ({ handleClickBack }) => (
   <Button className={classes.btn} onClick={handleClickBack}>
-    Back
+    <FormattedMessage id="app_back" />
   </Button>
 );
 

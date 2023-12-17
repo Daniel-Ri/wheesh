@@ -1,21 +1,26 @@
 import PropTypes from 'prop-types';
-
+import { FormattedMessage } from 'react-intl';
 import { Button, Dialog } from '@mui/material';
+
 import classes from './style.module.scss';
 
 const ReminderDialog = ({ open, handleClose, handleDelete }) => (
   <Dialog open={open} onClose={handleClose}>
     <div className={classes.dialog}>
       <div className={classes.content}>
-        <h2>Verification</h2>
-        <div className={classes.message}>Are you sure about deleting the passenger?</div>
+        <h2>
+          <FormattedMessage id="app_verification" />
+        </h2>
+        <div className={classes.message}>
+          <FormattedMessage id="app_sure_deleting_the_passenger" />
+        </div>
       </div>
       <div className={classes.buttons}>
         <Button variant="outlined" className={classes.cancel} onClick={handleClose}>
-          Cancel
+          <FormattedMessage id="app_cancel" />
         </Button>
         <Button variant="contained" className={classes.confirm} onClick={handleDelete}>
-          Confirm
+          <FormattedMessage id="app_confirm" />
         </Button>
       </div>
     </div>

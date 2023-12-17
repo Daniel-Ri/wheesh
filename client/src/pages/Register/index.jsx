@@ -328,7 +328,7 @@ const Register = ({ login, intl: { formatMessage } }) => {
               value={inputs.idCard}
               onChange={handleInputChange}
               onBlur={handleFocusOut}
-              placeholder={formatMessage({ id: 'app_please_enter_indonesia_id' })}
+              placeholder={formatMessage({ id: 'app_please_enter_your_id' })}
               autoComplete="off"
             />
           </div>
@@ -342,7 +342,7 @@ const Register = ({ login, intl: { formatMessage } }) => {
               id="name"
               value={inputs.name}
               onChange={handleInputChange}
-              placeholder={formatMessage({ id: 'app_enter_name_on_id_card' })}
+              placeholder={formatMessage({ id: 'app_enter_name_on_your_id' })}
               autoComplete="off"
             />
           </div>

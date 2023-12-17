@@ -1,5 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import { useDispatch } from 'react-redux';
+import PropTypes from 'prop-types';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 import { useNavigate } from 'react-router-dom';
 import BackBtn from '@components/BackBtn';
@@ -14,7 +16,7 @@ import { createPassenger } from './actions';
 
 import classes from './style.module.scss';
 
-const CreatePassenger = () => {
+const CreatePassenger = ({ intl: { formatMessage } }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -32,11 +34,11 @@ const CreatePassenger = () => {
 
   const validateIdCard = () => {
     if (!inputs.idCard) {
-      toast.error('You must insert ID Card');
+      toast.error(formatMessage({ id: 'app_must_insert_id_card' }));
       return false;
     }
     if (inputs.idCard.length !== 16 || !/^\d+$/.test(inputs.idCard)) {
-      toast.error('Incorrect ID Card format');
+      toast.error(formatMessage({ id: 'app_incorrect_id_card_format' }));
       return false;
     }
 
@@ -49,7 +51,7 @@ const CreatePassenger = () => {
     }
 
     if (!/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(inputs.email)) {
-      toast.error('Incorrect E-mail format');
+      toast.error(formatMessage({ id: 'app_incorrect_email_format' }));
       return false;
     }
 
@@ -73,7 +75,7 @@ const CreatePassenger = () => {
   };
 
   const handleSuccess = () => {
-    toast.success('Success create passenger');
+    toast.success(formatMessage({ id: 'app_success_add_passenger' }));
     navigate('/myPassengers');
   };
 
@@ -97,13 +99,19 @@ const CreatePassenger = () => {
       <div className={classes.container}>
         <header>
           <BackBtn handleClickBack={() => navigate('/myPassengers')} />
-          <h1>Create Passenger</h1>
+          <h1>
+            <FormattedMessage id="app_add_passenger" />
+          </h1>
         </header>
 
         <form>
-          <div className={classes.header}>Personal Information</div>
+          <div className={classes.header}>
+            <FormattedMessage id="app_personal_information" />
+          </div>
           <div className={classes.input}>
-            <label htmlFor="gender">Gender</label>
+            <label htmlFor="gender">
+              <FormattedMessage id="app_gender" />
+            </label>
             <div className={classes.radios}>
               <div className={classes.radio} onClick={() => setInputs((prev) => ({ ...prev, gender: 'Male' }))}>
                 <input
@@ -113,7 +121,9 @@ const CreatePassenger = () => {
                   checked={inputs.gender === 'Male'}
                   onChange={handleInputChange}
                 />
-                <label>Male</label>
+                <label>
+                  <FormattedMessage id="app_male" />
+                </label>
               </div>
               <div className={classes.radio} onClick={() => setInputs((prev) => ({ ...prev, gender: 'Female' }))}>
                 <input
@@ -123,15 +133,19 @@ const CreatePassenger = () => {
                   checked={inputs.gender === 'Female'}
                   onChange={handleInputChange}
                 />
-                <label>Female</label>
+                <label>
+                  <FormattedMessage id="app_female" />
+                </label>
               </div>
             </div>
           </div>
           <div className={classes.input}>
-            <label htmlFor="dateOfBirth">Date of birth</label>
+            <label htmlFor="dateOfBirth">
+              <FormattedMessage id="app_date_of_birth" />
+            </label>
             <DatePicker
               name="dateOfBirth"
-              placeholderText="Select your date of birth"
+              placeholderText={formatMessage({ id: 'app_select_the_date_of_birth' })}
               selected={inputs.dateOfBirth}
               showMonthDropdown
               dropdownMode="select"
@@ -142,9 +156,13 @@ const CreatePassenger = () => {
             />
           </div>
 
-          <div className={classes.header}>Certificate Information</div>
+          <div className={classes.header}>
+            <FormattedMessage id="app_certificate_information" />
+          </div>
           <div className={classes.input}>
-            <label htmlFor="idCard">ID Card</label>
+            <label htmlFor="idCard">
+              <FormattedMessage id="app_id_card" />
+            </label>
             <input
               type="text"
               name="idCard"
@@ -152,24 +170,28 @@ const CreatePassenger = () => {
               value={inputs.idCard}
               onChange={handleInputChange}
               onBlur={handleFocusOut}
-              placeholder="Please enter Indonesia ID card"
+              placeholder={formatMessage({ id: 'app_please_enter_indonesia_id' })}
               autoComplete="off"
             />
           </div>
           <div className={classes.input}>
-            <label htmlFor="name">Name</label>
+            <label htmlFor="name">
+              <FormattedMessage id="app_name" />
+            </label>
             <input
               type="text"
               name="name"
               id="name"
               value={inputs.name}
               onChange={handleInputChange}
-              placeholder="Enter the name on your ID Card"
+              placeholder={formatMessage({ id: 'app_enter_name_on_id_card' })}
               autoComplete="off"
             />
           </div>
 
-          <div className={classes.header}>Contact Information</div>
+          <div className={classes.header}>
+            <FormattedMessage id="app_contact_information" />
+          </div>
           <div className={classes.input}>
             <label htmlFor="email">E-mail</label>
             <input
@@ -179,7 +201,7 @@ const CreatePassenger = () => {
               value={inputs.email}
               onChange={handleInputChange}
               onBlur={handleFocusOut}
-              placeholder="(Optional) Enter the email address"
+              placeholder={formatMessage({ id: 'app_optional_enter_email_address' })}
               autoComplete="off"
             />
           </div>
@@ -187,7 +209,7 @@ const CreatePassenger = () => {
 
         <div className={classes.buttons}>
           <Button variant="contained" className={classes.submit} onClick={handleSubmit}>
-            Submit
+            <FormattedMessage id="app_submit" />
           </Button>
         </div>
       </div>
@@ -195,4 +217,8 @@ const CreatePassenger = () => {
   );
 };
 
-export default CreatePassenger;
+CreatePassenger.propTypes = {
+  intl: PropTypes.object,
+};
+
+export default injectIntl(CreatePassenger);
