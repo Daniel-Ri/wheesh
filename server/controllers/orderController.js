@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const { Schedule, SchedulePrice, Train, Carriage, Seat, Station,
         OrderedSeat, Order, Passenger, Payment, sequelize } = require("../models");
 const { handleServerError, handleClientError } = require("../utils/handleError");
+const redisClient = require("../utils/handleCache");
 
 exports.getUnpaidOrders = async (req, res) => {
   try {
@@ -384,6 +385,8 @@ exports.createOrder = async (req, res) => {
         { transaction: t }
       )
 
+      await redisClient.del(`schedule:${scheduleId}`);
+
       return res.status(201).json({ data: newOrder.id, message: 'Successfully booked seats', status: 'success' });
     })
 
@@ -439,6 +442,8 @@ exports.cancelOrder = async (req, res) => {
       return handleClientError(res, 400, 'Cannot cancel paid order');
 
     await Order.destroy({ where: {id: orderId} });
+    await redisClient.del(`schedule:${foundOrder.scheduleId}`);
+
     return res.status(200).json({ message: 'Successfully cancel the order', status: 'Success' });
 
   } catch (error) {

@@ -11,6 +11,7 @@ const { Schedule,
         Order, 
         sequelize } = require("../models");
 const { handleServerError, handleClientError } = require("../utils/handleError");
+const redisClient = require("../utils/handleCache");
 
 exports.getLatestDateSchedule = async(req, res) => {
   try {
@@ -173,6 +174,13 @@ exports.getSchedule = async (req, res) => {
   try {
     const { scheduleId } = req.params;
 
+    const redisKey = `schedule:${scheduleId}`
+    const cachedFormattedSchedule = await redisClient.get(redisKey);
+    if (cachedFormattedSchedule)
+      return res.status(200).json(
+        { fromCache: true, data: JSON.parse(cachedFormattedSchedule), status: 'Success' }
+      );
+
     const foundSchedule = await Schedule.findByPk(
       scheduleId,
       {
@@ -281,7 +289,9 @@ exports.getSchedule = async (req, res) => {
       carriages: foundScheduleJSON.Train.Carriages,
     };
 
-    return res.status(200).json({ data: formattedSchedule, status: 'Success' });
+    await redisClient.set(redisKey, JSON.stringify(formattedSchedule), 'EX', 3600);
+
+    return res.status(200).json({ fromCache: false, data: formattedSchedule, status: 'Success' });
 
   } catch (error) {
     console.error(error);
