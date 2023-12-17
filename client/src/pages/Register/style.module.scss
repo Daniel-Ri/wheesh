@@ -122,23 +122,9 @@
 
     .buttons {
       margin-top: 1rem;
+      margin-bottom: 1rem;
       @include directionY;
       gap: 1rem;
-
-      .login {
-        background-color: $color-picton-blue-dark-shade;
-        color: $color-white;
-        transition: 0.3s opacity;
-      }
-
-      .login:disabled,
-      .login[disabled]{
-        opacity: 0.5;
-      }
-
-      .register {
-        color: $color-picton-blue-dark-shade;
-      }
     }
   }
 

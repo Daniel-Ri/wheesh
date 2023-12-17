@@ -1,6 +1,8 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import { FormattedMessage, injectIntl } from 'react-intl';
+import { connect, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { Button, IconButton, InputAdornment, OutlinedInput } from '@mui/material';
@@ -12,9 +14,12 @@ import './custom.css';
 
 import toast from 'react-hot-toast';
 import { registerUser, sendEmailToken } from '@containers/Client/actions';
+import { createStructuredSelector } from 'reselect';
+import { selectLogin } from '@containers/Client/selectors';
+
 import classes from './style.module.scss';
 
-const Register = () => {
+const Register = ({ login, intl: { formatMessage } }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -51,7 +56,7 @@ const Register = () => {
 
   const validateUsername = () => {
     if (!inputs.username) {
-      toast.error('Username cannot be empty');
+      toast.error(formatMessage({ id: 'app_username_cannot_be_empty' }));
       return false;
     }
 
@@ -60,12 +65,12 @@ const Register = () => {
 
   const validatePassword = () => {
     if (!inputs.password) {
-      toast.error('Password cannot be empty');
+      toast.error(formatMessage({ id: 'app_password_cannot_be_empty' }));
       return false;
     }
 
     if (inputs.password.length < 6) {
-      toast.error('Password must have min 6 characters');
+      toast.error(formatMessage({ id: 'app_password_must_have_characters' }));
       return false;
     }
 
@@ -74,11 +79,11 @@ const Register = () => {
 
   const validatePasswordConfirmation = () => {
     if (!inputs.passwordConfirmation) {
-      toast.error('You must insert the password confirmation');
+      toast.error(formatMessage({ id: 'app_must_insert_password_confirmation' }));
       return false;
     }
     if (inputs.passwordConfirmation !== inputs.password) {
-      toast.error('Password confirmation must have same value as password');
+      toast.error(formatMessage({ id: 'app_password_confirmation_must_same' }));
       return false;
     }
 
@@ -87,11 +92,11 @@ const Register = () => {
 
   const validateIdCard = () => {
     if (!inputs.idCard) {
-      toast.error('You must insert ID Card');
+      toast.error(formatMessage({ id: 'app_must_insert_id_card' }));
       return false;
     }
     if (inputs.idCard.length !== 16 || !/^\d+$/.test(inputs.idCard)) {
-      toast.error('Incorrect ID Card format');
+      toast.error(formatMessage({ id: 'app_incorrect_id_card_format' }));
       return false;
     }
 
@@ -100,12 +105,12 @@ const Register = () => {
 
   const validateEmail = () => {
     if (!inputs.email) {
-      toast.error('You must insert email');
+      toast.error(formatMessage({ id: 'app_you_must_insert_email' }));
       return false;
     }
 
     if (!/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(inputs.email)) {
-      toast.error('Incorrect E-mail format');
+      toast.error(formatMessage({ id: 'app_incorrect_email_format' }));
       return false;
     }
 
@@ -141,7 +146,7 @@ const Register = () => {
   };
 
   const handleSuccessRegister = () => {
-    toast.success('Success registration');
+    toast.success(formatMessage({ id: 'app_success_registration' }));
     navigate('/login');
   };
 
@@ -160,7 +165,7 @@ const Register = () => {
   };
 
   const handleSuccessSendEmailToken = () => {
-    toast.success('Sent a token via email');
+    toast.success(formatMessage({ id: 'app_sent_a_token_email' }));
   };
 
   const handleErrorSendEmailToken = (errorMsg) => {
@@ -175,6 +180,13 @@ const Register = () => {
     dispatch(sendEmailToken(formattedInputs, handleSuccessSendEmailToken, handleErrorSendEmailToken));
   };
 
+  useEffect(() => {
+    if (login) {
+      navigate('/');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [login]);
+
   return (
     <main className={classes.main}>
       <div className={classes.container}>
@@ -184,9 +196,11 @@ const Register = () => {
         </header>
 
         <form>
-          <div className={classes.header}>Personal Information</div>
+          <div className={classes.header}>
+            <FormattedMessage id="app_personal_information" />
+          </div>
           <div className={classes.input}>
-            <label htmlFor="username">User Name</label>
+            <label htmlFor="username">Username</label>
             <input
               type="text"
               name="username"
@@ -194,7 +208,7 @@ const Register = () => {
               value={inputs.username}
               onChange={handleInputChange}
               onBlur={handleFocusOut}
-              placeholder="Enter the username"
+              placeholder={formatMessage({ id: 'app_enter_the_username' })}
               autoComplete="off"
             />
           </div>
@@ -203,7 +217,7 @@ const Register = () => {
             <OutlinedInput
               id="outlined-adornment-password"
               name="password"
-              placeholder="Enter the password"
+              placeholder={formatMessage({ id: 'app_enter_the_password' })}
               value={inputs.password}
               onChange={handleInputChange}
               onBlur={handleFocusOut}
@@ -225,11 +239,13 @@ const Register = () => {
             />
           </div>
           <div className={classes.input}>
-            <label htmlFor="passwordConfirmation">Password Confirmation</label>
+            <label htmlFor="passwordConfirmation">
+              <FormattedMessage id="app_password_confirmation" />
+            </label>
             <OutlinedInput
               id="outlined-adornment-password"
               name="passwordConfirmation"
-              placeholder="Enter password confirmation"
+              placeholder={formatMessage({ id: 'app_enter_password_confirmation' })}
               value={inputs.passwordConfirmation}
               onChange={handleInputChange}
               onBlur={handleFocusOut}
@@ -251,7 +267,9 @@ const Register = () => {
             />
           </div>
           <div className={classes.input}>
-            <label htmlFor="gender">Gender</label>
+            <label htmlFor="gender">
+              <FormattedMessage id="app_gender" />
+            </label>
             <div className={classes.radios}>
               <div className={classes.radio} onClick={() => setInputs((prev) => ({ ...prev, gender: 'Male' }))}>
                 <input
@@ -261,7 +279,9 @@ const Register = () => {
                   checked={inputs.gender === 'Male'}
                   onChange={handleInputChange}
                 />
-                <label>Male</label>
+                <label>
+                  <FormattedMessage id="app_male" />
+                </label>
               </div>
               <div className={classes.radio} onClick={() => setInputs((prev) => ({ ...prev, gender: 'Female' }))}>
                 <input
@@ -271,15 +291,19 @@ const Register = () => {
                   checked={inputs.gender === 'Female'}
                   onChange={handleInputChange}
                 />
-                <label>Female</label>
+                <label>
+                  <FormattedMessage id="app_female" />
+                </label>
               </div>
             </div>
           </div>
           <div className={classes.input}>
-            <label htmlFor="dateOfBirth">Date of birth</label>
+            <label htmlFor="dateOfBirth">
+              <FormattedMessage id="app_date_of_birth" />
+            </label>
             <DatePicker
               name="dateOfBirth"
-              placeholderText="Select your date of birth"
+              placeholderText={formatMessage({ id: 'app_select_your_date_of_birth' })}
               selected={inputs.dateOfBirth}
               showMonthDropdown
               dropdownMode="select"
@@ -290,9 +314,13 @@ const Register = () => {
             />
           </div>
 
-          <div className={classes.header}>Certificate Information</div>
+          <div className={classes.header}>
+            <FormattedMessage id="app_certificate_information" />
+          </div>
           <div className={classes.input}>
-            <label htmlFor="idCard">ID Card</label>
+            <label htmlFor="idCard">
+              <FormattedMessage id="app_id_card" />
+            </label>
             <input
               type="text"
               name="idCard"
@@ -300,24 +328,28 @@ const Register = () => {
               value={inputs.idCard}
               onChange={handleInputChange}
               onBlur={handleFocusOut}
-              placeholder="Please enter your Indonesia ID card"
+              placeholder={formatMessage({ id: 'app_please_enter_indonesia_id' })}
               autoComplete="off"
             />
           </div>
           <div className={classes.input}>
-            <label htmlFor="name">Name</label>
+            <label htmlFor="name">
+              <FormattedMessage id="app_name" />
+            </label>
             <input
               type="text"
               name="name"
               id="name"
               value={inputs.name}
               onChange={handleInputChange}
-              placeholder="Enter your name on your ID Card"
+              placeholder={formatMessage({ id: 'app_enter_name_on_id_card' })}
               autoComplete="off"
             />
           </div>
 
-          <div className={classes.header}>Contact Information</div>
+          <div className={classes.header}>
+            <FormattedMessage id="app_contact_information" />
+          </div>
           <div className={classes.input}>
             <label htmlFor="email">E-mail</label>
             <input
@@ -327,7 +359,7 @@ const Register = () => {
               value={inputs.email}
               onChange={handleInputChange}
               onBlur={handleFocusOut}
-              placeholder="Please enter your email address"
+              placeholder={formatMessage({ id: 'app_please_enter_email_address' })}
               autoComplete="off"
             />
           </div>
@@ -339,12 +371,12 @@ const Register = () => {
               id="emailToken"
               value={inputs.emailToken}
               onChange={handleInputChange}
-              placeholder="Please enter the verification code"
+              placeholder={formatMessage({ id: 'app_please_enter_verification_code' })}
               autoComplete="off"
             />
             <div className={classes.button}>
               <Button variant="contained" className={classes.btn} onClick={handleGenerateEmailToken}>
-                Generate
+                <FormattedMessage id="app_generate" />
               </Button>
             </div>
           </div>
@@ -352,7 +384,7 @@ const Register = () => {
 
         <div className={classes.buttons}>
           <Button variant="contained" className={classes.submit} onClick={handleSubmit}>
-            Submit
+            <FormattedMessage id="app_submit" />
           </Button>
         </div>
       </div>
@@ -360,4 +392,13 @@ const Register = () => {
   );
 };
 
-export default Register;
+Register.propTypes = {
+  login: PropTypes.bool,
+  intl: PropTypes.object,
+};
+
+const mapStateToProps = createStructuredSelector({
+  login: selectLogin,
+});
+
+export default injectIntl(connect(mapStateToProps)(Register));

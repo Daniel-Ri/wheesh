@@ -1,4 +1,6 @@
-import { useDispatch } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
+import PropTypes from 'prop-types';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 // eslint-disable-next-line import/no-absolute-path
 import wheeshIcon from '/wheesh.png';
@@ -8,9 +10,12 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '@containers/Client/actions';
 import toast from 'react-hot-toast';
+import { createStructuredSelector } from 'reselect';
+import { selectLogin } from '@containers/Client/selectors';
+
 import classes from './style.module.scss';
 
-const Login = () => {
+const Login = ({ login, intl: { formatMessage } }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -45,6 +50,13 @@ const Login = () => {
   };
 
   useEffect(() => {
+    if (login) {
+      navigate('/');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [login]);
+
+  useEffect(() => {
     if (inputs.usernameOrEmail && inputs.password) {
       setAbleLogin(true);
     } else {
@@ -59,8 +71,12 @@ const Login = () => {
           <img src={wheeshIcon} alt="App Icon" />
         </header>
         <div className={classes.message}>
-          <div className={classes.mainMsg}>Please enter your account and password</div>
-          <div className={classes.subMsg}>Please log in using your registered username or email</div>
+          <div className={classes.mainMsg}>
+            <FormattedMessage id="app_please_enter_account_and_password" />
+          </div>
+          <div className={classes.subMsg}>
+            <FormattedMessage id="app_please_log_in_using_registered" />
+          </div>
         </div>
         <form>
           <input
@@ -69,7 +85,7 @@ const Login = () => {
             id="usernameOrEmail"
             value={inputs.usernameOrEmail}
             onChange={handleInputChange}
-            placeholder="Enter username or email"
+            placeholder={formatMessage({ id: 'app_enter_username_or_email' })}
             autoComplete="off"
           />
           <FormControl variant="outlined">
@@ -78,7 +94,7 @@ const Login = () => {
             <OutlinedInput
               id="outlined-adornment-password"
               name="password"
-              placeholder="Enter the password"
+              placeholder={formatMessage({ id: 'app_enter_the_password' })}
               value={inputs.password}
               onChange={handleInputChange}
               className={classes.input}
@@ -112,4 +128,13 @@ const Login = () => {
   );
 };
 
-export default Login;
+Login.propTypes = {
+  login: PropTypes.bool,
+  intl: PropTypes.object,
+};
+
+const mapStateToProps = createStructuredSelector({
+  login: selectLogin,
+});
+
+export default injectIntl(connect(mapStateToProps)(Login));

@@ -61,18 +61,24 @@ const Navbar = ({ title, locale, theme }) => {
         <div className={classes.toolbar}>
           <div className={`${classes.link} ${pathname === '/' && classes.linkSelected}`} onClick={goHome}>
             <HomeIcon className={classes.icon} />
-            <div className={classes.namePage}>Home</div>
+            <div className={classes.namePage}>
+              <FormattedMessage id="app_home" />
+            </div>
           </div>
           <div
             className={`${classes.link} ${pathname === '/my-tickets' && classes.linkSelected}`}
             onClick={goMyTicketsPage}
           >
             <ReceiptLongIcon className={classes.icon} />
-            <div className={classes.namePage}>My Tickets</div>
+            <div className={classes.namePage}>
+              <FormattedMessage id="app_my_tickets" />
+            </div>
           </div>
           <div className={`${classes.link} ${pathname === '/me' && classes.linkSelected}`} onClick={goMePage}>
             <SentimentSatisfiedAltIcon className={classes.icon} />
-            <div className={classes.namePage}>Me</div>
+            <div className={classes.namePage}>
+              <FormattedMessage id="app_me" />
+            </div>
           </div>
           <div className={classes.toggle} onClick={handleClick}>
             <Avatar className={classes.avatar} src={locale === 'id' ? '/id.png' : '/en.png'} />
