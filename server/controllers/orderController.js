@@ -446,3 +446,141 @@ exports.cancelOrder = async (req, res) => {
     handleServerError(res);
   }
 }
+
+exports.validateTicketOnDeparture = async (req, res) => {
+  try {
+    const { departureStationId, orderedSeatId, secret } = req.body;
+    const scheme = Joi.object({
+      departureStationId: Joi.number().required(),
+      orderedSeatId: Joi.number().required(),
+      secret: Joi.string().required(),
+    });
+
+    const { error } = scheme.validate(req.body);
+    if (error) 
+      return res.status(400).json({ status: 'Validation Failed', message: error.details[0].message })
+
+    const foundStation = await Station.findByPk(departureStationId);
+    if (!foundStation) return handleClientError(res, 404, 'Station Not Found');
+
+    const foundOrderedSeat = await OrderedSeat.findOne({
+      where: {
+        id: orderedSeatId,
+        secret
+      },
+      attributes: { exclude: [ 'secret', 'createdAt', 'updatedAt' ] },
+      include: [
+        {
+          model: Order,
+          attributes: { exclude: ['createdAt', 'updatedAt'] },
+          include: [
+            {
+              model: Schedule,
+              attributes: { exclude: ['createdAt', 'updatedAt'] },
+              include: [
+                {
+                  model: Station,
+                  as: 'departureStation',
+                  attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
+                },
+                {
+                  model: Station,
+                  as: 'arrivalStation',
+                  attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
+                },
+              ]
+            },
+            {
+              model: Payment
+            }
+          ]
+        }
+      ]
+    });
+    if (!foundOrderedSeat) return handleClientError(res, 400, 'Invalid QR ticket');
+
+    if (!foundOrderedSeat.Order.Payment.isPaid) return handleClientError(res, 400, 'Hacker!!!');
+
+    if (foundOrderedSeat.Order.Schedule.departureStationId !== departureStationId)
+      return handleClientError(res, 400, 'You depart at wrong station');
+
+    const departureTime = new Date(foundOrderedSeat.Order.Schedule.departureTime);
+
+    if (new Date() < new Date(departureTime.getTime() - 60 * 60 * 1000)) {
+      return handleClientError(res, 400, 'Need to wait until one hour before departure');
+    } else if (departureTime < new Date()) {
+      return handleClientError(res, 400, 'The train has gone');
+    }
+
+    const formattedOrderedSeat = foundOrderedSeat.toJSON();
+    delete formattedOrderedSeat.Order.Payment;
+
+    return res.status(200).json({ data: formattedOrderedSeat, status: 'Success' });
+
+  } catch (error) {
+    console.error(error);
+    handleServerError(res);
+  }
+}
+
+exports.validateTicketOnArrival = async (req, res) => {
+  const { arrivalStationId, orderedSeatId, secret } = req.body;
+  const scheme = Joi.object({
+    arrivalStationId: Joi.number().required(),
+    orderedSeatId: Joi.number().required(),
+    secret: Joi.string().required(),
+  });
+
+  const { error } = scheme.validate(req.body);
+  if (error) 
+    return res.status(400).json({ status: 'Validation Failed', message: error.details[0].message });
+
+  const foundStation = await Station.findByPk(arrivalStationId);
+  if (!foundStation) return handleClientError(res, 404, 'Station Not Found');
+
+  const foundOrderedSeat = await OrderedSeat.findOne({
+    where: {
+      id: orderedSeatId,
+      secret
+    },
+    attributes: { exclude: [ 'secret', 'createdAt', 'updatedAt' ] },
+    include: [
+      {
+        model: Order,
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+        include: [
+          {
+            model: Schedule,
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+            include: [
+              {
+                model: Station,
+                as: 'departureStation',
+                attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
+              },
+              {
+                model: Station,
+                as: 'arrivalStation',
+                attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
+              },
+            ]
+          },
+          {
+            model: Payment
+          }
+        ]
+      }
+    ]
+  });
+  if (!foundOrderedSeat) return handleClientError(res, 400, 'Invalid QR ticket');
+
+  if (!foundOrderedSeat.Order.Payment.isPaid) return handleClientError(res, 400, 'Hacker!!!');
+
+  if (foundOrderedSeat.Order.Schedule.arrivalStationId !== arrivalStationId)
+    return handleClientError(res, 400, 'You arrive at wrong station');
+
+  const formattedOrderedSeat = foundOrderedSeat.toJSON();
+  delete formattedOrderedSeat.Order.Payment;
+
+  return res.status(200).json({ data: formattedOrderedSeat, status: 'Success' });
+}

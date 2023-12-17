@@ -70,3 +70,15 @@ export const getBanner = (bannerId) => callAPI(`${urls.banner}/${bannerId}`, 'GE
 export const createBanner = (inputs) => callAPI(urls.banner, 'POST', {}, {}, inputs);
 export const updateBanner = (bannerId, inputs) => callAPI(`${urls.banner}/${bannerId}`, 'PUT', {}, {}, inputs);
 export const deleteBanner = (bannerId) => callAPI(`${urls.banner}/${bannerId}`, 'DELETE');
+export const validateTicketOnDeparture = (inputs) => {
+  const header = {
+    'Content-Type': 'application/json; charset=UTF-8',
+  };
+  return callAPI(`${urls.order}/validateDepart`, 'POST', header, {}, inputs);
+};
+export const validateTicketOnArrival = (inputs) => {
+  const header = {
+    'Content-Type': 'application/json; charset=UTF-8',
+  };
+  return callAPI(`${urls.order}/validateArrive`, 'POST', header, {}, inputs);
+};

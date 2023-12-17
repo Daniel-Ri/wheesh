@@ -21,6 +21,7 @@ import History from '@pages/History';
 import Banner from '@pages/Banner';
 import AddBanner from '@pages/AddBanner';
 import ChangeBanner from '@pages/ChangeBanner';
+import Gate from '@pages/Gate';
 
 const routes = [
   {
@@ -154,6 +155,13 @@ const routes = [
     name: 'Change Banner',
     protected: true,
     component: ChangeBanner,
+    layout: MainLayout,
+  },
+  {
+    path: '/gate',
+    name: 'Gate',
+    protected: false,
+    component: Gate,
     layout: MainLayout,
   },
   {

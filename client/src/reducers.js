@@ -13,6 +13,7 @@ import unpaidReducer, { storedKey as storedUnpaidState } from '@pages/Unpaid/red
 import orderReducer, { storedKey as storedOrderState } from '@pages/Order/reducer';
 import historyReducer, { storedKey as storedHistoryState } from '@pages/History/reducer';
 import bannerReducer, { storedKey as storedBannerState } from '@pages/Banner/reducer';
+import gateReducer, { storedKey as storedGateState } from '@pages/Gate/reducer';
 import languageReducer from '@containers/Language/reducer';
 
 import { mapWithPersistor } from './persistence';
@@ -31,6 +32,7 @@ const storedReducers = {
   order: { reducer: orderReducer, whitelist: storedOrderState },
   history: { reducer: historyReducer, whitelist: storedHistoryState },
   banner: { reducer: bannerReducer, whitelist: storedBannerState },
+  gate: { reducer: gateReducer, whitelist: storedGateState },
 };
 
 const temporaryReducers = {
