@@ -23,6 +23,8 @@ const authentication = async(req, res, next) => {
       return handleClientError(res, 400, "Token is invalid");
     }
 
+    console.log(foundUser, '<< FOUND USER');
+
     req.user = { id, role };
 
     next();

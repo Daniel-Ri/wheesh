@@ -232,7 +232,23 @@ exports.verifyToken = async (req, res) => {
 
 exports.getProfile = async(req, res) => {
   try {
-    const user = await User.findByPk(req.user.id, {
+    console.log(req.user.id, '<< REQ USER ID');
+    // const user = await User.findByPk(req.user.id, {
+    //   attributes: { exclude: [ 'password', 'createdAt', 'updatedAt'] },
+    //   include: [
+    //     {
+    //       model: Passenger,
+    //       attributes: { exclude: [ 'createdAt', 'updatedAt'] },
+    //       where: {
+    //         isUser: true
+    //       }
+    //     }
+    //   ]
+    // })
+    const user = await User.findOne({
+      where: {
+        id: req.user.id
+      },
       attributes: { exclude: [ 'password', 'createdAt', 'updatedAt'] },
       include: [
         {
@@ -244,6 +260,8 @@ exports.getProfile = async(req, res) => {
         }
       ]
     })
+    // const user = await User.findAll()
+    console.log(user, '<< USER');
     return res.status(200).json({ data: user, status: 'Success' });
 
   } catch (error) {
