@@ -1,5 +1,6 @@
 import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
@@ -8,12 +9,14 @@ import BackBtn from '@components/BackBtn';
 import { formatDateWithDay, formatHour, formatOrderDate, formatRupiah } from '@utils/handleValue';
 import { createStructuredSelector } from 'reselect';
 import { useEffect } from 'react';
-import classes from './style.module.scss';
+import { selectLocale } from '@containers/App/selectors';
 import { selectOrder } from './selectors';
 import { getOrder, setOrder } from './actions';
 import OrderedSeatCard from './components/OrderedSeatCard';
 
-const Order = ({ order }) => {
+import classes from './style.module.scss';
+
+const Order = ({ order, locale, intl: { formatMessage } }) => {
   const { orderId } = useParams();
 
   const dispatch = useDispatch();
@@ -33,12 +36,14 @@ const Order = ({ order }) => {
     if (!order) return;
 
     if (!order.Payment.isPaid) {
-      toast.error("Haven't paid this order");
+      toast.error(formatMessage({ id: 'app_havent_paid_this_order' }));
       navigate(`/unpaid/${orderId}`);
+      return;
     }
 
     if (new Date(order.Schedule.arrivalTime) < new Date(new Date().getTime() - 6 * 60 * 60 * 1000)) {
       navigate(`/history/${orderId}`);
+      return;
     }
 
     return () => {
@@ -52,20 +57,24 @@ const Order = ({ order }) => {
       <div className={classes.container}>
         <header>
           <BackBtn handleClickBack={() => navigate('/my-tickets')} />
-          <h1>Paid Order</h1>
+          <h1>
+            <FormattedMessage id="app_paid_order" />
+          </h1>
         </header>
 
         <section className={classes.metaData}>
-          <div>Order Number: {order?.id}</div>
           <div>
-            Order Time: {formatHour(order?.createdAt)} {formatOrderDate(order?.createdAt)}
+            <FormattedMessage id="app_order_number" />: {order?.id}
+          </div>
+          <div>
+            <FormattedMessage id="app_order_time" />: {formatHour(order?.createdAt)} {formatOrderDate(order?.createdAt)}
           </div>
         </section>
 
         <section>
           <div className={classes.sectionDesc}>
             <div className={classes.row}>
-              <div className={classes.dateTime}>{formatDateWithDay(order?.Schedule.departureTime)}</div>
+              <div className={classes.dateTime}>{formatDateWithDay(order?.Schedule.departureTime, locale)}</div>
             </div>
             <div className={classes.row}>
               <div className={classes.timeAndPlace}>
@@ -93,7 +102,9 @@ const Order = ({ order }) => {
         </section>
 
         <section>
-          <div className={classes.header}>Passenger</div>
+          <div className={classes.header}>
+            <FormattedMessage id="app_passenger" />
+          </div>
           <hr />
           <div className={classes.sectionDesc}>
             {order?.OrderedSeats.map((orderedSeat, idx) => (
@@ -109,7 +120,9 @@ const Order = ({ order }) => {
         <section>
           <div className={classes.sectionDesc}>
             <div className={classes.totalPrice}>
-              <div>Total Payment Amount</div>
+              <div>
+                <FormattedMessage id="app_total_payment_amount" />
+              </div>
               <div>{formatRupiah(order?.Payment.amount)}</div>
             </div>
           </div>
@@ -121,10 +134,13 @@ const Order = ({ order }) => {
 
 Order.propTypes = {
   order: PropTypes.object,
+  locale: PropTypes.string.isRequired,
+  intl: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
   order: selectOrder,
+  locale: selectLocale,
 });
 
-export default connect(mapStateToProps)(Order);
+export default injectIntl(connect(mapStateToProps)(Order));

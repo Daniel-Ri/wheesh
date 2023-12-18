@@ -1,5 +1,6 @@
 import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
+import { FormattedMessage } from 'react-intl';
 
 import { createStructuredSelector } from 'reselect';
 import { useEffect } from 'react';
@@ -28,7 +29,9 @@ const MyTickets = ({ navChosen, orders, user }) => {
     <main className={classes.main}>
       <div className={classes.container}>
         <header>
-          <h1>My Tickets</h1>
+          <h1>
+            <FormattedMessage id="app_my_tickets" />
+          </h1>
         </header>
 
         {!user ? (
@@ -36,7 +39,9 @@ const MyTickets = ({ navChosen, orders, user }) => {
             <div className={classes.image}>
               <img src={pleaseImage} alt="Please" />
             </div>
-            <div className={classes.message}>Please log in to check the order</div>
+            <div className={classes.message}>
+              <FormattedMessage id="app_please_login_check_order" />
+            </div>
             <Button variant="contained" className={classes.btn} onClick={() => navigate('/login')}>
               Login
             </Button>
@@ -48,21 +53,27 @@ const MyTickets = ({ navChosen, orders, user }) => {
                 className={`${classes.itemNav} ${navChosen === 'unpaid' ? classes.chosen : ''}`}
                 onClick={() => dispatch(setNavChosen('unpaid'))}
               >
-                <div className={classes.name}>Unpaid</div>
+                <div className={classes.name}>
+                  <FormattedMessage id="app_unpaid" />
+                </div>
                 <hr />
               </div>
               <div
                 className={`${classes.itemNav} ${navChosen === 'paid' ? classes.chosen : ''}`}
                 onClick={() => dispatch(setNavChosen('paid'))}
               >
-                <div className={classes.name}>Paid</div>
+                <div className={classes.name}>
+                  <FormattedMessage id="app_paid" />
+                </div>
                 <hr />
               </div>
               <div
                 className={`${classes.itemNav} ${navChosen === 'history' ? classes.chosen : ''}`}
                 onClick={() => dispatch(setNavChosen('history'))}
               >
-                <div className={classes.name}>History</div>
+                <div className={classes.name}>
+                  <FormattedMessage id="app_history" />
+                </div>
                 <hr />
               </div>
             </nav>
@@ -72,7 +83,9 @@ const MyTickets = ({ navChosen, orders, user }) => {
                   <div className={classes.image}>
                     <img src={thinkingImage} alt="Thinking" />
                   </div>
-                  <div className={classes.message}>No Data</div>
+                  <div className={classes.message}>
+                    <FormattedMessage id="app_no_data" />
+                  </div>
                 </div>
               ) : (
                 orders.map((order) => <OrderCard key={order.id} order={order} />)

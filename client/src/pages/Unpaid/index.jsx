@@ -1,5 +1,6 @@
 import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import arrowImage from '@static/images/arrowTrain.png';
@@ -9,12 +10,14 @@ import toast from 'react-hot-toast';
 import BackBtn from '@components/BackBtn';
 import { formatDateWithDay, formatHour, formatRupiah } from '@utils/handleValue';
 import { Button } from '@mui/material';
-import classes from './style.module.scss';
+import { selectLocale } from '@containers/App/selectors';
 import { cancelOrder, getOrder, payOrder, setOrder } from './actions';
 import { selectOrder } from './selectors';
 import OrderedSeatCard from './components/OrderedSeatCard';
 
-const Unpaid = ({ order }) => {
+import classes from './style.module.scss';
+
+const Unpaid = ({ order, locale, intl: { formatMessage } }) => {
   const { orderId } = useParams();
   const [countdown, setCountdown] = useState({ minutes: 0, seconds: 0 });
 
@@ -31,7 +34,7 @@ const Unpaid = ({ order }) => {
   };
 
   const handleSuccessCancel = () => {
-    toast.success('Success cancel the order');
+    toast.success(formatMessage({ id: 'app_success_cancel_the_order' }));
     dispatch(setOrder(null));
     navigate('/my-tickets');
   };
@@ -41,7 +44,7 @@ const Unpaid = ({ order }) => {
   };
 
   const handleSuccessPay = () => {
-    toast.success('Success pay the order');
+    toast.success(formatMessage({ id: 'app_success_pay_the_order' }));
     dispatch(setOrder(null));
     navigate(`/order/${orderId}`);
   };
@@ -63,7 +66,7 @@ const Unpaid = ({ order }) => {
     if (!order) return;
 
     if (order.Payment.isPaid) {
-      toast.error('You have paid the order');
+      toast.error(formatMessage({ id: 'app_you_have_paid_order' }));
       navigate('/my-tickets');
     }
 
@@ -72,7 +75,7 @@ const Unpaid = ({ order }) => {
       const duePayment = new Date(order.Payment.duePayment).getTime();
 
       if (now > duePayment) {
-        toast.error('Passed payment due time');
+        toast.error(formatMessage({ id: 'app_passed_payment_due_time' }));
         navigate('/my-tickets');
       }
 
@@ -94,11 +97,15 @@ const Unpaid = ({ order }) => {
       <div className={classes.container}>
         <header>
           <BackBtn handleClickBack={() => navigate('/my-tickets')} />
-          <h1>Unpaid</h1>
+          <h1>
+            <FormattedMessage id="app_unpaid" />
+          </h1>
         </header>
 
         <div className={classes.countdown}>
-          <div className={classes.message}>To be paid, remaining time:</div>
+          <div className={classes.message}>
+            <FormattedMessage id="app_be_paid_remaining_time" />
+          </div>
           <div className={classes.time}>
             {countdown.minutes} m {countdown.seconds} s
           </div>
@@ -107,7 +114,7 @@ const Unpaid = ({ order }) => {
         <section>
           <div className={classes.sectionDesc}>
             <div className={classes.row}>
-              <div className={classes.dateTime}>{formatDateWithDay(order?.Schedule.departureTime)}</div>
+              <div className={classes.dateTime}>{formatDateWithDay(order?.Schedule.departureTime, locale)}</div>
             </div>
             <div className={classes.row}>
               <div className={classes.timeAndPlace}>
@@ -135,7 +142,9 @@ const Unpaid = ({ order }) => {
         </section>
 
         <section>
-          <div className={classes.header}>Passenger</div>
+          <div className={classes.header}>
+            <FormattedMessage id="app_passenger" />
+          </div>
           <hr />
           <div className={classes.sectionDesc}>
             {order?.OrderedSeats.map((orderedSeat, idx) => (
@@ -151,15 +160,17 @@ const Unpaid = ({ order }) => {
         <section>
           <div className={classes.sectionDesc}>
             <div className={classes.totalPrice}>
-              <div>Total Price</div>
+              <div>
+                <FormattedMessage id="app_total_price" />
+              </div>
               <div>{formatRupiah(order?.Payment.amount)}</div>
             </div>
             <div className={classes.buttons}>
               <Button variant="outlined" className={classes.btn} onClick={handleCancel}>
-                Cancel Order
+                <FormattedMessage id="app_cancel_order" />
               </Button>
               <Button variant="contained" className={classes.btn} onClick={handlePay}>
-                Pay
+                <FormattedMessage id="app_pay" />
               </Button>
             </div>
           </div>
@@ -171,10 +182,13 @@ const Unpaid = ({ order }) => {
 
 Unpaid.propTypes = {
   order: PropTypes.object,
+  locale: PropTypes.string.isRequired,
+  intl: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
   order: selectOrder,
+  locale: selectLocale,
 });
 
-export default connect(mapStateToProps)(Unpaid);
+export default injectIntl(connect(mapStateToProps)(Unpaid));

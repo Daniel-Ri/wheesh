@@ -1,9 +1,11 @@
 import PropTypes from 'prop-types';
+import { FormattedMessage } from 'react-intl';
 
 import { useNavigate } from 'react-router-dom';
 import arrowImage from '@static/images/arrowTrain.png';
 
 import { formatHour, formatOrderDate } from '@utils/handleValue';
+
 import classes from './style.module.scss';
 
 const OrderCard = ({ order }) => {
@@ -32,13 +34,15 @@ const OrderCard = ({ order }) => {
         <div className={classes.stationName}>{order.Schedule.arrivalStation.name}</div>
       </div>
       <div className={classes.timeDesc}>
-        Departure: {formatHour(order.Schedule.departureTime)} {formatOrderDate(order.Schedule.departureTime)}
+        <FormattedMessage id="app_departure" />: {formatHour(order.Schedule.departureTime)}{' '}
+        {formatOrderDate(order.Schedule.departureTime)}
       </div>
       <div className={classes.timeDesc}>
-        Order Time: {formatHour(order.createdAt)} {formatOrderDate(order.createdAt)}
+        <FormattedMessage id="app_order_time" />: {formatHour(order.createdAt)} {formatOrderDate(order.createdAt)}
       </div>
       <div className={classes.tickets}>
-        {order.OrderedSeats.length} ticket{order.OrderedSeats.length > 1 ? 's' : ''}{' '}
+        {order.OrderedSeats.length}{' '}
+        {order.OrderedSeats.length > 1 ? <FormattedMessage id="app_tickets" /> : <FormattedMessage id="app_ticket" />}{' '}
         {order.OrderedSeats.map((orderedSeat) => orderedSeat.name).join(', ')}
       </div>
     </div>

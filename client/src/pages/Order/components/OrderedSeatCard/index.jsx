@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { FormattedMessage } from 'react-intl';
 
 import QRCode from 'qrcode';
 import { censorIdCard, formatRupiah } from '@utils/handleValue';
@@ -39,11 +40,15 @@ const OrderedSeatCard = ({ orderedSeat, addLine }) => {
         <div className={classes.leftCard}>
           <div className={classes.name}>{orderedSeat.name}</div>
           <div className={classes.description}>
-            <div>ID Card</div>
+            <div>
+              <FormattedMessage id="app_id_card" />
+            </div>
             <div>{censorIdCard(orderedSeat.idCard)}</div>
           </div>
           <div className={classes.description}>
-            <div>Coach {String(orderedSeat.Seat.Carriage.carriageNumber).padStart(2, '0')}</div>
+            <div>
+              <FormattedMessage id="app_coach" /> {String(orderedSeat.Seat.Carriage.carriageNumber).padStart(2, '0')}
+            </div>
             <div>|</div>
             <div className={classes.seatClass}>{orderedSeat.Seat.seatClass} class</div>
             <div>{orderedSeat.Seat.seatNumber}</div>
@@ -56,15 +61,21 @@ const OrderedSeatCard = ({ orderedSeat, addLine }) => {
       <Dialog open={open} onClose={handleClose}>
         <div className={classes.dialog}>
           <div className={classes.content}>
-            <h2>QR Ticket</h2>
+            <h2>
+              <FormattedMessage id="app_qr_ticket" />
+            </h2>
             <img src={imageUrl} alt="" />
             <div className={classes.name}>{orderedSeat.name}</div>
             <div className={classes.description}>
-              <div>ID Card</div>
+              <div>
+                <FormattedMessage id="app_id_card" />
+              </div>
               <div>{censorIdCard(orderedSeat.idCard)}</div>
             </div>
             <div className={classes.description}>
-              <div>Coach {String(orderedSeat.Seat.Carriage.carriageNumber).padStart(2, '0')}</div>
+              <div>
+                <FormattedMessage id="app_coach" /> {String(orderedSeat.Seat.Carriage.carriageNumber).padStart(2, '0')}
+              </div>
               <div>|</div>
               <div className={classes.seatClass}>{orderedSeat.Seat.seatClass} class</div>
               <div>{orderedSeat.Seat.seatNumber}</div>

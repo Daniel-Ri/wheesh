@@ -1,6 +1,8 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+import { FormattedMessage, injectIntl } from 'react-intl';
+
 import { connect, useDispatch } from 'react-redux';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 
@@ -11,7 +13,7 @@ import classes from './style.module.scss';
 import { getAllStations, setValidateResult, validateTicketOnArrival, validateTicketOnDeparture } from './actions';
 import { selectStations, selectValidateResult } from './selectors';
 
-const Gate = ({ stations, validateResult }) => {
+const Gate = ({ stations, validateResult, intl: { formatMessage } }) => {
   const dispatch = useDispatch();
 
   const [direction, setDirection] = useState('depart');
@@ -30,7 +32,7 @@ const Gate = ({ stations, validateResult }) => {
   };
 
   const handleSuccessValidate = () => {
-    toast.success('Success validate QR');
+    toast.success(formatMessage({ id: 'app_success_validate_qr' }));
   };
 
   const handleErrorValidate = (errorMsg) => {
@@ -109,10 +111,10 @@ const Gate = ({ stations, validateResult }) => {
     try {
       jsonScan = JSON.parse(scanResult);
       if (!jsonScan.id || !jsonScan.secret) {
-        throw Error('Invalid QR Ticket');
+        throw Error(formatMessage({ id: 'app_invalid_qr_ticket' }));
       }
     } catch {
-      toast.error('Invalid QR Ticket');
+      toast.error(formatMessage({ id: 'app_invalid_qr_ticket' }));
       return;
     }
 
@@ -139,7 +141,9 @@ const Gate = ({ stations, validateResult }) => {
         <section>
           <div className={classes.row}>
             <div className={classes.input}>
-              <label>Direction</label>
+              <label>
+                <FormattedMessage id="app_direction" />
+              </label>
               <FormControl variant="standard">
                 <Select
                   labelId="demo-simple-select-label"
@@ -147,13 +151,19 @@ const Gate = ({ stations, validateResult }) => {
                   value={direction}
                   onChange={(e) => setDirection(e.target.value)}
                 >
-                  <MenuItem value="depart">Departure</MenuItem>
-                  <MenuItem value="arrive">Arrival</MenuItem>
+                  <MenuItem value="depart">
+                    <FormattedMessage id="app_departure" />
+                  </MenuItem>
+                  <MenuItem value="arrive">
+                    <FormattedMessage id="app_arrival" />
+                  </MenuItem>
                 </Select>
               </FormControl>
             </div>
             <div className={classes.input}>
-              <label>Station</label>
+              <label>
+                <FormattedMessage id="app_station" />
+              </label>
               <Autocomplete
                 {...defaultProps}
                 id="controlled-demo"
@@ -161,7 +171,9 @@ const Gate = ({ stations, validateResult }) => {
                 onChange={(event, newValue) => {
                   setStation(newValue);
                 }}
-                renderInput={(params) => <TextField {...params} placeholder="Select station" variant="standard" />}
+                renderInput={(params) => (
+                  <TextField {...params} placeholder={formatMessage({ id: 'app_select_station' })} variant="standard" />
+                )}
               />
             </div>
           </div>
@@ -179,18 +191,19 @@ const Gate = ({ stations, validateResult }) => {
               <div className={classes.validate}>
                 {direction === 'depart' ? (
                   <div className={classes.message}>
-                    Have a nice journey to {validateResult.Order.Schedule.arrivalStation.name}, {validateResult.name}
+                    <FormattedMessage id="app_have_nice_journey_to" />{' '}
+                    {validateResult.Order.Schedule.arrivalStation.name}, {validateResult.name}
                   </div>
                 ) : (
                   <div className={classes.message}>
-                    Hope you had a safe journey from {validateResult.Order.Schedule.departureStation.name},{' '}
+                    <FormattedMessage id="app_welcome_from" /> {validateResult.Order.Schedule.departureStation.name},{' '}
                     {validateResult.name}
                   </div>
                 )}
               </div>
             )}
             <Button variant="contained" onClick={() => setIsScan(true)}>
-              Scan Again
+              <FormattedMessage id="app_scan_again" />
             </Button>
           </div>
         )}
@@ -202,6 +215,7 @@ const Gate = ({ stations, validateResult }) => {
 Gate.propTypes = {
   stations: PropTypes.array,
   validateResult: PropTypes.object,
+  intl: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -209,4 +223,4 @@ const mapStateToProps = createStructuredSelector({
   validateResult: selectValidateResult,
 });
 
-export default connect(mapStateToProps)(Gate);
+export default injectIntl(connect(mapStateToProps)(Gate));

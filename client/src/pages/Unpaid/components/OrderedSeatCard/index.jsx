@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { FormattedMessage } from 'react-intl';
 
 import { censorIdCard, formatRupiah } from '@utils/handleValue';
 import classes from './style.module.scss';
@@ -9,11 +10,15 @@ const OrderedSeatCard = ({ orderedSeat, addLine }) => (
       <div className={classes.leftCard}>
         <div className={classes.name}>{orderedSeat.name}</div>
         <div className={classes.description}>
-          <div>ID Card</div>
+          <div>
+            <FormattedMessage id="app_id_card" />
+          </div>
           <div>{censorIdCard(orderedSeat.idCard)}</div>
         </div>
         <div className={classes.description}>
-          <div>Coach {String(orderedSeat.Seat.Carriage.carriageNumber).padStart(2, '0')}</div>
+          <div>
+            <FormattedMessage id="app_coach" /> {String(orderedSeat.Seat.Carriage.carriageNumber).padStart(2, '0')}
+          </div>
           <div>|</div>
           <div className={classes.seatClass}>{orderedSeat.Seat.seatClass} class</div>
           <div>{orderedSeat.Seat.seatNumber}</div>

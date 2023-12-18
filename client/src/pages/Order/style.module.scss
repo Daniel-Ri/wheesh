@@ -32,6 +32,8 @@
       position: relative;
 
       h1 {
+        text-align: center;
+        width: 50%;
         font-size: 120%;
       }
     }
@@ -123,6 +125,7 @@
         .totalPrice {
           @include directionX;
           justify-content: space-between;
+          gap: 0.5rem;
         }
       }
     }
