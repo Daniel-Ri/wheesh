@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import { useNavigate, useParams } from 'react-router-dom';
 import { connect, useDispatch } from 'react-redux';
 
@@ -18,13 +19,14 @@ import { formatDateWithDay, formatHour } from '@utils/handleValue';
 import arrowImage from '@static/images/arrowTrain.png';
 
 import toast from 'react-hot-toast';
+import { selectLocale } from '@containers/App/selectors';
 import CornerCarriage from '../CornerCarriage';
 import CenterCarriage from '../CenterCarriage';
-
-import classes from './style.module.scss';
 import RowPassenger from '../RowPassenger';
 
-const ChooseSeat = ({ step, schedule, myPassengers, passengerIds, chosenSeats }) => {
+import classes from './style.module.scss';
+
+const ChooseSeat = ({ step, schedule, myPassengers, passengerIds, chosenSeats, locale, intl: { formatMessage } }) => {
   const { scheduleId, seatClass } = useParams();
 
   const [activePassengerId, setActivePassengerId] = useState(passengerIds[0]);
@@ -75,10 +77,11 @@ const ChooseSeat = ({ step, schedule, myPassengers, passengerIds, chosenSeats })
 
   const handleErrorOrder = (errorRes) => {
     if (errorRes.status === 403) {
+      // Train will depart in less than 30 minutes
       toast.error(errorRes.data.message);
       navigate('/');
     } else if (errorRes.status === 409) {
-      toast.error('Your seat has been booked by other users');
+      toast.error(formatMessage({ id: 'app_seat_has_been_booked' }));
       dispatch(setStep(0));
       dispatch(getSchedule(scheduleId));
     } else {
@@ -87,13 +90,13 @@ const ChooseSeat = ({ step, schedule, myPassengers, passengerIds, chosenSeats })
   };
 
   const handleSuccessOrder = (response) => {
-    toast.success('Success book the seats');
+    toast.success(formatMessage({ id: 'app_success_book_the_seats' }));
     navigate(`/unpaid/${response.data}`);
   };
 
   const handleCreateOrder = () => {
     if (chosenSeats.size !== passengerIds.length) {
-      toast.error("You need to select your all passenger's seat");
+      toast.error(formatMessage({ id: 'app_need_select_all_seat' }));
       return;
     }
 
@@ -124,7 +127,9 @@ const ChooseSeat = ({ step, schedule, myPassengers, passengerIds, chosenSeats })
     <>
       <header>
         <BackBtn handleClickBack={() => dispatch(setStep(0))} />
-        <h1>Choose Seat</h1>
+        <h1>
+          <FormattedMessage id="app_choose_seat" />
+        </h1>
       </header>
 
       <section>
@@ -140,13 +145,17 @@ const ChooseSeat = ({ step, schedule, myPassengers, passengerIds, chosenSeats })
             <div className={classes.time}>({formatHour(schedule?.arrivalTime)})</div>
           </div>
           <div className={classes.row}>
-            <div className={classes.dateTime}>{formatDateWithDay(schedule?.departureTime)}</div>
+            <div className={classes.dateTime}>{formatDateWithDay(schedule?.departureTime, locale)}</div>
           </div>
           <table className={classes.passengers}>
             <tbody>
               <tr>
-                <th>Passenger Name</th>
-                <th>Selected Seats</th>
+                <th>
+                  <FormattedMessage id="app_passenger_name" />
+                </th>
+                <th>
+                  <FormattedMessage id="app_selected_seats" />
+                </th>
               </tr>
               {passengerIds.map((passengerId) => (
                 <RowPassenger
@@ -160,7 +169,9 @@ const ChooseSeat = ({ step, schedule, myPassengers, passengerIds, chosenSeats })
             </tbody>
           </table>
 
-          <div className={classes.row}>Select carriage</div>
+          <div className={classes.row}>
+            <FormattedMessage id="app_select_carriage" />
+          </div>
           <div className={classes.carriages}>
             {availableCarriages.map((carriage) => (
               <div
@@ -176,12 +187,14 @@ const ChooseSeat = ({ step, schedule, myPassengers, passengerIds, chosenSeats })
           </div>
 
           <div className={classes.selectSeat}>
-            <div className={classes.header}>Select Seat</div>
+            <div className={classes.header}>
+              <FormattedMessage id="app_select_seat" />
+            </div>
             <div className={classes.message}>
               <b>
                 {chosenSeats.size}/{passengerIds.length}
               </b>{' '}
-              has been selected
+              <FormattedMessage id="app_has_been_selected" />
             </div>
           </div>
 
@@ -190,7 +203,7 @@ const ChooseSeat = ({ step, schedule, myPassengers, passengerIds, chosenSeats })
       </section>
       <div className={classes.footer}>
         <Button variant="contained" className={classes.btn} onClick={handleCreateOrder}>
-          Submit
+          <FormattedMessage id="app_submit" />
         </Button>
       </div>
     </>
@@ -203,6 +216,8 @@ ChooseSeat.propTypes = {
   myPassengers: PropTypes.array,
   passengerIds: PropTypes.array,
   chosenSeats: PropTypes.instanceOf(Map),
+  locale: PropTypes.string.isRequired,
+  intl: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -211,6 +226,7 @@ const mapStateToProps = createStructuredSelector({
   myPassengers: selectMyPassengers,
   passengerIds: selectPassengerIds,
   chosenSeats: selectChosenSeats,
+  locale: selectLocale,
 });
 
-export default connect(mapStateToProps)(ChooseSeat);
+export default injectIntl(connect(mapStateToProps)(ChooseSeat));

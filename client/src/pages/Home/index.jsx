@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect, useDispatch } from 'react-redux';
 import SwapHorizontalCircleIcon from '@mui/icons-material/SwapHorizontalCircle';
 import DatePicker from 'react-datepicker';
@@ -18,7 +19,7 @@ import { getAllStations, getBanners, getLatestDateSchedule } from './actions';
 
 import classes from './style.module.scss';
 
-const Home = ({ stations, latestDateSchedule, banners }) => {
+const Home = ({ stations, latestDateSchedule, banners, intl: { formatMessage } }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const today = new Date(new Date().setHours(0, 0, 0, 0));
@@ -42,15 +43,15 @@ const Home = ({ stations, latestDateSchedule, banners }) => {
 
   const validateStations = () => {
     if (!inputs.departureStation) {
-      toast.error('You need to choose departure station');
+      toast.error(formatMessage({ id: 'app_need_to_choose_departure' }));
       return false;
     }
     if (!inputs.arrivalStation) {
-      toast.error('You need to choose arrival station');
+      toast.error(formatMessage({ id: 'app_need_to_choose_arrival' }));
       return false;
     }
     if (inputs.departureStation.id === inputs.arrivalStation.id) {
-      toast.error('Departure and Arrival station cannot be the same');
+      toast.error(formatMessage({ id: 'app_departure_arrival_cannot_same' }));
       return false;
     }
     return true;
@@ -58,7 +59,7 @@ const Home = ({ stations, latestDateSchedule, banners }) => {
 
   const validateDate = () => {
     if (!inputs.date) {
-      toast.error('You need to choose departure date');
+      toast.error(formatMessage({ id: 'app_need_choose_departure_date' }));
       return false;
     }
     return true;
@@ -88,7 +89,9 @@ const Home = ({ stations, latestDateSchedule, banners }) => {
         <section>
           <div className={classes.row}>
             <div className={classes.input}>
-              <label>From</label>
+              <label>
+                <FormattedMessage id="app_from" />
+              </label>
               <Autocomplete
                 {...defaultProps}
                 id="controlled-demo"
@@ -97,13 +100,19 @@ const Home = ({ stations, latestDateSchedule, banners }) => {
                   setInputs((prev) => ({ ...prev, departureStation: newValue }));
                 }}
                 renderInput={(params) => (
-                  <TextField {...params} placeholder="Select departure station" variant="standard" />
+                  <TextField
+                    {...params}
+                    placeholder={formatMessage({ id: 'app_select_departure_station' })}
+                    variant="standard"
+                  />
                 )}
               />
             </div>
             <SwapHorizontalCircleIcon className={classes.icon} onClick={handleSwap} />
             <div className={classes.input}>
-              <label>To</label>
+              <label>
+                <FormattedMessage id="app_to" />
+              </label>
               <Autocomplete
                 {...defaultProps}
                 id="controlled-demo"
@@ -112,17 +121,23 @@ const Home = ({ stations, latestDateSchedule, banners }) => {
                   setInputs((prev) => ({ ...prev, arrivalStation: newValue }));
                 }}
                 renderInput={(params) => (
-                  <TextField {...params} placeholder="Select arrival station" variant="standard" />
+                  <TextField
+                    {...params}
+                    placeholder={formatMessage({ id: 'app_select_arrival_station' })}
+                    variant="standard"
+                  />
                 )}
               />
             </div>
           </div>
           <div className={classes.row}>
             <div className={classes.inputDatePicker}>
-              <label>Date</label>
+              <label>
+                <FormattedMessage id="app_date" />
+              </label>
               <DatePicker
                 name="date"
-                placeholderText="Select departure date"
+                placeholderText={formatMessage({ id: 'app_select_departure_date' })}
                 selected={inputs.date}
                 dropdownMode="select"
                 dateFormat="eee, dd MMM yyyy"
@@ -134,7 +149,7 @@ const Home = ({ stations, latestDateSchedule, banners }) => {
           </div>
 
           <Button variant="contained" className={classes.btn} onClick={handleSearch}>
-            Search
+            <FormattedMessage id="app_search" />
           </Button>
         </section>
       </div>
@@ -146,6 +161,7 @@ Home.propTypes = {
   stations: PropTypes.array,
   latestDateSchedule: PropTypes.string,
   banners: PropTypes.array,
+  intl: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -154,4 +170,4 @@ const mapStateToProps = createStructuredSelector({
   banners: selectBanners,
 });
 
-export default connect(mapStateToProps)(Home);
+export default injectIntl(connect(mapStateToProps)(Home));

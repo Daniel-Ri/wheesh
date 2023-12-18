@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 import { useNavigate } from 'react-router-dom';
 import { formatHour, formatRupiah } from '@utils/handleValue';
@@ -12,13 +13,13 @@ import { connect } from 'react-redux';
 import toast from 'react-hot-toast';
 import classes from './style.module.scss';
 
-const ScheduleCard = ({ login, schedule }) => {
+const ScheduleCard = ({ login, schedule, intl: { formatMessage } }) => {
   const navigate = useNavigate();
   const [selected, setSelected] = useState(false);
 
   const handleClickBook = (seatClass) => {
     if (!login) {
-      toast.error('You need to login');
+      toast.error(formatMessage({ id: 'app_need_to_login' }));
     }
 
     navigate(`/book/${schedule.id}/${seatClass}`);
@@ -61,7 +62,16 @@ const ScheduleCard = ({ login, schedule }) => {
               <div className={classes.price}>
                 {formatRupiah(schedule.prices.filter((schedulePrice) => schedulePrice.seatClass === 'first')[0].price)}
               </div>
-              <div className={classes.available}>{schedule.firstSeatAvailable}</div>
+              <div className={classes.available}>
+                {/* eslint-disable-next-line no-nested-ternary */}
+                {schedule.firstSeatAvailable === 'Available' ? (
+                  <FormattedMessage id="app_available" />
+                ) : schedule.firstSeatAvailable === 'Few' ? (
+                  <FormattedMessage id="app_few" />
+                ) : (
+                  <FormattedMessage id="app_none" />
+                )}
+              </div>
             </div>
             <Button
               variant="contained"
@@ -69,7 +79,7 @@ const ScheduleCard = ({ login, schedule }) => {
               className={classes.btn}
               onClick={() => handleClickBook('first')}
             >
-              Book
+              <FormattedMessage id="app_book" />
             </Button>
           </div>
         </div>
@@ -83,7 +93,16 @@ const ScheduleCard = ({ login, schedule }) => {
                   schedule.prices.filter((schedulePrice) => schedulePrice.seatClass === 'business')[0].price
                 )}
               </div>
-              <div className={classes.available}>{schedule.businessSeatAvailable}</div>
+              <div className={classes.available}>
+                {/* eslint-disable-next-line no-nested-ternary */}
+                {schedule.businessSeatAvailable === 'Available' ? (
+                  <FormattedMessage id="app_available" />
+                ) : schedule.businessSeatAvailable === 'Few' ? (
+                  <FormattedMessage id="app_few" />
+                ) : (
+                  <FormattedMessage id="app_none" />
+                )}
+              </div>
             </div>
             <Button
               variant="contained"
@@ -91,7 +110,7 @@ const ScheduleCard = ({ login, schedule }) => {
               className={classes.btn}
               onClick={() => handleClickBook('business')}
             >
-              Book
+              <FormattedMessage id="app_book" />
             </Button>
           </div>
         </div>
@@ -105,7 +124,16 @@ const ScheduleCard = ({ login, schedule }) => {
                   schedule.prices.filter((schedulePrice) => schedulePrice.seatClass === 'economy')[0].price
                 )}
               </div>
-              <div className={classes.available}>{schedule.economySeatAvailable}</div>
+              <div className={classes.available}>
+                {/* eslint-disable-next-line no-nested-ternary */}
+                {schedule.economySeatAvailable === 'Available' ? (
+                  <FormattedMessage id="app_available" />
+                ) : schedule.economySeatAvailable === 'Few' ? (
+                  <FormattedMessage id="app_few" />
+                ) : (
+                  <FormattedMessage id="app_none" />
+                )}
+              </div>
             </div>
             <Button
               variant="contained"
@@ -113,7 +141,7 @@ const ScheduleCard = ({ login, schedule }) => {
               className={classes.btn}
               onClick={() => handleClickBook('economy')}
             >
-              Book
+              <FormattedMessage id="app_book" />
             </Button>
           </div>
         </div>
@@ -125,10 +153,11 @@ const ScheduleCard = ({ login, schedule }) => {
 ScheduleCard.propTypes = {
   schedule: PropTypes.object.isRequired,
   login: PropTypes.bool.isRequired,
+  intl: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
   login: selectLogin,
 });
 
-export default connect(mapStateToProps)(ScheduleCard);
+export default injectIntl(connect(mapStateToProps)(ScheduleCard));

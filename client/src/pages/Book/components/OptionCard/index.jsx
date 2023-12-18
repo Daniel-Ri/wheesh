@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { FormattedMessage } from 'react-intl';
 
 import classes from './style.module.scss';
 
@@ -11,7 +12,16 @@ const OptionCard = ({ seatClass, price, available, isSelected, onClick }) => (
   >
     <div className={classes.price}>{price}</div>
     <div className={classes.seatClass}>{seatClass} Class</div>
-    <div className={classes.available}>{available}</div>
+    <div className={classes.available}>
+      {/* eslint-disable-next-line no-nested-ternary */}
+      {available === 'Available' ? (
+        <FormattedMessage id="app_available" />
+      ) : available === 'Few' ? (
+        <FormattedMessage id="app_few" />
+      ) : (
+        <FormattedMessage id="app_none" />
+      )}
+    </div>
   </div>
 );
 

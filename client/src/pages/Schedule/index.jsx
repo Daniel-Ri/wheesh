@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect, useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
@@ -14,12 +15,13 @@ import SwapHorizontalCircleIcon from '@mui/icons-material/SwapHorizontalCircle';
 import { Autocomplete, TextField } from '@mui/material';
 import toast from 'react-hot-toast';
 import { formatDate } from '@utils/handleValue';
-import classes from './style.module.scss';
 import { selectLatestDateSchedule, selectSchedules, selectStations } from './selectors';
 import { getAllStations, getLatestDateSchedule, getSchedules } from './actions';
 import ScheduleCard from './components/ScheduleCard';
 
-const Schedule = ({ stations, latestDateSchedule, schedules }) => {
+import classes from './style.module.scss';
+
+const Schedule = ({ stations, latestDateSchedule, schedules, intl: { formatMessage } }) => {
   const { departureStationId, arrivalStationId, date } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -70,12 +72,16 @@ const Schedule = ({ stations, latestDateSchedule, schedules }) => {
       <div className={classes.container}>
         <header>
           <BackBtn handleClickBack={() => navigate('/')} />
-          <h1>Schedule</h1>
+          <h1>
+            <FormattedMessage id="app_schedule" />
+          </h1>
         </header>
         <div className={classes.filter}>
           <div className={classes.row}>
             <div className={classes.input}>
-              <label>From</label>
+              <label>
+                <FormattedMessage id="app_from" />
+              </label>
               <Autocomplete
                 {...defaultProps}
                 id="controlled-demo"
@@ -83,20 +89,26 @@ const Schedule = ({ stations, latestDateSchedule, schedules }) => {
                 onChange={(event, newValue) => {
                   if (!newValue) return;
                   if (newValue.id === parseInt(arrivalStationId, 10)) {
-                    toast.error('Departure and Arrival station cannot be the same');
+                    toast.error(formatMessage({ id: 'app_departure_arrival_cannot_same' }));
                     return;
                   }
                   navigate(`/schedule/${newValue.id}/${inputs.arrivalStation.id}/${formatDate(inputs.date)}`);
                   setInputs((prev) => ({ ...prev, departureStation: newValue }));
                 }}
                 renderInput={(params) => (
-                  <TextField {...params} placeholder="Select departure station" variant="standard" />
+                  <TextField
+                    {...params}
+                    placeholder={formatMessage({ id: 'app_select_departure_station' })}
+                    variant="standard"
+                  />
                 )}
               />
             </div>
             <SwapHorizontalCircleIcon className={classes.icon} onClick={handleSwap} />
             <div className={classes.input}>
-              <label>To</label>
+              <label>
+                <FormattedMessage id="app_to" />
+              </label>
               <Autocomplete
                 {...defaultProps}
                 id="controlled-demo"
@@ -104,7 +116,7 @@ const Schedule = ({ stations, latestDateSchedule, schedules }) => {
                 onChange={(event, newValue) => {
                   if (!newValue) return;
                   if (newValue.id === parseInt(departureStationId, 10)) {
-                    toast.error('Departure and Arrival station cannot be the same');
+                    toast.error(formatMessage({ id: 'app_departure_arrival_cannot_same' }));
                     return;
                   }
                   navigate(`/schedule/${inputs.departureStation.id}/${newValue.id}/${formatDate(inputs.date)}`);
@@ -118,10 +130,12 @@ const Schedule = ({ stations, latestDateSchedule, schedules }) => {
           </div>
           <div className={classes.row}>
             <div className={classes.inputDatePicker}>
-              <label>Date</label>
+              <label>
+                <FormattedMessage id="app_date" />
+              </label>
               <DatePicker
                 name="date"
-                placeholderText="Select departure date"
+                placeholderText={formatMessage({ id: 'app_select_departure_date' })}
                 selected={inputs.date}
                 dropdownMode="select"
                 dateFormat="eee, dd MMM yyyy"
@@ -144,7 +158,9 @@ const Schedule = ({ stations, latestDateSchedule, schedules }) => {
               <div className={classes.image}>
                 <img src={thinkingImage} alt="Thinking" />
               </div>
-              <div className={classes.message}>No schedules</div>
+              <div className={classes.message}>
+                <FormattedMessage id="app_no_schedules" />
+              </div>
             </div>
           ) : (
             schedules.map((schedule) => <ScheduleCard key={schedule.id} schedule={schedule} />)
@@ -159,6 +175,7 @@ Schedule.propTypes = {
   stations: PropTypes.array,
   latestDateSchedule: PropTypes.string,
   schedules: PropTypes.array,
+  intl: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -167,4 +184,4 @@ const mapStateToProps = createStructuredSelector({
   schedules: selectSchedules,
 });
 
-export default connect(mapStateToProps)(Schedule);
+export default injectIntl(connect(mapStateToProps)(Schedule));

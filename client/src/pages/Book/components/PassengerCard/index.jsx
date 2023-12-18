@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { FormattedMessage } from 'react-intl';
 
 import { censorIdCard } from '@utils/handleValue';
 import { IconButton } from '@mui/material';
@@ -11,7 +12,9 @@ const PassengerCard = ({ passenger, onClick }) => (
       <div className={classes.leftCard}>
         <div className={classes.name}>{passenger.name}</div>
         <div className={classes.description}>
-          <div>ID Card</div>
+          <div>
+            <FormattedMessage id="app_id_card" />
+          </div>
           <div>{censorIdCard(passenger.idCard)}</div>
         </div>
       </div>

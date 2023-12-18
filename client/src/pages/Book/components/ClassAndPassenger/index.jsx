@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect, useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -12,11 +13,13 @@ import { createStructuredSelector } from 'reselect';
 import { selectMyPassengers, selectPassengerIds, selectSchedule } from '@pages/Book/selectors';
 
 import { Button } from '@mui/material';
-import classes from './style.module.scss';
+import { selectLocale } from '@containers/App/selectors';
 import OptionCard from '../OptionCard';
 import PassengerCard from '../PassengerCard';
 
-const ClassAndPassenger = ({ schedule, myPassengers, passengerIds }) => {
+import classes from './style.module.scss';
+
+const ClassAndPassenger = ({ schedule, myPassengers, passengerIds, locale, intl: { formatMessage } }) => {
   const { scheduleId, seatClass } = useParams();
 
   const navigate = useNavigate();
@@ -64,17 +67,17 @@ const ClassAndPassenger = ({ schedule, myPassengers, passengerIds }) => {
     } else {
       if (seatClass === 'first') {
         if (schedule.firstSeatRemainder === passengerIds.length) {
-          toast.error('Reach maximum number of seats');
+          toast.error(formatMessage({ id: 'app_reach_maximum_number_seats' }));
           return;
         }
       } else if (seatClass === 'business') {
         if (schedule.businessSeatRemainder === passengerIds.length) {
-          toast.error('Reach maximum number of seats');
+          toast.error(formatMessage({ id: 'app_reach_maximum_number_seats' }));
           return;
         }
       } else if (seatClass === 'economy') {
         if (schedule.economySeatRemainder === passengerIds.length) {
-          toast.error('React maximum number of seats');
+          toast.error(formatMessage({ id: 'app_reach_maximum_number_seats' }));
           return;
         }
       }
@@ -89,7 +92,7 @@ const ClassAndPassenger = ({ schedule, myPassengers, passengerIds }) => {
 
   const handleClickChooseSeat = () => {
     if (passengerIds.length === 0) {
-      toast.error('You need to choose passengers');
+      toast.error(formatMessage({ id: 'app_need_to_choose_passengers' }));
       return;
     }
 
@@ -106,14 +109,18 @@ const ClassAndPassenger = ({ schedule, myPassengers, passengerIds }) => {
     <>
       <header>
         <BackBtn handleClickBack={() => navigate(-1)} />
-        <h1>Book</h1>
+        <h1>
+          <FormattedMessage id="app_book" />
+        </h1>
       </header>
       <section>
-        <div className={classes.header}>Train Information</div>
+        <div className={classes.header}>
+          <FormattedMessage id="app_train_information" />
+        </div>
         <hr />
         <div className={classes.sectionDesc}>
           <div className={classes.row}>
-            <div className={classes.dateTime}>{formatDateWithDay(schedule?.departureTime)}</div>
+            <div className={classes.dateTime}>{formatDateWithDay(schedule?.departureTime, locale)}</div>
           </div>
           <div className={classes.row}>
             <div className={classes.timeAndPlace}>
@@ -155,7 +162,9 @@ const ClassAndPassenger = ({ schedule, myPassengers, passengerIds }) => {
         </div>
       </section>
       <section>
-        <div className={classes.header}>Passenger</div>
+        <div className={classes.header}>
+          <FormattedMessage id="app_passenger" />
+        </div>
         <hr />
         <div className={classes.sectionDesc}>
           <div className={classes.checkboxes}>
@@ -186,7 +195,7 @@ const ClassAndPassenger = ({ schedule, myPassengers, passengerIds }) => {
       </section>
       <div className={classes.footer}>
         <Button variant="contained" className={classes.btn} onClick={handleClickChooseSeat}>
-          Choose Seat
+          <FormattedMessage id="app_choose_seat" />
         </Button>
       </div>
     </>
@@ -197,12 +206,15 @@ ClassAndPassenger.propTypes = {
   schedule: PropTypes.object,
   myPassengers: PropTypes.array,
   passengerIds: PropTypes.array,
+  locale: PropTypes.string.isRequired,
+  intl: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
   schedule: selectSchedule,
   myPassengers: selectMyPassengers,
   passengerIds: selectPassengerIds,
+  locale: selectLocale,
 });
 
-export default connect(mapStateToProps)(ClassAndPassenger);
+export default injectIntl(connect(mapStateToProps)(ClassAndPassenger));

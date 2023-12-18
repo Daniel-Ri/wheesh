@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { FormattedMessage } from 'react-intl';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 
 import { useParams } from 'react-router-dom';
@@ -6,6 +7,7 @@ import { createStructuredSelector } from 'reselect';
 import { selectChosenSeats, selectMyPassengers } from '@pages/Book/selectors';
 import { connect } from 'react-redux';
 import { convertChosenSeats } from '@utils/handleValue';
+
 import classes from './style.module.scss';
 
 const CenterCarriage = ({
@@ -48,8 +50,12 @@ const CenterCarriage = ({
     <div className={classes.centerCarriage}>
       <div className={classes.seats}>
         <div className={classes.aisle}>
-          <div>AISLE</div>
-          <div>AISLE</div>
+          <div>
+            <FormattedMessage id="app_aisle" />
+          </div>
+          <div>
+            <FormattedMessage id="app_aisle" />
+          </div>
         </div>
         {economySeats.map((seatNumber) => (
           <div key={seatNumber} className={classes.seat}>

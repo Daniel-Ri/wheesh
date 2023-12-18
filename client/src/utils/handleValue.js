@@ -20,14 +20,17 @@ export const formatOrderDate = (dateString) => {
   return `${day}/${month}/${year}`;
 };
 
-export const formatDateWithDay = (date) => {
+export const formatDateWithDay = (date, locale = 'en') => {
   const inputDate = new Date(date);
 
-  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const daysEn = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const daysId = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+  const days = locale === 'id' ? daysId : daysEn;
+
   const dayOfWeek = days[inputDate.getDay()];
 
   const day = inputDate.getDate();
-  const month = inputDate.toLocaleString('en-US', { month: 'short' });
+  const month = inputDate.toLocaleString(locale, { month: 'short' });
   const year = inputDate.getFullYear();
 
   const formattedDate = `${dayOfWeek}, ${day} ${month} ${year}`;

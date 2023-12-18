@@ -44,6 +44,12 @@
       .inputPassword {
         margin: 0.5rem;
         font-size: 100%;
+        
+        input{
+          &::placeholder{
+            font-size: 80%;
+          }
+        }
       }
     }
 

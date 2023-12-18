@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { FormattedMessage } from 'react-intl';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 
 import { createStructuredSelector } from 'reselect';
@@ -7,6 +8,7 @@ import { selectChosenSeats, selectMyPassengers } from '@pages/Book/selectors';
 import { connect } from 'react-redux';
 
 import { convertChosenSeats } from '@utils/handleValue';
+
 import classes from './style.module.scss';
 
 const CornerCarriage = ({
@@ -42,8 +44,12 @@ const CornerCarriage = ({
     <div className={classes.cornerCarriage}>
       <div className={classes.firstSection}>
         <div className={classes.aisleFirst}>
-          <div>AISLE</div>
-          <div>AISLE</div>
+          <div>
+            <FormattedMessage id="app_aisle" />
+          </div>
+          <div>
+            <FormattedMessage id="app_aisle" />
+          </div>
         </div>
         {firstSeats.map((seatNumber) => (
           <div key={seatNumber} className={classes.seat}>
@@ -73,8 +79,12 @@ const CornerCarriage = ({
       <hr />
       <div className={classes.businessSection}>
         <div className={classes.aisleBusiness}>
-          <div>AISLE</div>
-          <div>AISLE</div>
+          <div>
+            <FormattedMessage id="app_aisle" />
+          </div>
+          <div>
+            <FormattedMessage id="app_aisle" />
+          </div>
         </div>
         {businessSeats.map((seatNumber) => (
           <div key={seatNumber} className={classes.seat}>
