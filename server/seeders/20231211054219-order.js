@@ -23,8 +23,10 @@ module.exports = {
       }
     });
     
+    let orderId = 1;
     return queryInterface.bulkInsert('Orders', [
       {
+        id: orderId++,
         userId: 2,
         scheduleId: afterTodaySchedules[0].id,
         isNotified: false,
@@ -32,6 +34,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: orderId++,
         userId: 3,
         scheduleId: afterTodaySchedules[0].id,
         isNotified: false,
@@ -39,6 +42,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: orderId++,
         userId: 2,
         scheduleId: afterTodaySchedules[1].id,
         isNotified: false,
@@ -46,6 +50,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: orderId++,
         userId: 3,
         scheduleId: afterTodaySchedules[2].id,
         isNotified: false,
@@ -53,6 +58,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: orderId++,
         userId: 2,
         scheduleId: afterTodaySchedules[3].id,
         isNotified: false,
@@ -60,6 +66,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: orderId++,
         userId: 3,
         scheduleId: afterTodaySchedules[4].id,
         isNotified: false,
@@ -67,6 +74,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: orderId++,
         userId: 2,
         scheduleId: afterTodaySchedules[5].id,
         isNotified: false,
@@ -74,6 +82,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: orderId++,
         userId: 3,
         scheduleId: afterTodaySchedules[6].id,
         isNotified: false,
@@ -81,6 +90,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: orderId++,
         userId: 2,
         scheduleId: 1,
         isNotified: true,
@@ -88,6 +98,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: orderId++,
         userId: 2,
         scheduleId: 2,
         isNotified: true,

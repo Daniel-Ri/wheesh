@@ -12,23 +12,28 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
+   let stationId = 1;
     return queryInterface.bulkInsert('Stations', [
       {
+        id: stationId++,
         name: 'Halim',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
+        id: stationId++,
         name: 'Karawang',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
+        id: stationId++,
         name: 'Padalarang',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
+        id: stationId++,
         name: 'Tegalluar',
         createdAt: new Date(),
         updatedAt: new Date(),

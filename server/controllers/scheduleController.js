@@ -31,7 +31,7 @@ exports.getLatestDateSchedule = async(req, res) => {
 const findStationById = async (res, stationId, errorMessage) => {
   const foundStation = await Station.findByPk(stationId);
   if (!foundStation) {
-    handleClientError(res, 400, errorMessage);
+    handleClientError(res, 404, errorMessage);
   }
 }
 

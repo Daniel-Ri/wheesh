@@ -12,8 +12,10 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
+   let passengerId = 1;
     return queryInterface.bulkInsert('Passengers', [
       {
+        id: passengerId++,
         userId: 1,
         isUser: true,
         gender: 'Male',
@@ -25,6 +27,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: passengerId++,
         userId: 2,
         isUser: true,
         gender: 'Male',
@@ -36,6 +39,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: passengerId++,
         userId: 2,
         isUser: false,
         gender: 'Female',
@@ -47,6 +51,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: passengerId++,
         userId: 3,
         isUser: true,
         gender: 'Female',
@@ -58,6 +63,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: passengerId++,
         userId: 4,
         isUser: true,
         gender: 'Male',
@@ -69,6 +75,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: passengerId++,
         userId: 4,
         isUser: false,
         gender: 'Male',
@@ -80,6 +87,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: passengerId++,
         userId: 4,
         isUser: false,
         gender: 'Male',
@@ -91,6 +99,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: passengerId++,
         userId: 4,
         isUser: false,
         gender: 'Female',
@@ -102,6 +111,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: passengerId++,
         userId: 4,
         isUser: false,
         gender: 'Female',
@@ -113,6 +123,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: passengerId++,
         userId: 4,
         isUser: false,
         gender: 'Female',
@@ -124,6 +135,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: passengerId++,
         userId: 4,
         isUser: false,
         gender: 'Female',
@@ -135,6 +147,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: passengerId++,
         userId: 4,
         isUser: false,
         gender: 'Female',
@@ -146,6 +159,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: passengerId++,
         userId: 4,
         isUser: false,
         gender: 'Female',
@@ -157,6 +171,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: passengerId++,
         userId: 4,
         isUser: false,
         gender: 'Female',
@@ -168,6 +183,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: passengerId++,
         userId: 4,
         isUser: false,
         gender: 'Female',
@@ -179,6 +195,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: passengerId++,
         userId: 4,
         isUser: false,
         gender: 'Female',
@@ -190,6 +207,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: passengerId++,
         userId: 4,
         isUser: false,
         gender: 'Female',
@@ -201,6 +219,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: passengerId++,
         userId: 4,
         isUser: false,
         gender: 'Male',
@@ -211,6 +230,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: passengerId++,
         userId: 4,
         isUser: false,
         gender: 'Male',
@@ -221,6 +241,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: passengerId++,
         userId: 5,
         isUser: true,
         gender: 'Male',
@@ -232,6 +253,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: passengerId++,
         userId: 6,
         isUser: true,
         gender: 'Male',

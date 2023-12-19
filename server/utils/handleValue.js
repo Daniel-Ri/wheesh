@@ -52,8 +52,9 @@ const generateRandomEmail = () => {
   return email;
 }
 
-exports.generateOrderedSeatItem = (orderId, seatId, price) => {
+exports.generateOrderedSeatItem = (orderedSeatId, orderId, seatId, price) => {
   return {
+    id: orderedSeatId,
     orderId,
     seatId,
     price,

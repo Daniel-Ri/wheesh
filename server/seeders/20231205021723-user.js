@@ -14,8 +14,10 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
+    let userId = 1;
     return queryInterface.bulkInsert('Users', [
       {
+        id: userId++,
         username: "bangjoe",
         password: hash("123456"),
         role: "admin",
@@ -24,6 +26,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        id: userId++,
         username: "johndoe",
         password: hash("123456"),
         role: "user",
@@ -32,6 +35,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: userId++,
         username: "jeandoe",
         password: hash("123456"),
         role: "user",
@@ -40,6 +44,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: userId++,
         username: "agus",
         password: hash("123456"),
         role: "user",
@@ -48,6 +53,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: userId++,
         username: "asep",
         password: hash("123456"),
         role: "user",
@@ -56,6 +62,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: userId++,
         username: "slamet",
         password: hash("123456"),
         role: "user",

@@ -14,7 +14,7 @@ module.exports = {
     */
     const dummyData = [];
     for (let i = 1; i <= 60; i++) {
-      const item = { createdAt: new Date(), updatedAt: new Date() };
+      const item = { id: i, createdAt: new Date(), updatedAt: new Date() };
       item.name = 'G' + (1200 + i);
       dummyData.push(item);
     }

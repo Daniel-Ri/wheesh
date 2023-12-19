@@ -19,6 +19,7 @@ module.exports = {
     */
 
     const dummyData = [];
+    let orderedSeatId = 1;
     
     /* 1: Order half all seats */
     let order = await Order.findByPk(1);
@@ -53,7 +54,7 @@ module.exports = {
     for (const seatId of seatIds) {
       const seat = await Seat.findByPk(seatId);
       const price = schedule.prices.find((schedulePrice) => schedulePrice.seatClass === seat.seatClass).price;
-      dummyData.push(generateOrderedSeatItem(order.id, seatId, price));
+      dummyData.push(generateOrderedSeatItem(orderedSeatId++, order.id, seatId, price));
     }
 
     /* 2: Order half all seats */
@@ -86,7 +87,7 @@ module.exports = {
     for (const seatId of seatIds) {
       const seat = await Seat.findByPk(seatId);
       const price = schedule.prices.find((schedulePrice) => schedulePrice.seatClass === seat.seatClass).price;
-      dummyData.push(generateOrderedSeatItem(2, seatId, price));
+      dummyData.push(generateOrderedSeatItem(orderedSeatId++, 2, seatId, price));
     }
     
     /* 3: Order all first class seats */
@@ -123,7 +124,7 @@ module.exports = {
     for (const seatId of seatIds) {
       const seat = await Seat.findByPk(seatId);
       const price = schedule.prices.find((schedulePrice) => schedulePrice.seatClass === seat.seatClass).price;
-      dummyData.push(generateOrderedSeatItem(order.id, seatId, price));
+      dummyData.push(generateOrderedSeatItem(orderedSeatId++, order.id, seatId, price));
     }
 
     /* 4: Order all business class seats */
@@ -160,7 +161,7 @@ module.exports = {
     for (const seatId of seatIds) {
       const seat = await Seat.findByPk(seatId);
       const price = schedule.prices.find((schedulePrice) => schedulePrice.seatClass === seat.seatClass).price;
-      dummyData.push(generateOrderedSeatItem(order.id, seatId, price));
+      dummyData.push(generateOrderedSeatItem(orderedSeatId++, order.id, seatId, price));
     }
 
     /* 5: Order all economy class seats */
@@ -197,7 +198,7 @@ module.exports = {
     for (const seatId of seatIds) {
       const seat = await Seat.findByPk(seatId);
       const price = schedule.prices.find((schedulePrice) => schedulePrice.seatClass === seat.seatClass).price;
-      dummyData.push(generateOrderedSeatItem(order.id, seatId, price));
+      dummyData.push(generateOrderedSeatItem(orderedSeatId++, order.id, seatId, price));
     }
 
     /* 6: Order 80% of first class seats */
@@ -235,7 +236,7 @@ module.exports = {
     for (const seatId of seatIds) {
       const seat = await Seat.findByPk(seatId);
       const price = schedule.prices.find((schedulePrice) => schedulePrice.seatClass === seat.seatClass).price;
-      dummyData.push(generateOrderedSeatItem(order.id, seatId, price));
+      dummyData.push(generateOrderedSeatItem(orderedSeatId++, order.id, seatId, price));
     }
 
     /* 7: Order 80% of business class seats */
@@ -273,7 +274,7 @@ module.exports = {
     for (const seatId of seatIds) {
       const seat = await Seat.findByPk(seatId);
       const price = schedule.prices.find((schedulePrice) => schedulePrice.seatClass === seat.seatClass).price;
-      dummyData.push(generateOrderedSeatItem(order.id, seatId, price));
+      dummyData.push(generateOrderedSeatItem(orderedSeatId++, order.id, seatId, price));
     }
 
     /* 8: Order 80% of economy class seats */
@@ -311,7 +312,7 @@ module.exports = {
     for (const seatId of seatIds) {
       const seat = await Seat.findByPk(seatId);
       const price = schedule.prices.find((schedulePrice) => schedulePrice.seatClass === seat.seatClass).price;
-      dummyData.push(generateOrderedSeatItem(order.id, seatId, price));
+      dummyData.push(generateOrderedSeatItem(orderedSeatId++, order.id, seatId, price));
     }
 
     /* 9: Order 3 of economy class seats */
@@ -349,7 +350,7 @@ module.exports = {
     for (const seatId of seatIds) {
       const seat = await Seat.findByPk(seatId);
       const price = schedule.prices.find((schedulePrice) => schedulePrice.seatClass === seat.seatClass).price;
-      dummyData.push(generateOrderedSeatItem(order.id, seatId, price));
+      dummyData.push(generateOrderedSeatItem(orderedSeatId++, order.id, seatId, price));
     }
 
     /* 10: Order 3 of business class seats */
@@ -387,7 +388,7 @@ module.exports = {
     for (const seatId of seatIds) {
       const seat = await Seat.findByPk(seatId);
       const price = schedule.prices.find((schedulePrice) => schedulePrice.seatClass === seat.seatClass).price;
-      dummyData.push(generateOrderedSeatItem(order.id, seatId, price));
+      dummyData.push(generateOrderedSeatItem(orderedSeatId++, order.id, seatId, price));
     }
 
     await queryInterface.bulkInsert('OrderedSeats', dummyData);

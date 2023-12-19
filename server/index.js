@@ -27,8 +27,11 @@ cron.schedule('* * * * *', async () => {
   await remindUserBeforeOneHourOfDeparture();
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-});
+// Only start the server if this file is the main module
+if (!module.parent) {
+  app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`);
+  });
+}
 
 module.exports = app;

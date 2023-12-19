@@ -27,7 +27,7 @@ exports.getPassenger = async (req, res) => {
       attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
     });
     if (!foundPassenger)
-      return handleClientError(res, 400, 'Passenger Not Found');
+      return handleClientError(res, 404, 'Passenger Not Found');
 
     if (foundPassenger.userId != req.user.id)
       return handleClientError(res, 400, 'Not Authorized');
@@ -145,7 +145,7 @@ exports.updatePassenger = async (req, res) => {
       attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
     });
     if (!foundPassenger)
-      return handleClientError(res, 400, 'Passenger Not Found');
+      return handleClientError(res, 404, 'Passenger Not Found');
 
     if (foundPassenger.userId != req.user.id)
       return handleClientError(res, 400, 'Not Authorized');
@@ -192,7 +192,7 @@ exports.deletePassenger = async (req, res) => {
       attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
     });
     if (!foundPassenger)
-      return handleClientError(res, 400, 'Passenger Not Found');
+      return handleClientError(res, 404, 'Passenger Not Found');
 
     if (foundPassenger.userId != req.user.id)
       return handleClientError(res, 400, 'Not Authorized');

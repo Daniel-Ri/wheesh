@@ -23,11 +23,13 @@ module.exports = {
     });
 
     const dummyData = [];
+    let paymentId = 1;
     for (const order of orders) {
       const totalPrice = order.OrderedSeats.reduce((accumulator, orderedSeat) =>
         accumulator + orderedSeat.price, 0
       );
       dummyData.push({
+        id: paymentId++,
         orderId: order.id,
         amount: totalPrice,
         isPaid: true,

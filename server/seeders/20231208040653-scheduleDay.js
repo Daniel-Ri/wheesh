@@ -12,7 +12,9 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
+    let scheduleDayId = 1;
     const dummyData = require('../data/scheduleDay.json').map((item) => {
+      item.id = scheduleDayId++,
       item.createdAt = new Date();
       item.updatedAt = new Date();
 

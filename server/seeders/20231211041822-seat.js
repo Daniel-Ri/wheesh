@@ -23,12 +23,14 @@ module.exports = {
     const economySeatNumber = 18;
 
     const dummyData = [];
+    let seatId = 1;
     for (const carriage of carriages) {
       const carriageNumber = carriage.carriageNumber;
       if (carriageNumber === 1 || carriageNumber === 8) {
         for (let i = 1; i <= firstSeatNumber; i++) {
           for (const letter of firstSeatLetters) {
             const item = {
+              id: seatId++,
               carriageId: carriage.id,
               seatNumber: i + letter,
               seatClass: 'first',
@@ -41,6 +43,7 @@ module.exports = {
         for (let i = firstSeatNumber + 1; i <= firstSeatNumber + businessSeatNumber; i++) {
           for (const letter of businessSeatLetters) {
             const item = {
+              id: seatId++,
               carriageId: carriage.id,
               seatNumber: i + letter,
               seatClass: 'business',
@@ -55,6 +58,7 @@ module.exports = {
         for (let i = 1; i <= economySeatNumber; i++) {
           for (const letter of economySeatLetters) {
             const item = {
+              id: seatId++,
               carriageId: carriage.id,
               seatNumber: i + letter,
               seatClass: 'economy',

@@ -28,9 +28,11 @@ module.exports = {
     const firstPrice = 600000
 
     const dummyData = [];
+    let schedulePriceId = 1;
     for (const schedule of schedules) {
       for (const seatClass of ['economy', 'business', 'first']) {
         const item = {
+          id: schedulePriceId++,
           scheduleId: schedule.id,
           seatClass,
           price: 

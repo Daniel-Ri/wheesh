@@ -17,9 +17,11 @@ module.exports = {
 
     const trains = await Train.findAll();
     const dummyData = [];
+    let carriageId = 1;
     for (const train of trains) {
       for (let i = 1; i <= 8; i++) {
         const item = {
+          id: carriageId++,
           trainId: train.id,
           carriageNumber: i,
           createdAt: new Date(),

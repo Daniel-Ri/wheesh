@@ -17,6 +17,7 @@ module.exports = {
     const scheduleDays = await ScheduleDay.findAll();
 
     const dummyData = [];
+    let scheduleId = 1;
     for (let i = -2; i <= 7; i++) {
       const today = new Date();
       const tempDate = new Date(
@@ -35,6 +36,7 @@ module.exports = {
         );
 
         dummyData.push({
+          id: scheduleId++,
           trainId: j + 1,
           departureStationId: scheduleDays[j].departureStationId,
           arrivalStationId: scheduleDays[j].arrivalStationId,

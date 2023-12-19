@@ -12,32 +12,38 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
+   let bannerId = 1;
     return queryInterface.bulkInsert('Banners', [
       {
+        id: bannerId++,
         imageDesktop: 'public/Frame 1 - Desktop.png',
         imageMobile: 'public/Frame 1 - Mobile.png',
         createdAt: new Date(),
         updatedAt: new Date(),
       }, 
       {
+        id: bannerId++,
         imageDesktop: 'public/Frame 2 - Desktop.png',
         imageMobile: 'public/Frame 2 - Mobile.png',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
+        id: bannerId++,
         imageDesktop: 'public/Frame 3 - Desktop.png',
         imageMobile: 'public/Frame 3 - Mobile.png',
         createdAt: new Date(),
         updatedAt: new Date(),
       }, 
       {
+        id: bannerId++,
         imageDesktop: 'public/Frame 4 - Desktop.png',
         imageMobile: 'public/Frame 4 - Mobile.png',
         createdAt: new Date(),
         updatedAt: new Date(),
       }, 
       {
+        id: bannerId++,
         imageDesktop: 'public/Frame 5 - Desktop.png',
         imageMobile: 'public/Frame 5 - Mobile.png',
         createdAt: new Date(),
