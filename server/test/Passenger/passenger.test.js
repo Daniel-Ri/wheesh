@@ -1,6 +1,6 @@
 const request = require('supertest');
 const app = require('../../index');
-const { User, Passenger, sequelize } = require('../../models/index');
+const { Passenger, sequelize } = require('../../models/index');
 const { up: upUser, down: downUser } = require('../../seeders/20231205021723-user');
 const { up: upPassenger, down: downPassenger } = require('../../seeders/20231205023546-passenger');
 const { queryInterface } = sequelize;
