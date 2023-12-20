@@ -42,6 +42,8 @@ module.exports = {
           arrivalStationId: scheduleDays[j].arrivalStationId,
           departureTime,
           arrivalTime,
+          createdAt: new Date(),
+          updatedAt: new Date(),
         });
       }
     }

@@ -1,8 +1,12 @@
 const request = require('supertest');
+const Redis = require("ioredis-mock");
 const app = require('../../index');
 const { Station, sequelize } = require('../../models/index');
 const { up: upStation, down: downStation } = require('../../seeders/20231208023152-station');
 const { queryInterface } = sequelize;
+
+const mockRedisClient = new Redis();
+jest.mock("ioredis", () => require("ioredis-mock"));
 
 beforeAll(async () => {
   await upStation(queryInterface, sequelize);

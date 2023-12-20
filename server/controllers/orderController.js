@@ -232,7 +232,7 @@ exports.getOrder = async (req, res) => {
 
     if (!foundOrder.Payment.isPaid || 
         foundOrder.Schedule.arrivalTime < new Date(new Date().getTime() - 6 * 60 * 60 * 1000)) {
-      console.log('Cannot get secret');
+
       const formattedOrder = foundOrder.toJSON();
       formattedOrder.OrderedSeats = formattedOrder.OrderedSeats.map((orderedSeat) => {
         const {secret, ...rest} = orderedSeat;
@@ -241,7 +241,6 @@ exports.getOrder = async (req, res) => {
       return res.status(200).json({ data: formattedOrder, status: 'Success' });
 
     } else {
-      console.log('Can get secret');
       return res.status(200).json({ data: foundOrder, status: 'Success' });
     }
 
