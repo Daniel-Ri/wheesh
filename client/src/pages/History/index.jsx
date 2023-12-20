@@ -53,7 +53,7 @@ const History = ({ order, locale, intl: { formatMessage } }) => {
   }, [order]);
 
   return (
-    <main className={classes.main}>
+    <main data-testid="History" className={classes.main}>
       <div className={classes.container}>
         <header>
           <BackBtn handleClickBack={() => navigate('/my-tickets')} />
@@ -87,7 +87,7 @@ const History = ({ order, locale, intl: { formatMessage } }) => {
               <div className={classes.train}>
                 <div className={classes.name}>{order?.Schedule.Train.name}</div>
                 <div className={classes.arrowImage}>
-                  <img src={arrowImage} alt="" />
+                  <img src="../../static/images/arrowTrain.png" alt="" />
                 </div>
               </div>
               <div className={classes.timeAndPlace}>

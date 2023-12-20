@@ -133,7 +133,7 @@ const Gate = ({ stations, validateResult, intl: { formatMessage } }) => {
   }, [isScan, scanResult]);
 
   return (
-    <main className={classes.main}>
+    <main data-testid="Gate" className={classes.main}>
       <div className={classes.container}>
         <header>
           <h1>Gate</h1>

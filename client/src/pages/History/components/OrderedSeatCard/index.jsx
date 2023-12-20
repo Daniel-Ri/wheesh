@@ -2,11 +2,12 @@ import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 
 import { censorIdCard, formatRupiah } from '@utils/handleValue';
+
 import classes from './style.module.scss';
 
 const OrderedSeatCard = ({ orderedSeat, addLine }) => (
   <>
-    <div className={classes.card}>
+    <div data-testid="OrderedSeatCard" className={classes.card}>
       <div className={classes.leftCard}>
         <div className={classes.name}>{orderedSeat.name}</div>
         <div className={classes.description}>

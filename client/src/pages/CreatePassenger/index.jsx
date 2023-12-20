@@ -95,7 +95,7 @@ const CreatePassenger = ({ intl: { formatMessage } }) => {
   };
 
   return (
-    <main className={classes.main}>
+    <main data-testid="CreatePassenger" className={classes.main}>
       <div className={classes.container}>
         <header>
           <BackBtn handleClickBack={() => navigate('/myPassengers')} />
