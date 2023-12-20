@@ -2,7 +2,7 @@ const request = require('supertest');
 const Redis = require("ioredis-mock");
 const { Op } = require("sequelize");
 const app = require('../../index');
-const { Schedule, User, Passenger, Order, Train, Carriage, Seat, Payment, sequelize } = require('../../models/index');
+const { Schedule, User, Passenger, Order, OrderedSeat, Train, Carriage, Seat, Payment, sequelize } = require('../../models/index');
 const { up: upUser, down: downUser } = require('../../seeders/20231205021723-user');
 const { up: upPassenger, down: downPassenger } = require('../../seeders/20231205023546-passenger');
 const { up: upStation, down: downStation } = require('../../seeders/20231208023152-station');
@@ -411,3 +411,146 @@ describe('Get Order', () => {
   });
 });
 
+describe('Pay Order', () => {
+  test('Success pay order with status 200', async () => {
+    let response;
+    let order;
+    const userId = 2;
+    const dummyUser = {
+      usernameOrEmail: 'johndoe',
+      password: '123456',
+    };
+
+    try {
+      const orderToBePaid = await Order.findOne({ 
+        where: { userId },
+        include: [
+          {
+            model: Payment,
+            where: {
+              isPaid: false,
+            }
+          }
+        ],
+        order: [
+          ['id', 'ASC']
+        ],
+      });
+
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+
+      response =
+        await request(app)
+          .put(`/api/order/${orderToBePaid.id}`)
+          .set('authorization', `Bearer ${loginResponse.body.token}`);
+
+      order = await Order.findByPk(orderToBePaid.id, {
+        include: [
+          {
+            model: Payment,
+          }
+        ],
+      })
+
+    } catch (err) {
+      console.error(err);
+    }
+
+    expect(response.status).toBe(200);
+    expect(order.Payment.isPaid).toBe(true);
+  });
+});
+
+describe('Cancel Order', () => {
+  test('Success cancel order with status 200', async () => {
+    // Cancel second created order
+    let response;
+    let order;
+    const userId = 2;
+    const dummyUser = {
+      usernameOrEmail: 'johndoe',
+      password: '123456',
+    };
+
+    try {
+      const orderToBePaid = await Order.findOne({ 
+        where: { userId },
+        include: [
+          {
+            model: Payment,
+            where: {
+              isPaid: false,
+            }
+          }
+        ],
+        order: [
+          ['id', 'ASC']
+        ],
+      });
+
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+
+      response =
+        await request(app)
+          .delete(`/api/order/${orderToBePaid.id}`)
+          .set('authorization', `Bearer ${loginResponse.body.token}`);
+
+      order = await Order.findByPk(orderToBePaid.id);
+
+    } catch (err) {
+      console.error(err);
+    }
+
+    expect(response.status).toBe(200);
+    expect(order).toBeNull();
+  });
+});
+
+describe('Validate Ticket On Departure', () => {
+  test('Failed validate ticket: Depart wrong station with status 400', async () => {
+    let response;
+    const userId = 2;
+    const dummyUser = {
+      usernameOrEmail: 'johndoe',
+      password: '123456',
+    };
+    const departureStationId = 1; // Halim
+
+    try {
+      const paidOrder = await Order.findOne({ 
+        where: { userId },
+        include: [
+          {
+            model: Payment,
+            where: {
+              isPaid: true,
+            }
+          }
+        ]
+      });
+
+      const orderedSeat = await OrderedSeat.findOne({
+        where: {
+          orderId: paidOrder.id
+        }
+      });
+
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+
+      response = 
+        await request(app)
+          .post('/api/order/validateDepart')
+          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .send({
+            departureStationId,
+            orderedSeatId: orderedSeat.id,
+            secret: orderedSeat.secret
+          })
+
+    } catch (err) {
+      console.error(err);
+    }
+
+    expect(response.status).toBe(400);
+  });
+})

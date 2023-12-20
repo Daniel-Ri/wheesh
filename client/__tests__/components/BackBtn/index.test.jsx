@@ -1,4 +1,4 @@
-import { render } from '@utils/testHelper';
+import { render, fireEvent } from '@utils/testHelper';
 import BackBtn from '@components/BackBtn';
 
 const mockHandleClickBack = jest.fn();
@@ -9,8 +9,21 @@ beforeEach(() => {
 });
 
 describe('Component BackBtn', () => {
-  test('renders BackBtn component', () => {
+  test('Renders BackBtn component', () => {
     const { getByTestId } = wrapper;
     expect(getByTestId('BackBtn')).toBeInTheDocument();
+  });
+
+  test('Calls handleClickBack when button is clicked', () => {
+    const { getByTestId } = wrapper;
+
+    const backBtn = getByTestId('BackBtn');
+    fireEvent.click(backBtn);
+
+    expect(mockHandleClickBack).toHaveBeenCalledTimes(1);
+  });
+
+  test('Should match snapshot', () => {
+    expect(wrapper).toMatchSnapshot();
   });
 });

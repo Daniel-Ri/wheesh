@@ -40,7 +40,7 @@ const BannerRow = ({ banner, intl: { formatMessage } }) => {
   return (
     <>
       {!isMobile ? (
-        <tr>
+        <tr data-testid="BannerRowDesktop">
           <td>
             <div className={classes.image}>
               <img src={`${config.api.host}${banner.imageDesktop}`} alt="" />
@@ -62,7 +62,7 @@ const BannerRow = ({ banner, intl: { formatMessage } }) => {
         </tr>
       ) : (
         <>
-          <tr>
+          <tr data-testid="BannerRowMobile">
             <th>Desktop</th>
             <td>
               <div className={classes.image}>
@@ -94,7 +94,7 @@ const BannerRow = ({ banner, intl: { formatMessage } }) => {
           </tr>
         </>
       )}
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog data-testid="Dialog" open={open} onClose={handleClose}>
         <div className={classes.dialog}>
           <div className={classes.content}>
             <h2>
