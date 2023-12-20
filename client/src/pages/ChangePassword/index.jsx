@@ -123,7 +123,7 @@ const ChangePassword = ({ intl: { formatMessage } }) => {
   };
 
   return (
-    <main className={classes.main}>
+    <main data-testid="ChangePassword" className={classes.main}>
       <div className={classes.container}>
         <header>
           <BackBtn handleClickBack={() => navigate('/me')} />

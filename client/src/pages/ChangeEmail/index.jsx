@@ -73,7 +73,7 @@ const ChangeEmail = ({ intl: { formatMessage } }) => {
   };
 
   return (
-    <main className={classes.main}>
+    <main data-testid="ChangeEmail" className={classes.main}>
       <div className={classes.container}>
         <header>
           <BackBtn handleClickBack={() => navigate('/me')} />

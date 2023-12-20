@@ -8,7 +8,11 @@ const RowPassenger = ({ passenger, chosenSeat, isActive, onClick }) => {
     : '';
 
   return (
-    <tr className={`${classes.rowPassenger} ${isActive ? classes.activeRow : ''}`} onClick={onClick}>
+    <tr
+      data-testid="RowPassenger"
+      className={`${classes.rowPassenger} ${isActive ? classes.activeRow : ''}`}
+      onClick={onClick}
+    >
       <td className={classes.passenger}>
         <input type="radio" onChange={() => {}} checked={isActive} />
         <div className={classes.name}>{passenger.name}</div>
