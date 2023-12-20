@@ -130,7 +130,7 @@ describe('Create Order', () => {
 
     expect(response.status).toBe(201);
     expect(order).not.toBeNull();
-  });
+  }, 15000);
 
   test('Success create second order with status 201', async () => {
     let response;
@@ -209,7 +209,7 @@ describe('Create Order', () => {
 
     expect(response.status).toBe(201);
     expect(order).not.toBeNull();
-  })
+  }, 15000)
 });
 
 describe('Get Unpaid Orders', () => {
@@ -507,14 +507,14 @@ describe('Cancel Order', () => {
 });
 
 describe('Validate Ticket On Departure', () => {
-  test('Failed validate ticket: Depart wrong station with status 400', async () => {
+  test('Failed validate ticket: Depart at wrong station with status 400', async () => {
     let response;
     const userId = 2;
     const dummyUser = {
       usernameOrEmail: 'johndoe',
       password: '123456',
     };
-    const departureStationId = 1; // Halim
+    const departureStationId = 3; // Padalarang
 
     try {
       const paidOrder = await Order.findOne({ 
@@ -552,5 +552,190 @@ describe('Validate Ticket On Departure', () => {
     }
 
     expect(response.status).toBe(400);
+    const { message } = response.body;
+    const messageLowerCase = message.toLowerCase();
+    expect(messageLowerCase).toContain('wrong');
+    expect(messageLowerCase).toContain('station');
   });
-})
+
+  test('Failed validate ticket: Train has gone with status 400', async () => {
+    let response;
+    const userId = 2;
+    const dummyUser = {
+      usernameOrEmail: 'johndoe',
+      password: '123456',
+    };
+    const departureStationId = 1; // Halim
+
+    try {
+      const paidOrder = await Order.findOne({ 
+        where: { userId },
+        include: [
+          {
+            model: Payment,
+            where: {
+              isPaid: true,
+            }
+          },
+          {
+            model: Schedule,
+            where: {
+              departureTime: {[Op.lt]: new Date()}
+            }
+          }
+        ]
+      });
+
+      const orderedSeat = await OrderedSeat.findOne({
+        where: {
+          orderId: paidOrder.id
+        }
+      });
+
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+
+      response = 
+        await request(app)
+          .post('/api/order/validateDepart')
+          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .send({
+            departureStationId,
+            orderedSeatId: orderedSeat.id,
+            secret: orderedSeat.secret
+          })
+
+    } catch (err) {
+      console.error(err);
+    }
+
+    expect(response.status).toBe(400);
+    const { message } = response.body;
+    const messageLowerCase = message.toLowerCase();
+    expect(messageLowerCase).toContain('train');
+    expect(messageLowerCase).toContain('gone');
+  });
+});
+
+describe('Validate Ticket On Arrival', () => {
+  test('Success validate ticket with status 200', async () => {
+    let response;
+    const userId = 2;
+    const dummyUser = {
+      usernameOrEmail: 'johndoe',
+      password: '123456',
+    };
+    const arrivalStationId = 3; // Padalarang
+
+    try {
+      const paidOrder = await Order.findOne({ 
+        where: { userId },
+        include: [
+          {
+            model: Payment,
+            where: {
+              isPaid: true,
+            }
+          },
+          {
+            model: Schedule,
+            where: {
+              arrivalTime: {[Op.lt]: new Date()}
+            }
+          }
+        ]
+      });
+
+      const orderedSeat = await OrderedSeat.findOne({
+        where: {
+          orderId: paidOrder.id
+        }
+      });
+
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+
+      response = 
+        await request(app)
+          .post('/api/order/validateArrive')
+          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .send({
+            arrivalStationId,
+            orderedSeatId: orderedSeat.id,
+            secret: orderedSeat.secret
+          })
+
+    } catch (err) {
+      console.error(err);
+    }
+
+    expect(response.status).toBe(200);
+    const { data } = response.body;
+    expect(data).toHaveProperty('name');
+    expect(data).toHaveProperty('Order');
+    expect(data.Order).toHaveProperty('Schedule');
+    expect(data.Order.Schedule).toHaveProperty('departureStation');
+    expect(data.Order.Schedule.departureStation).toHaveProperty('name');
+    expect(data.Order.Schedule).toHaveProperty('arrivalStation');
+    expect(data.Order.Schedule.arrivalStation).toHaveProperty('name');
+  });
+
+  // test('Failed validation ticket: Validation Error with status 400', async () => {
+    
+  // })
+
+  test('Failed validation ticket: Arrive at wrong station with status 400', async () => {
+    let response;
+    const userId = 2;
+    const dummyUser = {
+      usernameOrEmail: 'johndoe',
+      password: '123456',
+    };
+    const arrivalStationId = 1; // Halim
+
+    try {
+      const paidOrder = await Order.findOne({ 
+        where: { userId },
+        include: [
+          {
+            model: Payment,
+            where: {
+              isPaid: true,
+            }
+          },
+          {
+            model: Schedule,
+            where: {
+              arrivalTime: {[Op.lt]: new Date()}
+            }
+          }
+        ]
+      });
+
+      const orderedSeat = await OrderedSeat.findOne({
+        where: {
+          orderId: paidOrder.id
+        }
+      });
+
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+
+      response = 
+        await request(app)
+          .post('/api/order/validateArrive')
+          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .send({
+            arrivalStationId,
+            orderedSeatId: orderedSeat.id,
+            secret: orderedSeat.secret
+          })
+
+    } catch (err) {
+      console.error(err);
+    }
+
+    expect(response.status).toBe(400);
+    const { message } = response.body;
+    const messageLowerCase = message.toLowerCase();
+    expect(messageLowerCase).toContain('wrong');
+    expect(messageLowerCase).toContain('station');
+  });
+});

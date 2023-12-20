@@ -1,13 +1,10 @@
-import { render } from '@utils/testHelper';
+import { render, fireEvent } from '@utils/testHelper';
 import Banner from '@pages/Banner';
 
-jest.mock('react-redux', () => ({
-  useDispatch: jest.fn(),
-  connect: jest.fn((mapStateToProps) => (Component) => (props) => <Component {...props} {...mapStateToProps} />),
-}));
+const mockNavigate = jest.fn();
 
 jest.mock('react-router-dom', () => ({
-  useNavigate: jest.fn(),
+  useNavigate: () => mockNavigate,
 }));
 
 let wrapper;
@@ -47,71 +44,30 @@ const mockProps = {
 };
 
 beforeEach(() => {
-  wrapper = render(<Banner user={mockProps.user} banners={mockProps.banners} />);
+  wrapper = render(<Banner {...mockProps} />);
 });
 
-describe('Pages Banner', () => {
+describe('Page Banner', () => {
   test('Renders Banner page', () => {
     const { getByTestId } = wrapper;
     expect(getByTestId('Banner')).toBeInTheDocument();
   });
+
+  test('Should call navigate when BackBtn clicked', () => {
+    const { getByTestId } = wrapper;
+    const backButton = getByTestId('BackBtn');
+    fireEvent.click(backButton);
+    expect(mockNavigate).toHaveBeenCalledWith('/me');
+  });
+
+  test('Should call navigate when AddBannerButton clicked', () => {
+    const { getByTestId } = wrapper;
+    const backButton = getByTestId('AddBannerButton');
+    fireEvent.click(backButton);
+    expect(mockNavigate).toHaveBeenCalledWith('/addBanner');
+  });
+
+  test('Should match snapshot', () => {
+    expect(wrapper).toMatchSnapshot();
+  });
 });
-
-// // pages/Banner/index.test.jsx
-// import { Provider } from 'react-redux';
-// import { IntlProvider } from 'react-intl';
-// import { render, screen, fireEvent } from '@utils/testHelper'; // Assuming your test helper is in the specified location
-// import Banner from '@pages/Banner';
-// import store from '../../../src/configureStore'; // Provide the correct path to your configureStore
-
-// // Mock the react-redux module
-// jest.mock('react-redux', () => ({
-//   ...jest.requireActual('react-redux'), // Use the actual implementation for most functions
-//   connect: jest.fn(() => (Component) => Component),
-// }));
-
-// // Mock the react-router-dom module
-// const mockNavigate = jest.fn();
-// jest.mock('react-router-dom', () => ({
-//   ...jest.requireActual('react-router-dom'),
-//   useNavigate: () => mockNavigate,
-// }));
-
-// const mockBanners = [
-//   // Provide mock data for your banners
-// ];
-
-// describe('Banner Page', () => {
-//   test('Renders Banner page', () => {
-//     render(
-//       <Provider store={store}>
-//         <IntlProvider locale="en" messages={{}}>
-//           <Banner user={{ role: 'admin' }} banners={mockBanners} intl={{ formatMessage: jest.fn() }} />
-//         </IntlProvider>
-//       </Provider>
-//     );
-
-//     // Check if the component renders without errors
-//     expect(screen.getByTestId('Banner')).toBeInTheDocument();
-
-//     // Add more assertions based on your component's structure and behavior
-//   });
-
-//   test('handles button click and navigates to /addBanner', () => {
-//     render(
-//       <Provider store={store}>
-//         <IntlProvider locale="en" messages={{}}>
-//           <Banner user={{ role: 'admin' }} banners={mockBanners} intl={{ formatMessage: jest.fn() }} />
-//         </IntlProvider>
-//       </Provider>
-//     );
-
-//     // Find the button and simulate a click event
-//     fireEvent.click(screen.getByText('app_add'));
-
-//     // Check if the navigate function is called with the correct argument
-//     expect(mockNavigate).toHaveBeenCalledWith('/addBanner');
-//   });
-
-//   // Add more tests as needed for different scenarios and edge cases
-// });

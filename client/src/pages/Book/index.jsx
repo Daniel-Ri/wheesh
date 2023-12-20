@@ -22,7 +22,7 @@ const Book = ({ step }) => {
   }, []);
 
   return (
-    <main className={classes.main}>
+    <main data-testid="Book" className={classes.main}>
       <div className={classes.container}>
         {(() => {
           switch (step) {

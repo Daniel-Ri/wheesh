@@ -49,7 +49,12 @@ const Banner = ({ user, banners, intl: { formatMessage } }) => {
         </header>
 
         <div className={classes.button}>
-          <Button variant="contained" className={classes.btn} onClick={() => navigate('/addBanner')}>
+          <Button
+            data-testid="AddBannerButton"
+            variant="contained"
+            className={classes.btn}
+            onClick={() => navigate('/addBanner')}
+          >
             <AddOutlinedIcon className={classes.icon} />
             <div className={classes.message}>
               <FormattedMessage id="app_add" />

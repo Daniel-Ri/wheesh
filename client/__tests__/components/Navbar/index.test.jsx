@@ -1,23 +1,46 @@
-import { render } from '@testing-library/react';
-
+import { render, fireEvent } from '@utils/testHelper';
 import Navbar from '@components/Navbar';
 
-jest.mock('react-redux', () => ({
-  useDispatch: jest.fn(),
-}));
+const mockNavigate = jest.fn();
 
 jest.mock('react-router-dom', () => ({
-  useNavigate: jest.fn(),
+  useNavigate: () => mockNavigate,
+  useLocation: () => '/',
 }));
 
-describe('Navbar Component', () => {
+let wrapper;
+beforeEach(() => {
+  wrapper = render(<Navbar title="Title" locale="id" theme="light" />);
+});
+
+describe('Component Navbar', () => {
   test('Correct render', () => {
-    const navbar = render(<Navbar title="Title" locale="en" theme="light" />);
-    expect(navbar.getByTestId('navbar')).toBeInTheDocument();
+    const { getByTestId } = wrapper;
+    expect(getByTestId('navbar')).toBeInTheDocument();
+  });
+
+  test('Should call navigate when HomeLink clicked', () => {
+    const { getByTestId } = wrapper;
+    const homeNav = getByTestId('HomeLink');
+    fireEvent.click(homeNav);
+    expect(mockNavigate).toHaveBeenCalledWith('/');
+  });
+
+  test('Should call navigate when MyTicketsLink clicked', () => {
+    const { getByTestId } = wrapper;
+    const myTicketsNav = getByTestId('MyTicketsLink');
+    fireEvent.click(myTicketsNav);
+    expect(mockNavigate).toHaveBeenCalledWith('/my-tickets');
+  });
+
+  test('Should call navigate when MeLink clicked', () => {
+    const { getByTestId } = wrapper;
+    const meNav = getByTestId('MeLink');
+    fireEvent.click(meNav);
+    expect(mockNavigate).toHaveBeenCalledWith('/me');
   });
 
   test('Should match with snapshot', () => {
-    const navbar = render(<Navbar title="Title" locale="en" theme="light" />);
-    expect(navbar).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

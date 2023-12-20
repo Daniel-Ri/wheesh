@@ -4,11 +4,12 @@ import { FormattedMessage } from 'react-intl';
 import { censorIdCard } from '@utils/handleValue';
 import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+
 import classes from './style.module.scss';
 
 const PassengerCard = ({ passenger, onClick }) => (
   <>
-    <div className={classes.card}>
+    <div data-testid="PassengerCard" className={classes.card}>
       <div className={classes.leftCard}>
         <div className={classes.name}>{passenger.name}</div>
         <div className={classes.description}>
@@ -18,7 +19,7 @@ const PassengerCard = ({ passenger, onClick }) => (
           <div>{censorIdCard(passenger.idCard)}</div>
         </div>
       </div>
-      <IconButton className={classes.iconButton} onClick={onClick}>
+      <IconButton data-testid="DeleteIconButton" className={classes.iconButton} onClick={onClick}>
         <DeleteIcon />
       </IconButton>
     </div>

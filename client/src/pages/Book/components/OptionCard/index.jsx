@@ -5,6 +5,7 @@ import classes from './style.module.scss';
 
 const OptionCard = ({ seatClass, price, available, isSelected, onClick }) => (
   <div
+    data-testid="OptionCard"
     className={`${classes.optionCard}  ${isSelected ? classes.selected : ''} ${
       available === 'None' ? classes.disabled : ''
     }`}

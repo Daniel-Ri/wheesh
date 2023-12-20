@@ -1,12 +1,10 @@
 import { render } from '@utils/testHelper';
 import BannerRow from '@pages/Banner/components/BannerRow';
 
-jest.mock('react-redux', () => ({
-  useDispatch: jest.fn(),
-}));
+const mockNavigate = jest.fn();
 
 jest.mock('react-router-dom', () => ({
-  useNavigate: jest.fn(),
+  useNavigate: () => mockNavigate,
 }));
 
 let wrapper;
@@ -20,12 +18,16 @@ const mockProps = {
 };
 
 beforeEach(() => {
-  wrapper = render(<BannerRow banner={mockProps.banner} />);
+  wrapper = render(<BannerRow {...mockProps} />);
 });
 
-describe('Component BannerRow of Banner component', () => {
+describe('Component BannerRow of Banner page', () => {
   test('Renders BannerRow component', () => {
     const { getByTestId } = wrapper;
     expect(getByTestId('BannerRowDesktop')).toBeInTheDocument();
+  });
+
+  test('Should match snapshot', () => {
+    expect(wrapper).toMatchSnapshot();
   });
 });

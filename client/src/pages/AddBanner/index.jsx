@@ -63,7 +63,7 @@ const AddBanner = ({ user, intl: { formatMessage } }) => {
   }, [user]);
 
   return (
-    <main className={classes.main}>
+    <main data-testid="AddBanner" className={classes.main}>
       <div className={classes.container}>
         <header>
           <BackBtn handleClickBack={() => navigate('/banner')} />

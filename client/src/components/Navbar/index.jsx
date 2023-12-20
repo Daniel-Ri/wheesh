@@ -59,13 +59,18 @@ const Navbar = ({ title, locale, theme }) => {
           <img src="/wheesh.png" alt="title" className={classes.title} />
         </div>
         <div className={classes.toolbar}>
-          <div className={`${classes.link} ${pathname === '/' && classes.linkSelected}`} onClick={goHome}>
+          <div
+            data-testid="HomeLink"
+            className={`${classes.link} ${pathname === '/' && classes.linkSelected}`}
+            onClick={goHome}
+          >
             <HomeIcon className={classes.icon} />
             <div className={classes.namePage}>
               <FormattedMessage id="app_home" />
             </div>
           </div>
           <div
+            data-testid="MyTicketsLink"
             className={`${classes.link} ${pathname === '/my-tickets' && classes.linkSelected}`}
             onClick={goMyTicketsPage}
           >
@@ -74,7 +79,11 @@ const Navbar = ({ title, locale, theme }) => {
               <FormattedMessage id="app_my_tickets" />
             </div>
           </div>
-          <div className={`${classes.link} ${pathname === '/me' && classes.linkSelected}`} onClick={goMePage}>
+          <div
+            data-testid="MeLink"
+            className={`${classes.link} ${pathname === '/me' && classes.linkSelected}`}
+            onClick={goMePage}
+          >
             <SentimentSatisfiedAltIcon className={classes.icon} />
             <div className={classes.namePage}>
               <FormattedMessage id="app_me" />
