@@ -1,13 +1,16 @@
 const request = require('supertest');
-const Redis = require("ioredis-mock");
 const app = require('../../index');
 const { Passenger, sequelize } = require('../../models/index');
 const { up: upUser, down: downUser } = require('../../seeders/20231205021723-user');
 const { up: upPassenger, down: downPassenger } = require('../../seeders/20231205023546-passenger');
 const { queryInterface } = sequelize;
 
-const mockRedisClient = new Redis();
 jest.mock("ioredis", () => require("ioredis-mock"));
+
+// Mock node-cron
+jest.mock('node-cron', () => ({
+  schedule: jest.fn(),
+}));
 
 beforeAll(async () => {
   await upUser(queryInterface, sequelize);

@@ -20,6 +20,11 @@ const { queryInterface } = sequelize;
 const mockRedisClient = new Redis();
 jest.mock("ioredis", () => require("ioredis-mock"));
 
+// Mock node-cron
+jest.mock('node-cron', () => ({
+  schedule: jest.fn(),
+}));
+
 beforeAll(async () => {
   await upUser(queryInterface, sequelize);
   await upPassenger(queryInterface, sequelize);
@@ -50,6 +55,51 @@ afterAll(async () => {
   await downPayment(queryInterface, sequelize);
 });
 
+const getTomorrowSchedules = async () => {
+  const tomorrow = new Date(new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000);
+  const tomorrowSchedules = await Schedule.findAll({
+    where: {
+      departureTime: {[Op.gte]: tomorrow},
+    },
+    order: [
+      ['departureTime', 'ASC']
+    ],
+    include: [
+      {
+        model: Train,
+        attributes: { exclude: [ 'createdAt', 'updatedAt' ] },
+        include: [
+          {
+            model: Carriage,
+            attributes: { exclude: [ 'createdAt', 'updatedAt' ] },
+            include: [
+              {
+                model: Seat,
+                attributes: { exclude: [ 'createdAt', 'updatedAt' ] },
+              }
+            ]
+          }
+        ]
+      },
+    ],
+  });
+
+  return tomorrowSchedules;
+};
+
+const getTwoBusinessSeats = (schedule) => {
+  const businessSeatIdsOfFirstCarriage = 
+    schedule
+      .Train
+      .Carriages[0]
+      .Seats.filter((seat) => seat.seatClass === 'business').map((seat) => seat.id);
+  const choosenSeats = [];
+  choosenSeats.push(businessSeatIdsOfFirstCarriage[0]);
+  choosenSeats.push(businessSeatIdsOfFirstCarriage[1]);
+
+  return choosenSeats;
+}
+
 describe('Create Order', () => {
   beforeEach(() => {
     mockRedisClient.flushall();
@@ -66,44 +116,11 @@ describe('Create Order', () => {
     const passengerIds = [2, 3] // passenger ids of this user
 
     try {
-      const tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
-      const tomorrowSchedules = await Schedule.findAll({
-        where: {
-          departureTime: {[Op.gte]: tomorrow},
-        },
-        order: [
-          ['departureTime', 'ASC']
-        ],
-        include: [
-          {
-            model: Train,
-            attributes: { exclude: [ 'createdAt', 'updatedAt' ] },
-            include: [
-              {
-                model: Carriage,
-                attributes: { exclude: [ 'createdAt', 'updatedAt' ] },
-                include: [
-                  {
-                    model: Seat,
-                    attributes: { exclude: [ 'createdAt', 'updatedAt' ] },
-                  }
-                ]
-              }
-            ]
-          },
-        ],
-      });
+      const tomorrowSchedules = await getTomorrowSchedules();
       const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
       
       const schedule = tomorrowSchedules[whichOrderTomorrow - 1];
-      const businessSeatIdsOfFirstCarriage = 
-        schedule
-          .Train
-          .Carriages[0]
-          .Seats.filter((seat) => seat.seatClass === 'business').map((seat) => seat.id);
-      const choosenSeats = [];
-      choosenSeats.push(businessSeatIdsOfFirstCarriage[0]);
-      choosenSeats.push(businessSeatIdsOfFirstCarriage[1]);
+      const choosenSeats = getTwoBusinessSeats(schedule);
 
       const inputs = {
         scheduleId: schedule.id,
@@ -175,14 +192,7 @@ describe('Create Order', () => {
       const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
       
       const schedule = tomorrowSchedules[whichOrderTomorrowGoBack - 1];
-      const businessSeatIdsOfFirstCarriage = 
-        schedule
-          .Train
-          .Carriages[0]
-          .Seats.filter((seat) => seat.seatClass === 'business').map((seat) => seat.id);
-      const choosenSeats = [];
-      choosenSeats.push(businessSeatIdsOfFirstCarriage[0]);
-      choosenSeats.push(businessSeatIdsOfFirstCarriage[1]);
+      const choosenSeats = getTwoBusinessSeats(schedule);
 
       const inputs = {
         scheduleId: schedule.id,
@@ -209,7 +219,95 @@ describe('Create Order', () => {
 
     expect(response.status).toBe(201);
     expect(order).not.toBeNull();
-  }, 15000)
+  }, 15000);
+
+  test('Success create third order by other user with status 201', async () => {
+    let response;
+    let order;
+    const whichOrderTomorrow = 3; // third order
+    const dummyUser = {
+      usernameOrEmail: 'agus',
+      password: '123456',
+    };
+    const passengerIds = [5, 6] // passenger ids of this user
+
+    try {
+      const tomorrowSchedules = await getTomorrowSchedules();
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+      
+      const schedule = tomorrowSchedules[whichOrderTomorrow - 1];
+      const choosenSeats = getTwoBusinessSeats(schedule);
+
+      const inputs = {
+        scheduleId: schedule.id,
+        orderedSeats: 
+          passengerIds.map((passengerId, idx) => ({seatId: choosenSeats[idx], passengerId})),
+      };
+
+      response =
+        await request(app)
+          .post('/api/order')
+          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .send(inputs);
+
+      order = await Order.findOne({
+        where: {
+          userId: loginResponse.body.user.id,
+          scheduleId: schedule.id,
+        },
+      });
+
+    } catch (err) {
+      console.error(err);
+    }
+
+    expect(response.status).toBe(201);
+    expect(order).not.toBeNull();
+  }, 15000);
+
+  test('Failed create order: cannot book booked seat with status 409', async () => {
+    let response;
+    let order;
+    const whichOrderTomorrow = 2; // second order
+    const dummyUser = {
+      usernameOrEmail: 'agus',
+      password: '123456',
+    };
+    const passengerIds = [5, 6] // passenger ids of this user
+
+    try {
+      const tomorrowSchedules = await getTomorrowSchedules();
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+      
+      const schedule = tomorrowSchedules[whichOrderTomorrow - 1];
+      const choosenSeats = getTwoBusinessSeats(schedule);
+
+      const inputs = {
+        scheduleId: schedule.id,
+        orderedSeats: 
+          passengerIds.map((passengerId, idx) => ({seatId: choosenSeats[idx], passengerId})),
+      };
+
+      response =
+        await request(app)
+          .post('/api/order')
+          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .send(inputs);
+
+      order = await Order.findOne({
+        where: {
+          userId: loginResponse.body.user.id,
+          scheduleId: schedule.id,
+        },
+      });
+
+    } catch (err) {
+      console.error(err);
+    }
+
+    expect(response.status).toBe(409);
+    expect(order).toBeNull();
+  }, 10000);
 });
 
 describe('Get Unpaid Orders', () => {
@@ -409,6 +507,29 @@ describe('Get Order', () => {
       expect(obj).not.toHaveProperty("secret");
     })
   });
+
+  test('Failed get order: Order not found with status 404', async () => {
+    let response;
+    const orderId = 1000;
+    const dummyUser = {
+      usernameOrEmail: 'johndoe',
+      password: '123456',
+    };
+
+    try {
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+
+      response =
+        await request(app)
+          .get(`/api/order/${orderId}`)
+          .set('authorization', `Bearer ${loginResponse.body.token}`);
+
+    } catch (err) {
+      console.error(err);
+    }
+
+    expect(response.status).toBe(404);
+  })
 });
 
 describe('Pay Order', () => {
@@ -504,9 +625,175 @@ describe('Cancel Order', () => {
     expect(response.status).toBe(200);
     expect(order).toBeNull();
   });
+
+  test('Failed cancel order: Order not found with status 404', async () => {
+    let response;
+    const orderId = 1000;
+    const dummyUser = {
+      usernameOrEmail: 'johndoe',
+      password: '123456',
+    };
+
+    try {
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+
+      response =
+        await request(app)
+          .delete(`/api/order/${orderId}`)
+          .set('authorization', `Bearer ${loginResponse.body.token}`);
+
+    } catch (err) {
+      console.error(err);
+    }
+
+    expect(response.status).toBe(404);
+  });
+
+  test('Failed cancel order: Not authorized with status 400', async () => {
+    let response;
+    let order;
+    const otherUserId = 4;
+    const dummyUser = {
+      usernameOrEmail: 'johndoe',
+      password: '123456',
+    };
+
+    try {
+      const orderToBePaid = await Order.findOne({ 
+        where: { userId: otherUserId },
+        include: [
+          {
+            model: Payment,
+            where: {
+              isPaid: false,
+            }
+          }
+        ],
+        order: [
+          ['id', 'ASC']
+        ],
+      });
+
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+
+      response =
+        await request(app)
+          .delete(`/api/order/${orderToBePaid.id}`)
+          .set('authorization', `Bearer ${loginResponse.body.token}`);
+
+      order = await Order.findByPk(orderToBePaid.id);
+
+    } catch (err) {
+      console.error(err);
+    }
+
+    expect(response.status).toBe(400);
+    const { message } = response.body;
+    const messageLowerCase = message.toLowerCase();
+    expect(messageLowerCase).toContain('not');
+    expect(messageLowerCase).toContain('authorized');
+
+    expect(order).not.toBeNull();
+  });
+
+  test('Failed cancel order: Cannot cancel paid order with status 400', async () => {
+    let response;
+    let order;
+    const userId = 2;
+    const dummyUser = {
+      usernameOrEmail: 'johndoe',
+      password: '123456',
+    };
+
+    try {
+      const orderToBePaid = await Order.findOne({ 
+        where: { userId },
+        include: [
+          {
+            model: Payment,
+            where: {
+              isPaid: true,
+            }
+          }
+        ],
+        order: [
+          ['id', 'ASC']
+        ],
+      });
+
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+
+      response =
+        await request(app)
+          .delete(`/api/order/${orderToBePaid.id}`)
+          .set('authorization', `Bearer ${loginResponse.body.token}`);
+
+      order = await Order.findByPk(orderToBePaid.id);
+
+    } catch (err) {
+      console.error(err);
+    }
+
+    expect(response.status).toBe(400);
+    const { message } = response.body;
+    const messageLowerCase = message.toLowerCase();
+    expect(messageLowerCase).toContain('cannot');
+    expect(messageLowerCase).toContain('cancel');
+
+    expect(order).not.toBeNull();
+  });
 });
 
 describe('Validate Ticket On Departure', () => {
+  test('Failed validate ticket: Validation error with status 400', async () => {
+    let response;
+    const userId = 2;
+    const dummyUser = {
+      usernameOrEmail: 'johndoe',
+      password: '123456',
+    };
+    const departureStationId = 1; // Halim
+
+    try {
+      const paidOrder = await Order.findOne({ 
+        where: { userId },
+        include: [
+          {
+            model: Payment,
+            where: {
+              isPaid: true,
+            }
+          }
+        ]
+      });
+
+      const orderedSeat = await OrderedSeat.findOne({
+        where: {
+          orderId: paidOrder.id
+        }
+      });
+
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+
+      response = 
+        await request(app)
+          .post('/api/order/validateDepart')
+          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .send({
+            departureStationId,
+            orderedSeatId: orderedSeat.id,
+          })
+
+    } catch (err) {
+      console.error(err);
+    }
+
+    expect(response.status).toBe(400);
+    const { status } = response.body;
+    const statusLowerCase = status.toLowerCase();
+    expect(statusLowerCase).toContain('validation');
+  })
+
   test('Failed validate ticket: Depart at wrong station with status 400', async () => {
     let response;
     const userId = 2;
@@ -557,6 +844,63 @@ describe('Validate Ticket On Departure', () => {
     expect(messageLowerCase).toContain('wrong');
     expect(messageLowerCase).toContain('station');
   });
+
+  test('Failed validate ticket: Need to wait one hour before departure with status 400', async () => {
+    let response;
+    const userId = 2;
+    const dummyUser = {
+      usernameOrEmail: 'johndoe',
+      password: '123456',
+    };
+    const departureStationId = 1; // Halim
+
+    try {
+      const paidOrder = await Order.findOne({ 
+        where: { userId },
+        include: [
+          {
+            model: Payment,
+            where: {
+              isPaid: true,
+            }
+          }
+        ],
+        order: [[
+          "id", "ASC"
+        ]]
+      });
+
+      const orderedSeat = await OrderedSeat.findOne({
+        where: {
+          orderId: paidOrder.id
+        }
+      });
+
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+
+      response = 
+        await request(app)
+          .post('/api/order/validateDepart')
+          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .send({
+            departureStationId,
+            orderedSeatId: orderedSeat.id,
+            secret: orderedSeat.secret
+          })
+
+    } catch (err) {
+      console.error(err);
+    }
+
+    expect(response.status).toBe(400);
+    const { message } = response.body;
+    const messageLowerCase = message.toLowerCase();
+    expect(messageLowerCase).toContain('wait');
+    expect(messageLowerCase).toContain('one');
+    expect(messageLowerCase).toContain('hour');
+    expect(messageLowerCase).toContain('before');
+    expect(messageLowerCase).toContain('departure');
+  })
 
   test('Failed validate ticket: Train has gone with status 400', async () => {
     let response;
@@ -678,9 +1022,60 @@ describe('Validate Ticket On Arrival', () => {
     expect(data.Order.Schedule.arrivalStation).toHaveProperty('name');
   });
 
-  // test('Failed validation ticket: Validation Error with status 400', async () => {
-    
-  // })
+  test('Failed validation ticket: Validation Error with status 400', async () => {
+    let response;
+    const userId = 2;
+    const dummyUser = {
+      usernameOrEmail: 'johndoe',
+      password: '123456',
+    };
+    const arrivalStationId = 3; // Padalarang
+
+    try {
+      const paidOrder = await Order.findOne({ 
+        where: { userId },
+        include: [
+          {
+            model: Payment,
+            where: {
+              isPaid: true,
+            }
+          },
+          {
+            model: Schedule,
+            where: {
+              arrivalTime: {[Op.lt]: new Date()}
+            }
+          }
+        ]
+      });
+
+      const orderedSeat = await OrderedSeat.findOne({
+        where: {
+          orderId: paidOrder.id
+        }
+      });
+
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+
+      response = 
+        await request(app)
+          .post('/api/order/validateArrive')
+          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .send({
+            arrivalStationId,
+            orderedSeatId: orderedSeat.id,
+          })
+
+    } catch (err) {
+      console.error(err);
+    }
+
+    expect(response.status).toBe(400);
+    const { status } = response.body;
+    const statusLowerCase = status.toLowerCase();
+    expect(statusLowerCase).toContain('validation');
+  })
 
   test('Failed validation ticket: Arrive at wrong station with status 400', async () => {
     let response;

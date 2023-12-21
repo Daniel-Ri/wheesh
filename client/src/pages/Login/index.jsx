@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
 // eslint-disable-next-line import/no-absolute-path
-import wheeshIcon from '/wheesh.png';
 import { useEffect, useState } from 'react';
 import { Button, FormControl, IconButton, InputAdornment, OutlinedInput } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -65,10 +64,10 @@ const Login = ({ login, intl: { formatMessage } }) => {
   }, [inputs.usernameOrEmail, inputs.password]);
 
   return (
-    <main className={classes.main}>
+    <main data-testid="Login" className={classes.main}>
       <div className={classes.container}>
         <header>
-          <img src={wheeshIcon} alt="App Icon" />
+          <img src="/wheesh.png" alt="App Icon" />
         </header>
         <div className={classes.message}>
           <div className={classes.mainMsg}>

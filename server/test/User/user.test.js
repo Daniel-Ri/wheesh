@@ -1,13 +1,17 @@
 const request = require('supertest');
-const Redis = require("ioredis-mock");
 const app = require('../../index');
 const { User, EmailToken, sequelize } = require('../../models/index');
 const { up: upUser, down: downUser } = require('../../seeders/20231205021723-user');
 const { up: upPassenger, down: downPassenger } = require('../../seeders/20231205023546-passenger');
+const { signToken } = require('../../utils/handleToken');
 const { queryInterface } = sequelize;
 
-const mockRedisClient = new Redis();
 jest.mock("ioredis", () => require("ioredis-mock"));
+
+// Mock node-cron
+jest.mock('node-cron', () => ({
+  schedule: jest.fn(),
+}));
 
 // Mock the entire handleMail module
 jest.mock("../../utils/handleMail", () => ({
@@ -270,13 +274,32 @@ describe('Verify Token', () => {
       response = 
         await request(app)
           .post('/api/user/verifyToken')
-          .set('authorization', `Bearer ${invalidToken}`);;
+          .set('authorization', `Bearer ${invalidToken}`);
     } catch (err) {
       console.error(err);
     }
 
     expect(response.status).toBe(400);
-  })
+  });
+
+  test('Failed verify token: User ID is not in database with status 400', async () => {
+    let response;
+    const userId = 1000;
+    const userRole = 'admin';
+
+    try {
+      const token = signToken(userId, userRole);
+      response = 
+        await request(app)
+          .post('/api/user/verifyToken')
+          .set('authorization', `Bearer ${token}`);
+
+    } catch (err) {
+      console.error(err);
+    }
+
+    expect(response.status).toBe(400);
+  });
 });
 
 describe('Get Profile', () => {

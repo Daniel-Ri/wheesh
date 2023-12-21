@@ -20,6 +20,11 @@ const { queryInterface } = sequelize;
 const mockRedisClient = new Redis();
 jest.mock("ioredis", () => require("ioredis-mock"));
 
+// Mock node-cron
+jest.mock('node-cron', () => ({
+  schedule: jest.fn(),
+}));
+
 beforeAll(async () => {
   await upUser(queryInterface, sequelize);
   await upPassenger(queryInterface, sequelize);

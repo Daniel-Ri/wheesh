@@ -53,9 +53,9 @@ const Me = ({ user, intl: { formatMessage } }) => {
   };
 
   return (
-    <main className={classes.main}>
+    <main data-testid="Me" className={classes.main}>
       <div className={classes.container}>
-        <header className={classes.header} onClick={clickHeader}>
+        <header data-testid="Header" className={classes.header} onClick={clickHeader}>
           <Avatar className={classes.icon} />
           <h1>{user && user.username ? user.username : 'Login'}</h1>
         </header>
@@ -67,17 +67,17 @@ const Me = ({ user, intl: { formatMessage } }) => {
           <hr />
           <div className={classes.sectionDesc}>
             <div className={classes.links}>
-              <div className={classes.link} onClick={clickPassengerPage}>
+              <div data-testid="MyPassengersLink" className={classes.link} onClick={clickPassengerPage}>
                 <RecentActorsOutlinedIcon className={classes.icon} />
                 <div className={classes.namePage}>
                   <FormattedMessage id="app_passenger_list" />
                 </div>
               </div>
-              <div className={classes.link} onClick={clickChangePasswordPage}>
+              <div data-testid="ChangePasswordLink" className={classes.link} onClick={clickChangePasswordPage}>
                 <KeyIcon className={classes.icon} />
                 <div className={classes.namePage}>Password</div>
               </div>
-              <div className={classes.link} onClick={clickChangeEmailPage}>
+              <div data-testid="ChangeEmailLink" className={classes.link} onClick={clickChangeEmailPage}>
                 <MailIcon className={classes.icon} />
                 <div className={classes.namePage}>E-mail</div>
               </div>
@@ -86,14 +86,14 @@ const Me = ({ user, intl: { formatMessage } }) => {
         </section>
 
         {user && user.role === 'admin' && (
-          <section>
+          <section data-testid="WebManagement">
             <h2>
               <FormattedMessage id="app_website_management" />
             </h2>
             <hr />
             <div className={classes.sectionDesc}>
               <div className={classes.links}>
-                <div className={classes.link} onClick={() => navigate('/banner')}>
+                <div data-testid="BannerLink" className={classes.link} onClick={() => navigate('/banner')}>
                   <PhotoSizeSelectActualOutlinedIcon className={classes.icon} />
                   <div className={classes.namePage}>Banner</div>
                 </div>
