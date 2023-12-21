@@ -119,7 +119,7 @@ const AddBanner = ({ user, intl: { formatMessage } }) => {
         </div>
 
         <div className={classes.button}>
-          <Button variant="contained" onClick={handleSubmit}>
+          <Button data-testid="Submit" variant="contained" onClick={handleSubmit}>
             <FormattedMessage id="app_submit" />
           </Button>
         </div>

@@ -89,14 +89,14 @@ const Navbar = ({ title, locale, theme }) => {
               <FormattedMessage id="app_me" />
             </div>
           </div>
-          <div className={classes.toggle} onClick={handleClick}>
+          <div data-testid="ToggleLang" className={classes.toggle} onClick={handleClick}>
             <Avatar className={classes.avatar} src={locale === 'id' ? '/id.png' : '/en.png'} />
             <div className={classes.lang}>{locale}</div>
             <ExpandMoreIcon />
           </div>
         </div>
-        <Menu open={open} anchorEl={menuPosition} onClose={handleClose}>
-          <MenuItem onClick={() => onSelectLang('id')} selected={locale === 'id'}>
+        <Menu data-testid="MenuLang" open={open} anchorEl={menuPosition} onClose={handleClose}>
+          <MenuItem data-testid="IDItem" onClick={() => onSelectLang('id')} selected={locale === 'id'}>
             <div className={classes.menu}>
               <Avatar className={classes.menuAvatar} src="/id.png" />
               <div className={classes.menuLang}>
@@ -104,7 +104,7 @@ const Navbar = ({ title, locale, theme }) => {
               </div>
             </div>
           </MenuItem>
-          <MenuItem onClick={() => onSelectLang('en')} selected={locale === 'en'}>
+          <MenuItem data-testid="ENItem" onClick={() => onSelectLang('en')} selected={locale === 'en'}>
             <div className={classes.menu}>
               <Avatar className={classes.menuAvatar} src="/en.png" />
               <div className={classes.menuLang}>

@@ -52,10 +52,20 @@ const BannerRow = ({ banner, intl: { formatMessage } }) => {
             </div>
           </td>
           <td className={classes.buttons}>
-            <Button variant="contained" className={classes.btn} onClick={() => navigate(`/changeBanner/${banner.id}`)}>
+            <Button
+              data-testid="ChangeBannerButton"
+              variant="contained"
+              className={classes.btn}
+              onClick={() => navigate(`/changeBanner/${banner.id}`)}
+            >
               <ModeEditOutlinedIcon />
             </Button>
-            <Button variant="contained" className={`${classes.btn} ${classes.delete}`} onClick={() => setOpen(true)}>
+            <Button
+              data-testid="DeleteBannerButton"
+              variant="contained"
+              className={`${classes.btn} ${classes.delete}`}
+              onClick={() => setOpen(true)}
+            >
               <DeleteOutlineOutlinedIcon />
             </Button>
           </td>
@@ -105,10 +115,10 @@ const BannerRow = ({ banner, intl: { formatMessage } }) => {
             </div>
           </div>
           <div className={classes.buttons}>
-            <Button variant="outlined" className={classes.cancel} onClick={handleClose}>
+            <Button data-testid="Cancel" variant="outlined" className={classes.cancel} onClick={handleClose}>
               <FormattedMessage id="app_cancel" />
             </Button>
-            <Button variant="contained" className={classes.confirm} onClick={handleDeleteBanner}>
+            <Button data-testid="Confirm" variant="contained" className={classes.confirm} onClick={handleDeleteBanner}>
               <FormattedMessage id="app_confirm" />
             </Button>
           </div>

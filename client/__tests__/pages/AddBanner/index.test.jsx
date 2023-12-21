@@ -18,6 +18,7 @@ const mockProps = {
 
 beforeEach(() => {
   wrapper = render(<AddBanner {...mockProps} />);
+  mockNavigate.mockClear();
 });
 
 describe('Page AddBanner', () => {
@@ -31,6 +32,13 @@ describe('Page AddBanner', () => {
     const backButton = getByTestId('BackBtn');
     fireEvent.click(backButton);
     expect(mockNavigate).toHaveBeenCalledWith('/banner');
+  });
+
+  test('Cannot create banner when user input no images', () => {
+    const { getByTestId } = wrapper;
+    const submitButton = getByTestId('Submit');
+    fireEvent.click(submitButton);
+    expect(mockNavigate).not.toHaveBeenCalledWith('/banner');
   });
 
   test('Should match snapshot', () => {
