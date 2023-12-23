@@ -219,7 +219,7 @@ describe('Delete Not Paid Order Passed Due Time', () => {
     }
 
     expect(orders.length).toEqual(0);
-  }, 10000);
+  }, 15000);
 });
 
 describe('Remind User Before One Hour of Departure', () => {

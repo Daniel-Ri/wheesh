@@ -83,6 +83,7 @@ export default {
   app_add: 'Add',
   app_not_authorized: 'Not Authorized',
   app_sure_deleting_the_banner: 'Are you sure about deleting the banner?',
+  app_have_least_one_banner: 'You must have at least one banner',
   app_success_delete_banner: 'Success delete banner',
   app_add_banner: 'Add Banner',
   app_desktop_image: 'Desktop Image',

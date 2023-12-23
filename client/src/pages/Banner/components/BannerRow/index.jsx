@@ -14,12 +14,17 @@ import toast from 'react-hot-toast';
 import { deleteBanner } from '@pages/Banner/actions';
 import classes from './style.module.scss';
 
-const BannerRow = ({ banner, intl: { formatMessage } }) => {
+const BannerRow = ({ banner, isOneLeft, intl: { formatMessage } }) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
+
+  const handleClickDeleteBanner = () => {
+    if (isOneLeft) return toast.error(formatMessage({ id: 'app_have_least_one_banner' }));
+    setOpen(true);
+  };
 
   const handleClose = () => {
     setOpen(false);
@@ -64,7 +69,7 @@ const BannerRow = ({ banner, intl: { formatMessage } }) => {
               data-testid="DeleteBannerButton"
               variant="contained"
               className={`${classes.btn} ${classes.delete}`}
-              onClick={() => setOpen(true)}
+              onClick={handleClickDeleteBanner}
             >
               <DeleteOutlineOutlinedIcon />
             </Button>
@@ -97,7 +102,11 @@ const BannerRow = ({ banner, intl: { formatMessage } }) => {
               </div>
             </td>
             <td className={classes.deleteCell}>
-              <Button variant="contained" className={`${classes.btn} ${classes.delete}`} onClick={() => setOpen(true)}>
+              <Button
+                variant="contained"
+                className={`${classes.btn} ${classes.delete}`}
+                onClick={handleClickDeleteBanner}
+              >
                 <DeleteOutlineOutlinedIcon />
               </Button>
             </td>
@@ -130,6 +139,7 @@ const BannerRow = ({ banner, intl: { formatMessage } }) => {
 
 BannerRow.propTypes = {
   banner: PropTypes.object.isRequired,
+  isOneLeft: PropTypes.bool.isRequired,
   intl: PropTypes.object,
 };
 

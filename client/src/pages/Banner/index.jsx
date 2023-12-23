@@ -72,13 +72,13 @@ const Banner = ({ user, banners, intl: { formatMessage } }) => {
                 <th />
               </tr>
               {banners.map((banner) => (
-                <BannerRow key={banner.id} banner={banner} />
+                <BannerRow key={banner.id} banner={banner} isOneLeft={banners.length === 1} />
               ))}
             </tbody>
           ) : (
             <tbody>
               {banners.map((banner) => (
-                <BannerRow key={banner.id} banner={banner} />
+                <BannerRow key={banner.id} banner={banner} isOneLeft={banners.length === 1} />
               ))}
             </tbody>
           )}

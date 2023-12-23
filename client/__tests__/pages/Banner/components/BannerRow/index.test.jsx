@@ -15,6 +15,7 @@ const mockProps = {
     imageDesktop: 'public/Frame 1 - Desktop.png',
     imageMobile: 'public/Frame 1 - Mobile.png',
   },
+  isOneLeft: false,
 };
 
 beforeEach(() => {

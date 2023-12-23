@@ -83,6 +83,7 @@ export default {
   app_add: 'Tambah',
   app_not_authorized: 'Tidak Berwenang',
   app_sure_deleting_the_banner: 'Apakah Anda yakin untuk menghapus banner ini?',
+  app_have_least_one_banner: 'Anda harus memiliki minimal satu banner',
   app_success_delete_banner: 'Sukses menghapus banner',
   app_add_banner: 'Tambah Banner',
   app_desktop_image: 'Gambar Desktop',

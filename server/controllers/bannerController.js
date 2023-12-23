@@ -86,6 +86,9 @@ exports.deleteBanner = async (req, res) => {
     const foundBanner = await Banner.findByPk(bannerId);
     if (!foundBanner) return handleClientError(res, 404, 'Banner Not Found');
 
+    const banners = await Banner.findAll();
+    if (banners.length === 1) return handleClientError(res, 400, 'Should have minimum 1 banner');
+
     await Banner.destroy({ where: { id: bannerId } });
     fs.unlinkSync(foundBanner.imageDesktop);
     fs.unlinkSync(foundBanner.imageMobile);
