@@ -116,6 +116,7 @@ export default {
   app_choose_seat: 'Pilih Kursi',
   app_reach_maximum_number_seats: 'Capai jumlah kursi maksimum',
   app_need_to_choose_passengers: 'Anda harus memilih penumpang',
+  app_all_seats_are_booked: 'Semua kursi telah dipesan',
   app_passenger_name: 'Nama Penumpang',
   app_selected_seats: 'Kursi Terpilih',
   app_select_carriage: 'Pilih Gerbong',

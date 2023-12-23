@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import BackBtn from '@components/BackBtn';
 import { formatDateWithDay, formatHour, formatRupiah } from '@utils/handleValue';
-import { getSchedule, setChosenSeats, setPassengerIds, setStep } from '@pages/Book/actions';
+import { getSchedule, setChosenSeats, setPassengerIds, setSchedule, setStep } from '@pages/Book/actions';
 import arrowImage from '@static/images/arrowTrain.png';
 import toast from 'react-hot-toast';
 import { createStructuredSelector } from 'reselect';
@@ -104,6 +104,41 @@ const ClassAndPassenger = ({ schedule, myPassengers, passengerIds, locale, intl:
     dispatch(getSchedule(scheduleId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scheduleId]);
+
+  useEffect(() => {
+    if (
+      schedule?.firstSeatAvailable === 'None' &&
+      schedule?.businessSeatAvailable === 'None' &&
+      schedule?.economySeatAvailable === 'None'
+    ) {
+      toast.error(formatMessage({ id: 'app_all_seats_are_booked' }));
+      dispatch(setSchedule(null));
+      return navigate('/');
+    }
+
+    if (seatClass === 'first' && schedule?.firstSeatAvailable === 'None') {
+      if (schedule?.businessSeatAvailable !== 'None') {
+        return navigate(`/book/${scheduleId}/business`);
+      }
+      return navigate(`/book/${scheduleId}/economy`);
+    }
+
+    if (seatClass === 'business' && schedule?.businessSeatAvailable === 'None') {
+      if (schedule?.firstSeatAvailable !== 'None') {
+        return navigate(`/book/${scheduleId}/first`);
+      }
+      return navigate(`/book/${scheduleId}/economy`);
+    }
+
+    if (seatClass === 'economy' && schedule?.economySeatAvailable === 'None') {
+      if (schedule?.firstSeatAvailable !== 'None') {
+        return navigate(`/book/${scheduleId}/first`);
+      }
+      return navigate(`/book/${scheduleId}/business`);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [schedule, seatClass]);
 
   return (
     <>

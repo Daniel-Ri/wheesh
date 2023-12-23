@@ -116,6 +116,7 @@ export default {
   app_choose_seat: 'Choose Seat',
   app_reach_maximum_number_seats: 'Reach maximum number of seats',
   app_need_to_choose_passengers: 'You need to choose passengers',
+  app_all_seats_are_booked: 'All seats are booked',
   app_passenger_name: 'Passenger Name',
   app_selected_seats: 'Selected Seats',
   app_select_carriage: 'Select Carriage',
