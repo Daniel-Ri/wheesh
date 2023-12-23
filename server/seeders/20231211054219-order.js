@@ -92,6 +92,14 @@ module.exports = {
       {
         id: orderId++,
         userId: 2,
+        scheduleId: afterTodaySchedules[7].id,
+        isNotified: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: orderId++,
+        userId: 2,
         scheduleId: 1,
         isNotified: true,
         createdAt: new Date(),

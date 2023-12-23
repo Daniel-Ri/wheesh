@@ -315,8 +315,79 @@ module.exports = {
       dummyData.push(generateOrderedSeatItem(orderedSeatId++, order.id, seatId, price));
     }
 
-    /* 9: Order 3 of economy class seats */
+    /* 9: Order all seats of economy, business, and 80% of first class seats */
     order = await Order.findByPk(9);
+    scheduleId = order.scheduleId;
+
+    // Get 80% of first class seats
+    schedule = await Schedule.findByPk(scheduleId, {
+      include: [
+        {
+          model: Train,
+          include: [
+            {
+              model: Carriage,
+              include: [
+                {
+                  model: Seat,
+                  where: { seatClass: 'first' }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          model: SchedulePrice,
+          as: 'prices'
+        },
+      ]
+    });
+
+    carriages = schedule.toJSON().Train.Carriages;
+    seatIds = carriages.map((carriage) => {
+      return carriage.Seats.map((seat) => seat.id);
+    });
+    seatIds = seatIds.flat();
+    seatIds = select80PercentRandomly(seatIds);
+
+    // Get all business and economy class seats
+    schedule = await Schedule.findByPk(scheduleId, {
+      include: [
+        {
+          model: Train,
+          include: [
+            {
+              model: Carriage,
+              include: [
+                {
+                  model: Seat,
+                  where: { seatClass: ['business', 'economy'] }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          model: SchedulePrice,
+          as: 'prices'
+        },
+      ]
+    });
+
+    carriages = schedule.toJSON().Train.Carriages;
+    let otherSeatIds = carriages.map((carriage) => {
+      return carriage.Seats.map((seat) => seat.id);
+    });
+    otherSeatIds = otherSeatIds.flat();
+    seatIds = [...seatIds, ...otherSeatIds];
+    for (const seatId of seatIds) {
+      const seat = await Seat.findByPk(seatId);
+      const price = schedule.prices.find((schedulePrice) => schedulePrice.seatClass === seat.seatClass).price;
+      dummyData.push(generateOrderedSeatItem(orderedSeatId++, order.id, seatId, price));
+    }
+
+    /* 10: Order 3 of economy class seats */
+    order = await Order.findByPk(10);
     scheduleId = order.scheduleId;
     schedule = await Schedule.findByPk(scheduleId, {
       include: [
@@ -353,8 +424,8 @@ module.exports = {
       dummyData.push(generateOrderedSeatItem(orderedSeatId++, order.id, seatId, price));
     }
 
-    /* 10: Order 3 of business class seats */
-    order = await Order.findByPk(10);
+    /* 11: Order 3 of business class seats */
+    order = await Order.findByPk(11);
     scheduleId = order.scheduleId;
     schedule = await Schedule.findByPk(scheduleId, {
       include: [

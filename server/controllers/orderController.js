@@ -374,12 +374,19 @@ exports.createOrder = async (req, res) => {
         )
       }
 
+      let duePayment;
+      if (new Date(foundSchedule.departureTime) > new Date(new Date().getTime() + 70 * 60 * 1000)) {
+        duePayment = new Date(new Date().getTime() + 60 * 60 * 1000);
+      } else {
+        duePayment = new Date(new Date(foundSchedule.departureTime) - 10 * 60 * 1000);
+      }
+
       await Payment.create(
         {
           orderId: newOrder.id,
           amount: orderedPrices.reduce((accumulator, value) => accumulator + value, 0),
           isPaid: false,
-          duePayment: new Date(new Date().getTime() + 60 * 60 * 1000),
+          duePayment,
         },
         { transaction: t }
       )
