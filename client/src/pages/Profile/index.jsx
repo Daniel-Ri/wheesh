@@ -183,18 +183,20 @@ const Profile = ({ profile, intl: { formatMessage } }) => {
             <label htmlFor="dateOfBirth">
               <FormattedMessage id="app_date_of_birth" />
             </label>
-            <DatePicker
-              name="dateOfBirth"
-              placeholderText={formatMessage({ id: 'app_select_your_date_of_birth' })}
-              selected={inputs.dateOfBirth}
-              showMonthDropdown
-              dropdownMode="select"
-              showYearDropdown
-              dateFormat="dd/MM/yyyy"
-              className={classes.datePicker}
-              onChange={(date) => setInputs((prev) => ({ ...prev, dateOfBirth: date }))}
-              disabled={!isEdit}
-            />
+            <div className={classes.datePickerWrapper}>
+              <DatePicker
+                name="dateOfBirth"
+                placeholderText={formatMessage({ id: 'app_select_your_date_of_birth' })}
+                selected={inputs.dateOfBirth}
+                showMonthDropdown
+                dropdownMode="select"
+                showYearDropdown
+                dateFormat="dd/MM/yyyy"
+                className={classes.datePicker}
+                onChange={(date) => setInputs((prev) => ({ ...prev, dateOfBirth: date }))}
+                disabled={!isEdit}
+              />
+            </div>
           </div>
 
           <div className={classes.header}>

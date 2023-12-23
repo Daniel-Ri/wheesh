@@ -68,10 +68,13 @@
       }
     }
 
-    .datePicker {
+    .datePickerWrapper {
+      @include directionX;
       flex: 45%;
-      width: 45%;
-      align-self: flex-end;
+
+      .datePicker {
+        align-self: flex-end;
+      }
     }
 
     .verification {

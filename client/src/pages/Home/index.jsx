@@ -4,10 +4,12 @@ import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect, useDispatch } from 'react-redux';
 import SwapHorizontalCircleIcon from '@mui/icons-material/SwapHorizontalCircle';
+import SwapVerticalCircleIcon from '@mui/icons-material/SwapVerticalCircle';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './custom.css';
 
+import { useMediaQuery } from 'react-responsive';
 import { createStructuredSelector } from 'reselect';
 import { Autocomplete, Button, TextField } from '@mui/material';
 import toast from 'react-hot-toast';
@@ -28,6 +30,8 @@ const Home = ({ stations, latestDateSchedule, banners, intl: { formatMessage } }
     arrivalStation: null,
     date: today,
   });
+
+  const isMDMaxSize = useMediaQuery({ query: '(max-width: 768px)' });
 
   const defaultProps = {
     options: stations,
@@ -99,6 +103,7 @@ const Home = ({ stations, latestDateSchedule, banners, intl: { formatMessage } }
                 onChange={(event, newValue) => {
                   setInputs((prev) => ({ ...prev, departureStation: newValue }));
                 }}
+                className={classes.inputAutocomplete}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -108,7 +113,11 @@ const Home = ({ stations, latestDateSchedule, banners, intl: { formatMessage } }
                 )}
               />
             </div>
-            <SwapHorizontalCircleIcon className={classes.icon} onClick={handleSwap} />
+            {isMDMaxSize ? (
+              <SwapVerticalCircleIcon className={classes.icon} onClick={handleSwap} />
+            ) : (
+              <SwapHorizontalCircleIcon className={classes.icon} onClick={handleSwap} />
+            )}
             <div className={classes.input}>
               <label>
                 <FormattedMessage id="app_to" />
@@ -120,6 +129,7 @@ const Home = ({ stations, latestDateSchedule, banners, intl: { formatMessage } }
                 onChange={(event, newValue) => {
                   setInputs((prev) => ({ ...prev, arrivalStation: newValue }));
                 }}
+                className={classes.inputAutocomplete}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -135,16 +145,18 @@ const Home = ({ stations, latestDateSchedule, banners, intl: { formatMessage } }
               <label>
                 <FormattedMessage id="app_date" />
               </label>
-              <DatePicker
-                name="date"
-                placeholderText={formatMessage({ id: 'app_select_departure_date' })}
-                selected={inputs.date}
-                dropdownMode="select"
-                dateFormat="eee, dd MMM yyyy"
-                filterDate={isDateAvailable}
-                className={classes.datePicker}
-                onChange={(date) => setInputs((prev) => ({ ...prev, date }))}
-              />
+              <div className={classes.datePickerWrapper}>
+                <DatePicker
+                  name="date"
+                  placeholderText={formatMessage({ id: 'app_select_departure_date' })}
+                  selected={inputs.date}
+                  dropdownMode="select"
+                  dateFormat="eee, dd MMM yyyy"
+                  filterDate={isDateAvailable}
+                  className={classes.datePicker}
+                  onChange={(date) => setInputs((prev) => ({ ...prev, date }))}
+                />
+              </div>
             </div>
           </div>
 

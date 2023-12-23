@@ -12,6 +12,8 @@ import thinkingImage from '@static/images/thinking.svg';
 import BackBtn from '@components/BackBtn';
 import { createStructuredSelector } from 'reselect';
 import SwapHorizontalCircleIcon from '@mui/icons-material/SwapHorizontalCircle';
+import SwapVerticalCircleIcon from '@mui/icons-material/SwapVerticalCircle';
+import { useMediaQuery } from 'react-responsive';
 import { Autocomplete, TextField } from '@mui/material';
 import toast from 'react-hot-toast';
 import { formatDate } from '@utils/handleValue';
@@ -32,6 +34,8 @@ const Schedule = ({ stations, latestDateSchedule, schedules, intl: { formatMessa
     arrivalStation: null,
     date: today,
   });
+
+  const isMDMaxSize = useMediaQuery({ query: '(max-width: 768px)' });
 
   const defaultProps = {
     options: stations,
@@ -95,6 +99,7 @@ const Schedule = ({ stations, latestDateSchedule, schedules, intl: { formatMessa
                   navigate(`/schedule/${newValue.id}/${inputs.arrivalStation.id}/${formatDate(inputs.date)}`);
                   setInputs((prev) => ({ ...prev, departureStation: newValue }));
                 }}
+                className={classes.inputAutocomplete}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -104,7 +109,11 @@ const Schedule = ({ stations, latestDateSchedule, schedules, intl: { formatMessa
                 )}
               />
             </div>
-            <SwapHorizontalCircleIcon className={classes.icon} onClick={handleSwap} />
+            {isMDMaxSize ? (
+              <SwapVerticalCircleIcon className={classes.icon} onClick={handleSwap} />
+            ) : (
+              <SwapHorizontalCircleIcon className={classes.icon} onClick={handleSwap} />
+            )}
             <div className={classes.input}>
               <label>
                 <FormattedMessage id="app_to" />
@@ -122,6 +131,7 @@ const Schedule = ({ stations, latestDateSchedule, schedules, intl: { formatMessa
                   navigate(`/schedule/${inputs.departureStation.id}/${newValue.id}/${formatDate(inputs.date)}`);
                   setInputs((prev) => ({ ...prev, arrivalStation: newValue }));
                 }}
+                className={classes.inputAutocomplete}
                 renderInput={(params) => (
                   <TextField {...params} placeholder="Select arrival station" variant="standard" />
                 )}
@@ -133,21 +143,23 @@ const Schedule = ({ stations, latestDateSchedule, schedules, intl: { formatMessa
               <label>
                 <FormattedMessage id="app_date" />
               </label>
-              <DatePicker
-                name="date"
-                placeholderText={formatMessage({ id: 'app_select_departure_date' })}
-                selected={inputs.date}
-                dropdownMode="select"
-                dateFormat="eee, dd MMM yyyy"
-                filterDate={isDateAvailable}
-                className={classes.datePicker}
-                onChange={(datetime) => {
-                  navigate(
-                    `/schedule/${inputs.departureStation.id}/${inputs.arrivalStation.id}/${formatDate(datetime)}`
-                  );
-                  setInputs((prev) => ({ ...prev, date: datetime }));
-                }}
-              />
+              <div className={classes.datePickerWrapper}>
+                <DatePicker
+                  name="date"
+                  placeholderText={formatMessage({ id: 'app_select_departure_date' })}
+                  selected={inputs.date}
+                  dropdownMode="select"
+                  dateFormat="eee, dd MMM yyyy"
+                  filterDate={isDateAvailable}
+                  className={classes.datePicker}
+                  onChange={(datetime) => {
+                    navigate(
+                      `/schedule/${inputs.departureStation.id}/${inputs.arrivalStation.id}/${formatDate(datetime)}`
+                    );
+                    setInputs((prev) => ({ ...prev, date: datetime }));
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>

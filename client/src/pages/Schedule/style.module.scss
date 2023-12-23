@@ -61,6 +61,14 @@
           width: 45%;
         }
 
+        .inputAutocomplete {
+          input {
+            &::placeholder {
+              font-size: 90%;
+            }
+          }
+        }
+
         .icon {
           font-size: 180%;
           color: $color-picton-blue-dark-shade;
@@ -75,9 +83,15 @@
         .inputDatePicker {
           width: 100%;
 
-          .datePicker {
-            width: 100%;
-            font-size: 90%;
+          .datePickerWrapper {
+            @include directionX;
+            width: 45%;
+
+            .datePicker {
+              width: 100%;
+              border-width: 0 0 2px 0;
+              font-size: 90%;
+            }
           }
         }
       }
@@ -116,6 +130,29 @@
   @media screen and (max-width: $screen-md-limit) {
     margin-left: 10rem;
     width: calc(100vw - 10rem);
+
+    .container {
+      .filter {
+        .row {
+          @include directionY;
+          gap: 0;
+
+          .input {
+            width: 100%;
+          }
+
+          .icon {
+            margin-top: 0.5rem;
+          }
+
+          .inputDatePicker {
+            .datePickerWrapper {
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
   }
 
   @media screen and (max-width: $screen-sm-limit) {

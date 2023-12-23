@@ -36,13 +36,15 @@ const NonEditable = ({ passenger }) => (
         <label htmlFor="dateOfBirth">
           <FormattedMessage id="app_date_of_birth" />
         </label>
-        <DatePicker
-          name="dateOfBirth"
-          selected={new Date(passenger.dateOfBirth)}
-          dateFormat="dd/MM/yyyy"
-          className={classes.datePicker}
-          disabled
-        />
+        <div className={classes.datePickerWrapper}>
+          <DatePicker
+            name="dateOfBirth"
+            selected={new Date(passenger.dateOfBirth)}
+            dateFormat="dd/MM/yyyy"
+            className={classes.datePicker}
+            disabled
+          />
+        </div>
       </div>
 
       <div className={classes.header}>
