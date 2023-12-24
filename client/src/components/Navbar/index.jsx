@@ -3,10 +3,12 @@ import { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useMediaQuery } from 'react-responsive';
 import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import HomeIcon from '@mui/icons-material/Home';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
@@ -20,6 +22,8 @@ const Navbar = ({ title, locale, theme }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+
+  const isSMMaxSize = useMediaQuery({ query: '(max-width: 576px)' });
 
   const [menuPosition, setMenuPosition] = useState(null);
   const open = Boolean(menuPosition);
@@ -92,10 +96,21 @@ const Navbar = ({ title, locale, theme }) => {
           <div data-testid="ToggleLang" className={classes.toggle} onClick={handleClick}>
             <Avatar className={classes.avatar} src={locale === 'id' ? '/id.png' : '/en.png'} />
             <div className={classes.lang}>{locale}</div>
-            <ExpandMoreIcon />
+            {isSMMaxSize ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </div>
         </div>
-        <Menu data-testid="MenuLang" open={open} anchorEl={menuPosition} onClose={handleClose}>
+        <Menu
+          data-testid="MenuLang"
+          open={open}
+          anchorEl={menuPosition}
+          onClose={handleClose}
+          transformOrigin={
+            isSMMaxSize ? { horizontal: 'right', vertical: 'bottom' } : { horizontal: 'left', vertical: 'top' }
+          }
+          anchorOrigin={
+            isSMMaxSize ? { horizontal: 'right', vertical: 'top' } : { horizontal: 'left', vertical: 'bottom' }
+          }
+        >
           <MenuItem data-testid="IDItem" onClick={() => onSelectLang('id')} selected={locale === 'id'}>
             <div className={classes.menu}>
               <Avatar className={classes.menuAvatar} src="/id.png" />

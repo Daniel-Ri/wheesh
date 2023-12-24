@@ -80,18 +80,22 @@ exports[`Page CreatePassenger Should match snapshot 1`] = `
                 Tanggal Kelahiran
               </label>
               <div
-                class="react-datepicker-wrapper"
+                class="datePickerWrapper"
               >
                 <div
-                  class="react-datepicker__input-container"
+                  class="react-datepicker-wrapper"
                 >
-                  <input
-                    class="datePicker"
-                    name="dateOfBirth"
-                    placeholder="Pilih tanggal kelahiran"
-                    type="text"
-                    value=""
-                  />
+                  <div
+                    class="react-datepicker__input-container"
+                  >
+                    <input
+                      class="datePicker"
+                      name="dateOfBirth"
+                      placeholder="Pilih tanggal kelahiran"
+                      type="text"
+                      value=""
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -251,18 +255,22 @@ exports[`Page CreatePassenger Should match snapshot 1`] = `
               Tanggal Kelahiran
             </label>
             <div
-              class="react-datepicker-wrapper"
+              class="datePickerWrapper"
             >
               <div
-                class="react-datepicker__input-container"
+                class="react-datepicker-wrapper"
               >
-                <input
-                  class="datePicker"
-                  name="dateOfBirth"
-                  placeholder="Pilih tanggal kelahiran"
-                  type="text"
-                  value=""
-                />
+                <div
+                  class="react-datepicker__input-container"
+                >
+                  <input
+                    class="datePicker"
+                    name="dateOfBirth"
+                    placeholder="Pilih tanggal kelahiran"
+                    type="text"
+                    value=""
+                  />
+                </div>
               </div>
             </div>
           </div>
