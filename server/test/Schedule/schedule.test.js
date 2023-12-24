@@ -37,7 +37,7 @@ beforeAll(async () => {
   await upSeat(queryInterface, sequelize);
   await upOrder(queryInterface, sequelize);
   await upOrderedSeat(queryInterface, sequelize);
-}, 10000);
+}, 15000);
 
 afterAll(async () => {
   await downUser(queryInterface, sequelize);

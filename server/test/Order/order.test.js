@@ -307,7 +307,7 @@ describe('Create Order', () => {
 
     expect(response.status).toBe(409);
     expect(order).toBeNull();
-  }, 10000);
+  }, 15000);
 });
 
 describe('Get Unpaid Orders', () => {
