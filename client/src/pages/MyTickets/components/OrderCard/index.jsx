@@ -1,8 +1,6 @@
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
-
 import { useNavigate } from 'react-router-dom';
-import arrowImage from '@static/images/arrowTrain.png';
 
 import { formatHour, formatOrderDate } from '@utils/handleValue';
 
@@ -22,13 +20,13 @@ const OrderCard = ({ order }) => {
   };
 
   return (
-    <div className={classes.card} onClick={handleClickCard}>
+    <div data-testid="OrderCard" className={classes.card} onClick={handleClickCard}>
       <div className={classes.stations}>
         <div className={classes.stationName}>{order.Schedule.departureStation.name}</div>
         <div className={classes.train}>
           <div className={classes.name}>{order.Schedule.Train.name}</div>
           <div className={classes.arrowImage}>
-            <img src={arrowImage} alt="" />
+            <img src="/arrowTrain.png" alt="" />
           </div>
         </div>
         <div className={classes.stationName}>{order.Schedule.arrivalStation.name}</div>

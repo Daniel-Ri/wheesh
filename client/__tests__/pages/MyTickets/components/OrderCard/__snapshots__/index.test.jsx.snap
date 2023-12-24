@@ -1,0 +1,190 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Component OrderCard of My Tickets page Should match snapshot 1`] = `
+{
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <div
+        class="card"
+        data-testid="OrderCard"
+      >
+        <div
+          class="stations"
+        >
+          <div
+            class="stationName"
+          >
+            Halim
+          </div>
+          <div
+            class="train"
+          >
+            <div
+              class="name"
+            >
+              G1202
+            </div>
+            <div
+              class="arrowImage"
+            >
+              <img
+                alt=""
+                src="/arrowTrain.png"
+              />
+            </div>
+          </div>
+          <div
+            class="stationName"
+          >
+            Padalarang
+          </div>
+        </div>
+        <div
+          class="timeDesc"
+        >
+          Keberangkatan
+          : 
+          06:40
+           
+          15/12/2023
+        </div>
+        <div
+          class="timeDesc"
+        >
+          Waktu Pesanan
+          : 
+          09:59
+           
+          14/12/2023
+        </div>
+        <div
+          class="tickets"
+        >
+          2
+           
+          tiket
+           
+          John Doe, Jean Doe
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="card"
+      data-testid="OrderCard"
+    >
+      <div
+        class="stations"
+      >
+        <div
+          class="stationName"
+        >
+          Halim
+        </div>
+        <div
+          class="train"
+        >
+          <div
+            class="name"
+          >
+            G1202
+          </div>
+          <div
+            class="arrowImage"
+          >
+            <img
+              alt=""
+              src="/arrowTrain.png"
+            />
+          </div>
+        </div>
+        <div
+          class="stationName"
+        >
+          Padalarang
+        </div>
+      </div>
+      <div
+        class="timeDesc"
+      >
+        Keberangkatan
+        : 
+        06:40
+         
+        15/12/2023
+      </div>
+      <div
+        class="timeDesc"
+      >
+        Waktu Pesanan
+        : 
+        09:59
+         
+        14/12/2023
+      </div>
+      <div
+        class="tickets"
+      >
+        2
+         
+        tiket
+         
+        John Doe, Jean Doe
+      </div>
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;

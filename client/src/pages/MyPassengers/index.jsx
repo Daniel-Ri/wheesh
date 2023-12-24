@@ -24,7 +24,7 @@ const MyPassengers = ({ myPassengers }) => {
   }, []);
 
   return (
-    <main className={classes.main}>
+    <main data-testid="MyPassengers" className={classes.main}>
       <div className={classes.container}>
         <header>
           <BackBtn handleClickBack={() => navigate('/me')} />

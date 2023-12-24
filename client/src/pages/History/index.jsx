@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import arrowImage from '@static/images/arrowTrain.png';
 import toast from 'react-hot-toast';
 import { useEffect } from 'react';
 import BackBtn from '@components/BackBtn';
@@ -87,7 +86,7 @@ const History = ({ order, locale, intl: { formatMessage } }) => {
               <div className={classes.train}>
                 <div className={classes.name}>{order?.Schedule.Train.name}</div>
                 <div className={classes.arrowImage}>
-                  <img src="../../static/images/arrowTrain.png" alt="" />
+                  <img src="/arrowTrain.png" alt="" />
                 </div>
               </div>
               <div className={classes.timeAndPlace}>

@@ -10,7 +10,7 @@ const PassengerCard = ({ passenger }) => {
   const navigate = useNavigate();
 
   return (
-    <div className={classes.card} onClick={() => navigate(`/passenger/${passenger.id}`)}>
+    <div data-testid="PassengerCard" className={classes.card} onClick={() => navigate(`/passenger/${passenger.id}`)}>
       <div className={classes.leftCard}>
         <div className={classes.name}>{passenger.name}</div>
         <div className={classes.description}>
