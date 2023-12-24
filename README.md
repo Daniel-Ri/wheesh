@@ -76,3 +76,7 @@ npm start
 ```
 npm run test
 ```
+
+## Server Documentation
+
+Click this [link](server/ReadMe.md) to read the API Documentation

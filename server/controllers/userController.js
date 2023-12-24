@@ -29,12 +29,12 @@ exports.login = async(req, res) => {
       attributes: { exclude: [ 'createdAt', 'updatedAt'] }
     });
     if (!foundUser) {
-      return handleClientError(res, 400, "Username or password is invalid");
+      return handleClientError(res, 400, "Username / email or password is invalid");
     }
 
     const hashPassword = foundUser.password;
     if (!compare(dataReq.password, hashPassword))
-      return handleClientError(res, 400, "Username or password is invalid");
+      return handleClientError(res, 400, "Username / email or password is invalid");
     
     const token = signToken(foundUser.id, foundUser.role);
 
