@@ -113,7 +113,7 @@ const Profile = ({ profile, intl: { formatMessage } }) => {
   }, [profile]);
 
   return (
-    <main className={classes.main}>
+    <main data-testid="Profile" className={classes.main}>
       <div className={classes.container}>
         <header>
           <BackBtn handleClickBack={() => navigate('/me')} />

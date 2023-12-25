@@ -5,7 +5,6 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 
 import { useNavigate } from 'react-router-dom';
 import { formatHour, formatRupiah } from '@utils/handleValue';
-import arrowImage from '@static/images/arrowTrain.png';
 import { Button } from '@mui/material';
 import { createStructuredSelector } from 'reselect';
 import { selectLogin } from '@containers/Client/selectors';
@@ -18,6 +17,7 @@ const ScheduleCard = ({ login, schedule, intl: { formatMessage } }) => {
   const [selected, setSelected] = useState(false);
 
   const handleClickBook = (seatClass) => {
+    // Not adding `return` so the user will be redirected to `/login`
     if (!login) {
       toast.error(formatMessage({ id: 'app_need_to_login' }));
     }
@@ -26,7 +26,7 @@ const ScheduleCard = ({ login, schedule, intl: { formatMessage } }) => {
   };
 
   return (
-    <div className={`${classes.card} ${selected ? classes.selected : ''}`}>
+    <div data-testid="ScheduleCard" className={`${classes.card} ${selected ? classes.selected : ''}`}>
       <div className={classes.topCard} onClick={() => setSelected((isSelected) => !isSelected)}>
         <div className={classes.leftCard}>
           <div className={classes.timeAndPlace}>
@@ -39,7 +39,7 @@ const ScheduleCard = ({ login, schedule, intl: { formatMessage } }) => {
           <div className={classes.train}>
             <div className={classes.name}>{schedule.Train.name}</div>
             <div className={classes.arrowImage}>
-              <img src={arrowImage} alt="" />
+              <img src="/arrowTrain.png" alt="" />
             </div>
           </div>
           <div className={classes.timeAndPlace}>
@@ -74,6 +74,7 @@ const ScheduleCard = ({ login, schedule, intl: { formatMessage } }) => {
               </div>
             </div>
             <Button
+              data-testid="BookFirstSeatButton"
               variant="contained"
               disabled={schedule.firstSeatAvailable === 'None'}
               className={classes.btn}
@@ -105,6 +106,7 @@ const ScheduleCard = ({ login, schedule, intl: { formatMessage } }) => {
               </div>
             </div>
             <Button
+              data-testid="BookBusinessSeatButton"
               variant="contained"
               disabled={schedule.businessSeatAvailable === 'None'}
               className={classes.btn}
@@ -136,6 +138,7 @@ const ScheduleCard = ({ login, schedule, intl: { formatMessage } }) => {
               </div>
             </div>
             <Button
+              data-testid="BookEconomySeatButton"
               variant="contained"
               disabled={schedule.economySeatAvailable === 'None'}
               className={classes.btn}

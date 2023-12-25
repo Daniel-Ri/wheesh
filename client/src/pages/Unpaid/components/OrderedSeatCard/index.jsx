@@ -6,7 +6,7 @@ import classes from './style.module.scss';
 
 const OrderedSeatCard = ({ orderedSeat, addLine }) => (
   <>
-    <div className={classes.card}>
+    <div data-testid="OrderedSeatCard" className={classes.card}>
       <div className={classes.leftCard}>
         <div className={classes.name}>{orderedSeat.name}</div>
         <div className={classes.description}>

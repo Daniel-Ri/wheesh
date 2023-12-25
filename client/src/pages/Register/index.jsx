@@ -188,7 +188,7 @@ const Register = ({ login, intl: { formatMessage } }) => {
   }, [login]);
 
   return (
-    <main className={classes.main}>
+    <main data-testid="Register" className={classes.main}>
       <div className={classes.container}>
         <header>
           <BackBtn handleClickBack={() => navigate('/login')} />

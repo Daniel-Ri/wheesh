@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import arrowImage from '@static/images/arrowTrain.png';
 import { createStructuredSelector } from 'reselect';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -93,7 +92,7 @@ const Unpaid = ({ order, locale, intl: { formatMessage } }) => {
   }, [order]);
 
   return (
-    <main className={classes.main}>
+    <main data-testid="Unpaid" className={classes.main}>
       <div className={classes.container}>
         <header>
           <BackBtn handleClickBack={() => navigate('/my-tickets')} />
@@ -127,7 +126,7 @@ const Unpaid = ({ order, locale, intl: { formatMessage } }) => {
               <div className={classes.train}>
                 <div className={classes.name}>{order?.Schedule.Train.name}</div>
                 <div className={classes.arrowImage}>
-                  <img src={arrowImage} alt="" />
+                  <img src="/arrowTrain.png" alt="" />
                 </div>
               </div>
               <div className={classes.timeAndPlace}>
