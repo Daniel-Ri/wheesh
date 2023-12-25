@@ -55,7 +55,7 @@ const Passenger = ({ passenger, intl: { formatMessage } }) => {
   }, [passengerId]);
 
   return (
-    <main className={classes.main}>
+    <main data-testid="Passenger" className={classes.main}>
       <div className={classes.container}>
         <header>
           <BackBtn handleClickBack={() => navigate('/myPassengers')} />

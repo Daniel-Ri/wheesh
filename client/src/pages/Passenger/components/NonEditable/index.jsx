@@ -8,7 +8,7 @@ import './custom.css';
 import classes from './style.module.scss';
 
 const NonEditable = ({ passenger }) => (
-  <div className={classes.nonEditable}>
+  <div data-testid="NonEditable" className={classes.nonEditable}>
     <form>
       <div className={classes.header}>
         <FormattedMessage id="app_personal_information" />

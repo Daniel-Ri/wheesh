@@ -5,7 +5,7 @@ import { Button, Dialog } from '@mui/material';
 import classes from './style.module.scss';
 
 const ReminderDialog = ({ open, handleClose, handleDelete }) => (
-  <Dialog open={open} onClose={handleClose}>
+  <Dialog data-testid="ReminderDialog" open={open} onClose={handleClose}>
     <div className={classes.dialog}>
       <div className={classes.content}>
         <h2>
@@ -16,10 +16,10 @@ const ReminderDialog = ({ open, handleClose, handleDelete }) => (
         </div>
       </div>
       <div className={classes.buttons}>
-        <Button variant="outlined" className={classes.cancel} onClick={handleClose}>
+        <Button data-testid="CancelButton" variant="outlined" className={classes.cancel} onClick={handleClose}>
           <FormattedMessage id="app_cancel" />
         </Button>
-        <Button variant="contained" className={classes.confirm} onClick={handleDelete}>
+        <Button data-testid="ConfirmButton" variant="contained" className={classes.confirm} onClick={handleDelete}>
           <FormattedMessage id="app_confirm" />
         </Button>
       </div>

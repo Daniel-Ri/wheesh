@@ -102,7 +102,7 @@ const Editable = ({ passenger, intl: { formatMessage } }) => {
   }, [passenger]);
 
   return (
-    <div className={classes.editable}>
+    <div data-testid="Editable" className={classes.editable}>
       <form>
         <div className={classes.header}>
           <FormattedMessage id="app_personal_information" />

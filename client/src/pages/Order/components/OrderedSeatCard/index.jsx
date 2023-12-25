@@ -36,7 +36,7 @@ const OrderedSeatCard = ({ orderedSeat, addLine }) => {
 
   return (
     <>
-      <div className={classes.card} onClick={handleClickCard}>
+      <div data-testid="OrderedSeatCard" className={classes.card} onClick={handleClickCard}>
         <div className={classes.leftCard}>
           <div className={classes.name}>{orderedSeat.name}</div>
           <div className={classes.description}>

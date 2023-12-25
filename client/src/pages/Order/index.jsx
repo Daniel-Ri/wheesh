@@ -4,7 +4,6 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
-import arrowImage from '@static/images/arrowTrain.png';
 import BackBtn from '@components/BackBtn';
 import { formatDateWithDay, formatHour, formatOrderDate, formatRupiah } from '@utils/handleValue';
 import { createStructuredSelector } from 'reselect';
@@ -53,7 +52,7 @@ const Order = ({ order, locale, intl: { formatMessage } }) => {
   }, [order]);
 
   return (
-    <main className={classes.main}>
+    <main data-testid="Order" className={classes.main}>
       <div className={classes.container}>
         <header>
           <BackBtn handleClickBack={() => navigate('/my-tickets')} />
@@ -87,7 +86,7 @@ const Order = ({ order, locale, intl: { formatMessage } }) => {
               <div className={classes.train}>
                 <div className={classes.name}>{order?.Schedule.Train.name}</div>
                 <div className={classes.arrowImage}>
-                  <img src={arrowImage} alt="" />
+                  <img src="/arrowTrain.png" alt="" />
                 </div>
               </div>
               <div className={classes.timeAndPlace}>
