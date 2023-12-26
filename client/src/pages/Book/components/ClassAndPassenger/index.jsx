@@ -5,7 +5,7 @@ import { connect, useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import BackBtn from '@components/BackBtn';
-import { formatDateWithDay, formatHour, formatRupiah } from '@utils/handleValue';
+import { formatDate, formatDateWithDay, formatHour, formatRupiah } from '@utils/handleValue';
 import { getSchedule, setChosenSeats, setPassengerIds, setSchedule, setStep } from '@pages/Book/actions';
 import arrowImage from '@static/images/arrowTrain.png';
 import toast from 'react-hot-toast';
@@ -143,7 +143,17 @@ const ClassAndPassenger = ({ schedule, myPassengers, passengerIds, locale, intl:
   return (
     <>
       <header>
-        <BackBtn handleClickBack={() => navigate(-1)} />
+        <BackBtn
+          handleClickBack={() =>
+            navigate(
+              schedule
+                ? `/schedule/${schedule.departureStation.id}/${schedule.arrivalStation.id}/${formatDate(
+                    new Date(schedule.departureTime)
+                  )}`
+                : '/'
+            )
+          }
+        />
         <h1>
           <FormattedMessage id="app_book" />
         </h1>

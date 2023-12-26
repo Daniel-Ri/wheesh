@@ -381,6 +381,9 @@ exports.createOrder = async (req, res) => {
         duePayment = new Date(new Date(foundSchedule.departureTime) - 10 * 60 * 1000);
       }
 
+      // For demonstration purpose: # comment line 378-382 and uncomennt the bottom line (385)
+      // duePayment = new Date(new Date().getTime() + 10 * 1000);
+
       await Payment.create(
         {
           orderId: newOrder.id,
