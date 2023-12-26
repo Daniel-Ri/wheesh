@@ -6,6 +6,7 @@ export const initialState = {
   step: 0,
   myPassengers: [],
   passengerIds: [],
+  // choosenSeats: Map(key: passengerId, value: { carriageNumber, seatNumber, seatId })
   chosenSeats: new Map(),
 };
 

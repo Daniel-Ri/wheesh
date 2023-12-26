@@ -19,6 +19,8 @@ const CenterCarriage = ({
   handleAddOrUpdateSeat,
 }) => {
   const { seatClass } = useParams();
+
+  // convertedChoosenSeats: Map(key: seatId, value: passengerId)
   const convertedChosenSeats = convertChosenSeats(chosenSeats);
 
   const findSeat = (seatNumber) => seats?.find((seat) => seat.seatNumber === seatNumber);
