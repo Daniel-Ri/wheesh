@@ -12,15 +12,8 @@ jest.mock('react-router-dom', () => ({
 
 let wrapper;
 
-const mockProps = {
-  user: {
-    id: 1,
-    role: 'admin',
-  },
-};
-
 beforeEach(() => {
-  wrapper = render(<ChangeBanner {...mockProps} />);
+  wrapper = render(<ChangeBanner />);
 });
 
 describe('Page ChangeBanner', () => {

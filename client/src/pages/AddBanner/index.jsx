@@ -1,13 +1,11 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import BackBtn from '@components/BackBtn';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { createStructuredSelector } from 'reselect';
-import { selectUser } from '@containers/Client/selectors';
+import { useState } from 'react';
 
 import toast from 'react-hot-toast';
 import { Button } from '@mui/material';
@@ -15,7 +13,7 @@ import { createBanner } from './actions';
 
 import classes from './style.module.scss';
 
-const AddBanner = ({ user, intl: { formatMessage } }) => {
+const AddBanner = ({ intl: { formatMessage } }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -53,14 +51,6 @@ const AddBanner = ({ user, intl: { formatMessage } }) => {
 
     dispatch(createBanner(formData, handleSuccess, handleError));
   };
-
-  useEffect(() => {
-    if (user?.role !== 'admin') {
-      toast.error(formatMessage({ id: 'app_not_authorized' }));
-      navigate('/');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
 
   return (
     <main data-testid="AddBanner" className={classes.main}>
@@ -129,12 +119,7 @@ const AddBanner = ({ user, intl: { formatMessage } }) => {
 };
 
 AddBanner.propTypes = {
-  user: PropTypes.object,
   intl: PropTypes.object,
 };
 
-const mapStateToProps = createStructuredSelector({
-  user: selectUser,
-});
-
-export default injectIntl(connect(mapStateToProps)(AddBanner));
+export default injectIntl(AddBanner);

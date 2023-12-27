@@ -1,6 +1,6 @@
 import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
 import { useMediaQuery } from 'react-responsive';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
@@ -10,8 +10,6 @@ import { useEffect } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
-import { selectUser } from '@containers/Client/selectors';
-import toast from 'react-hot-toast';
 import { Button } from '@mui/material';
 import { getBanners } from './actions';
 import { selectBanners } from './selectors';
@@ -19,7 +17,7 @@ import BannerRow from './components/BannerRow';
 
 import classes from './style.module.scss';
 
-const Banner = ({ user, banners, intl: { formatMessage } }) => {
+const Banner = ({ banners }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -29,14 +27,6 @@ const Banner = ({ user, banners, intl: { formatMessage } }) => {
     dispatch(getBanners());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (user?.role !== 'admin') {
-      toast.error(formatMessage({ id: 'app_not_authorized' }));
-      navigate('/');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
 
   return (
     <main data-testid="Banner" className={classes.main}>
@@ -89,14 +79,11 @@ const Banner = ({ user, banners, intl: { formatMessage } }) => {
 };
 
 Banner.propTypes = {
-  user: PropTypes.object,
   banners: PropTypes.array,
-  intl: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
-  user: selectUser,
   banners: selectBanners,
 });
 
-export default injectIntl(connect(mapStateToProps)(Banner));
+export default connect(mapStateToProps)(Banner);

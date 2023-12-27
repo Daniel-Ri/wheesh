@@ -10,10 +10,6 @@ jest.mock('react-router-dom', () => ({
 let wrapper;
 
 const mockProps = {
-  user: {
-    id: 1,
-    role: 'admin',
-  },
   banners: [
     {
       id: 1,

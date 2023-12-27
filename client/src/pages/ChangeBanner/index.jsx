@@ -1,19 +1,17 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import BackBtn from '@components/BackBtn';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useEffect, useState } from 'react';
-import { selectUser } from '@containers/Client/selectors';
-import { createStructuredSelector } from 'reselect';
 import { Button } from '@mui/material';
 import { getBanner, updateBanner } from './actions';
 
 import classes from './style.module.scss';
 
-const ChangeBanner = ({ user, intl: { formatMessage } }) => {
+const ChangeBanner = ({ intl: { formatMessage } }) => {
   const { bannerId } = useParams();
 
   const navigate = useNavigate();
@@ -60,17 +58,9 @@ const ChangeBanner = ({ user, intl: { formatMessage } }) => {
   };
 
   useEffect(() => {
-    if (user?.role === 'admin') dispatch(getBanner(bannerId, handleErrorGet));
+    dispatch(getBanner(bannerId, handleErrorGet));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bannerId]);
-
-  useEffect(() => {
-    if (user?.role !== 'admin') {
-      toast.error(formatMessage({ id: 'app_not_authorized' }));
-      navigate('/');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
 
   return (
     <main data-testid="ChangeBanner" className={classes.main}>
@@ -139,12 +129,7 @@ const ChangeBanner = ({ user, intl: { formatMessage } }) => {
 };
 
 ChangeBanner.propTypes = {
-  user: PropTypes.object,
   intl: PropTypes.object,
 };
 
-const mapStateToProps = createStructuredSelector({
-  user: selectUser,
-});
-
-export default injectIntl(connect(mapStateToProps)(ChangeBanner));
+export default injectIntl(ChangeBanner);
