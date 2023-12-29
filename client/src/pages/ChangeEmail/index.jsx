@@ -23,20 +23,55 @@ const ChangeEmail = ({ intl: { formatMessage } }) => {
     emailToken: '',
   });
 
+  const [errors, setErrors] = useState({
+    email: '',
+    emailToken: '',
+  });
+
+  const [mainError, setMainError] = useState('');
+
   const handleInputChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const validateEmail = () => {
     if (!inputs.email) {
-      toast.error(formatMessage({ id: 'app_you_must_insert_email' }));
+      setErrors((prev) => ({ ...prev, email: formatMessage({ id: 'app_you_must_insert_email' }) }));
       return false;
     }
 
     if (!/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(inputs.email)) {
-      toast.error(formatMessage({ id: 'app_incorrect_email_format' }));
+      setErrors((prev) => ({ ...prev, email: formatMessage({ id: 'app_incorrect_email_format' }) }));
       return false;
     }
+
+    setErrors((prev) => ({ ...prev, email: '' }));
+    return true;
+  };
+
+  const validateEmailToken = () => {
+    if (!inputs.emailToken) {
+      setErrors((prev) => ({ ...prev, emailToken: formatMessage({ id: 'app_must_insert_verification_code' }) }));
+      return false;
+    }
+
+    setErrors((prev) => ({ ...prev, emailToken: '' }));
+    return true;
+  };
+
+  const handleFocusOut = (e) => {
+    if (e.target.name === 'email') {
+      validateEmail();
+    } else if (e.target.name === 'emailToken') {
+      validateEmailToken();
+    }
+  };
+
+  const validateInputs = () => {
+    const validatedEmail = validateEmail();
+    const validatedEmailToken = validateEmailToken();
+
+    if (!validatedEmail || !validatedEmailToken) return false;
 
     return true;
   };
@@ -47,11 +82,16 @@ const ChangeEmail = ({ intl: { formatMessage } }) => {
   };
 
   const handleErrorChange = (errorMsg) => {
-    toast.error(errorMsg);
+    setMainError(errorMsg);
   };
 
   const handleSubmit = () => {
-    if (!validateEmail()) return;
+    setErrors({
+      email: '',
+      emailToken: '',
+    });
+    setMainError('');
+    if (!validateInputs()) return;
 
     dispatch(changeEmail(inputs, handleSuccessChange, handleErrorChange));
   };
@@ -61,12 +101,13 @@ const ChangeEmail = ({ intl: { formatMessage } }) => {
   };
 
   const handleErrorSendEmailToken = (errorMsg) => {
-    toast.error(errorMsg);
+    setErrors((prev) => ({ ...prev, email: errorMsg }));
     setInputs((prev) => ({ ...prev, email: '' }));
   };
 
   const handleGenerateEmailToken = () => {
     if (!validateEmail()) return;
+    setInputs((prev) => ({ ...prev, emailToken: '' }));
 
     const formattedInputs = { email: inputs.email, action: 'update' };
     dispatch(sendEmailToken(formattedInputs, handleSuccessSendEmailToken, handleErrorSendEmailToken));
@@ -91,10 +132,17 @@ const ChangeEmail = ({ intl: { formatMessage } }) => {
               id="email"
               value={inputs.email}
               onChange={handleInputChange}
+              onBlur={handleFocusOut}
               placeholder={formatMessage({ id: 'app_please_enter_new_email' })}
               autoComplete="off"
             />
           </div>
+          {errors.email && (
+            <div className={classes.errorRowReverse}>
+              <div className={classes.errorMsg}>{errors.email}</div>
+            </div>
+          )}
+
           <div className={classes.input}>
             <input
               className={classes.verification}
@@ -103,6 +151,7 @@ const ChangeEmail = ({ intl: { formatMessage } }) => {
               id="emailToken"
               value={inputs.emailToken}
               onChange={handleInputChange}
+              onBlur={handleFocusOut}
               placeholder={formatMessage({ id: 'app_please_enter_verification_code' })}
               autoComplete="off"
             />
@@ -112,7 +161,14 @@ const ChangeEmail = ({ intl: { formatMessage } }) => {
               </Button>
             </div>
           </div>
+          {errors.emailToken && (
+            <div className={classes.errorRow}>
+              <div className={classes.errorMsg}>{errors.emailToken}</div>
+            </div>
+          )}
         </form>
+
+        {mainError && <div className={classes.mainError}>{mainError}</div>}
 
         <div className={classes.buttons}>
           <Button variant="contained" className={classes.submit} onClick={handleSubmit}>
