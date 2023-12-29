@@ -17,6 +17,7 @@ const { up: upOrder, down: downOrder } = require('../../seeders/20231211054219-o
 const { up: upOrderedSeat, down: downOrderedSeat } = require('../../seeders/20231211063308-orderedSeat');
 const { up: upPayment, down: downPayment } = require('../../seeders/20231213090332-payment');
 const { deleteNotPaidOrderPassedDueTime, remindUserBeforeOneHourOfDeparture } = require('../../utils/handleJob');
+const { encrypt } = require('../../utils/handleCrypto');
 const { queryInterface } = sequelize;
 
 const mockRedisClient = new Redis();
@@ -37,6 +38,21 @@ jest.mock("../../utils/handleMail", () => ({
   generateMailOptionsForRemindSchedule: jest.fn(),
 }));
 
+let firstToken;
+let secondToken;
+
+const firstDummyUser = {
+  usernameOrEmail: 'johndoe',
+  password: '123456',
+};
+const secondDummyUser = {
+  usernameOrEmail: 'agus',
+  password: '123456',
+};
+
+const firstEncryptedObj = encrypt(JSON.stringify(firstDummyUser));
+const secondEncryptedObj = encrypt(JSON.stringify(secondDummyUser));
+
 beforeAll(async () => {
   await upUser(queryInterface, sequelize);
   await upPassenger(queryInterface, sequelize);
@@ -50,6 +66,13 @@ beforeAll(async () => {
   await upOrder(queryInterface, sequelize);
   await upOrderedSeat(queryInterface, sequelize);
   await upPayment(queryInterface, sequelize);
+
+  const firstLoginResponse = 
+    await request(app).post('/api/user/login').send({ encryptedObj: firstEncryptedObj });
+  const secondLoginResponse = 
+    await request(app).post('/api/user/login').send({ encryptedObj: secondEncryptedObj });
+  firstToken = firstLoginResponse.body.token;
+  secondToken = secondLoginResponse.body.token;
 }, 15000);
 
 afterAll(async () => {
@@ -132,22 +155,11 @@ describe('Delete Not Paid Order Passed Due Time', () => {
   test('Success delete', async () => {
     let orders;
     const whichOrderTomorrow = 2; // the second schedule tomorrow only have first class full booked
-    const firstDummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
-    const secondDummyUser = {
-      usernameOrEmail: 'agus',
-      password: '123456',
-    };
     const firstPassengerIds = [2, 3];
     const secondPassengerIds = [5, 6];
 
     try {
       const tomorrowSchedules = await getTomorrowSchedules();
-      const firstLoginResponse = await request(app).post('/api/user/login').send(firstDummyUser);
-      const secondLoginResponse = await request(app).post('/api/user/login').send(secondDummyUser);
-
       const schedule = tomorrowSchedules[whichOrderTomorrow - 1];
       const firstChoosenSeats = getTwoSeats(schedule, 'business');
       const secondChoosenSeats = getTwoSeats(schedule, 'economy');
@@ -167,14 +179,10 @@ describe('Delete Not Paid Order Passed Due Time', () => {
       };
 
       await request(app)
-        .post('/api/order')
-        .set('authorization', `Bearer ${firstLoginResponse.body.token}`)
-        .send(firstInputs);
+        .post('/api/order').set('authorization', `Bearer ${firstToken}`).send(firstInputs);
 
       await request(app)
-        .post('/api/order')
-        .set('authorization', `Bearer ${secondLoginResponse.body.token}`)
-        .send(secondInputs);
+        .post('/api/order').set('authorization', `Bearer ${secondToken}`).send(secondInputs);
 
       const notPaidOrders = await Order.findAll({
         include: [
@@ -234,14 +242,6 @@ describe('Remind User Before One Hour of Departure', () => {
     const businessSeatPrice = 450000;
     const economySeatPrice = 200000;
 
-    const firstDummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
-    const secondDummyUser = {
-      usernameOrEmail: 'agus',
-      password: '123456',
-    };
     const firstPassengerIds = [2, 3];
     const secondPassengerIds = [5, 6];
 
@@ -299,9 +299,6 @@ describe('Remind User Before One Hour of Departure', () => {
         price: economySeatPrice,
       });
 
-      const firstLoginResponse = await request(app).post('/api/user/login').send(firstDummyUser);
-      const secondLoginResponse = await request(app).post('/api/user/login').send(secondDummyUser);
-
       const firstChoosenSeats = getTwoSeats(createdSchedule, 'business');
       const secondChoosenSeats = getTwoSeats(createdSchedule, 'economy');
 
@@ -320,14 +317,10 @@ describe('Remind User Before One Hour of Departure', () => {
       };
 
       await request(app)
-        .post('/api/order')
-        .set('authorization', `Bearer ${firstLoginResponse.body.token}`)
-        .send(firstInputs);
+        .post('/api/order').set('authorization', `Bearer ${firstToken}`).send(firstInputs);
 
       await request(app)
-        .post('/api/order')
-        .set('authorization', `Bearer ${secondLoginResponse.body.token}`)
-        .send(secondInputs);
+        .post('/api/order').set('authorization', `Bearer ${secondToken}`).send(secondInputs);
 
       const ordersToBePaid = await Order.findAll({
         include: [
@@ -350,11 +343,11 @@ describe('Remind User Before One Hour of Departure', () => {
 
       await request(app)
         .put(`/api/order/${orderToBePaidIds[1]}`)
-        .set('authorization', `Bearer ${firstLoginResponse.body.token}`);
+        .set('authorization', `Bearer ${firstToken}`);
 
       await request(app)
         .put(`/api/order/${orderToBePaidIds[0]}`)
-        .set('authorization', `Bearer ${secondLoginResponse.body.token}`);
+        .set('authorization', `Bearer ${secondToken}`);
 
       ordersBeforeNotified = await Order.findAll({
         where: { id: orderToBePaidIds }

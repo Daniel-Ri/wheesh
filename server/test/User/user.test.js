@@ -4,6 +4,7 @@ const { User, EmailToken, sequelize } = require('../../models/index');
 const { up: upUser, down: downUser } = require('../../seeders/20231205021723-user');
 const { up: upPassenger, down: downPassenger } = require('../../seeders/20231205023546-passenger');
 const { signToken } = require('../../utils/handleToken');
+const { encrypt, decrypt } = require('../../utils/handleCrypto');
 const { queryInterface } = sequelize;
 
 jest.mock("ioredis", () => require("ioredis-mock"));
@@ -49,8 +50,9 @@ describe('Login', () => {
         usernameOrEmail: 'johndoe',
         password: '123456',
       };
+      const encryptedObj = encrypt(JSON.stringify(dummyData));
 
-      response = await request(app).post('/api/user/login').send(dummyData);
+      response = await request(app).post('/api/user/login').send({ encryptedObj });
     } catch (err) {
       console.error(err);
     }
@@ -58,10 +60,12 @@ describe('Login', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('token');
     expect(response.body).toHaveProperty('user');
-    expect(response.body.user).toHaveProperty('id');
-    expect(response.body.user).toHaveProperty('username');
-    expect(response.body.user).toHaveProperty('email');
-    expect(response.body.user).toHaveProperty('role');
+
+    const decryptedUser = JSON.parse(decrypt(response.body.user));
+    expect(decryptedUser).toHaveProperty('id');
+    expect(decryptedUser).toHaveProperty('username');
+    expect(decryptedUser).toHaveProperty('email');
+    expect(decryptedUser).toHaveProperty('role');
   });
 
   test('Failed login: Validation Error with status 400', async () => {
@@ -71,8 +75,9 @@ describe('Login', () => {
         username: 'johndoe',
         password: '123456',
       };
+      const encryptedObj = encrypt(JSON.stringify(dummyData));
 
-      response = await request(app).post('/api/user/login').send(dummyData);
+      response = await request(app).post('/api/user/login').send({ encryptedObj });
     } catch (err) {
       console.error(err);
     }
@@ -87,8 +92,9 @@ describe('Login', () => {
         usernameOrEmail: 'jamesbond',
         password: '123456',
       };
+      const encryptedObj = encrypt(JSON.stringify(dummyData));
 
-      response = await request(app).post('/api/user/login').send(dummyData);
+      response = await request(app).post('/api/user/login').send({ encryptedObj });
     } catch (err) {
       console.error(err);
     }
@@ -103,8 +109,9 @@ describe('Login', () => {
         usernameOrEmail: 'johndoe',
         password: '1234567',
       };
+      const encryptedObj = encrypt(JSON.stringify(dummyData));
 
-      response = await request(app).post('/api/user/login').send(dummyData);
+      response = await request(app).post('/api/user/login').send({ encryptedObj });
     } catch (err) {
       console.error(err);
     }
@@ -253,7 +260,8 @@ describe('Verify Token', () => {
         usernameOrEmail: 'johndoe',
         password: '123456',
       };
-      const loginResponse = await request(app).post('/api/user/login').send(dummyData);
+      const encryptedObj = encrypt(JSON.stringify(dummyData));
+      const loginResponse = await request(app).post('/api/user/login').send({ encryptedObj });
 
       response = 
         await request(app)
@@ -311,7 +319,8 @@ describe('Get Profile', () => {
       password: '123456',
     };
     try {
-      const loginResponse = await request(app).post('/api/user/login').send(dummyData);
+      const encryptedObj = encrypt(JSON.stringify(dummyData));
+      const loginResponse = await request(app).post('/api/user/login').send({ encryptedObj });
 
       response = 
         await request(app)
@@ -361,7 +370,8 @@ describe('Update Profile', () => {
         usernameOrEmail: 'johndoe',
         password: '123456',
       };
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+      const encryptedObj = encrypt(JSON.stringify(dummyUser));
+      const loginResponse = await request(app).post('/api/user/login').send({ encryptedObj });
 
       response = 
         await request(app)
@@ -396,7 +406,8 @@ describe('Update Profile', () => {
         usernameOrEmail: 'johndoe@gmail.com',
         password: '123456',
       };
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+      const encryptedObj = encrypt(JSON.stringify(dummyUser));
+      const loginResponse = await request(app).post('/api/user/login').send({ encryptedObj });
 
       response = 
         await request(app)
@@ -425,7 +436,8 @@ describe('Change Password', () => {
         usernameOrEmail: 'johndoe@gmail.com',
         password: dummyData.oldPassword,
       };
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+      const encryptedObj = encrypt(JSON.stringify(dummyUser));
+      const loginResponse = await request(app).post('/api/user/login').send({ encryptedObj });
 
       response = 
         await request(app)
@@ -436,7 +448,8 @@ describe('Change Password', () => {
         usernameOrEmail: dummyUser.usernameOrEmail,
         password: dummyData.newPassword,
       };
-      loginResponseAgain = await request(app).post('/api/user/login').send(dummyUserWithNewPassword);
+      const encryptedObjWithNewPassword = encrypt(JSON.stringify(dummyUserWithNewPassword));
+      loginResponseAgain = await request(app).post('/api/user/login').send({ encryptedObj: encryptedObjWithNewPassword });
 
     } catch (err) {
       console.error(err);
@@ -463,7 +476,8 @@ describe('Change Email', () => {
         usernameOrEmail: 'johndoe@gmail.com',
         password: '1234567',
       };
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+      const encryptedObj = encrypt(JSON.stringify(dummyUser));
+      const loginResponse = await request(app).post('/api/user/login').send({ encryptedObj });
 
       emailToken = await EmailToken.findOne({ where: {email: newEmail} });
 
@@ -475,9 +489,11 @@ describe('Change Email', () => {
 
       emailToken = await EmailToken.findOne({ where: {email: newEmail} });
 
+      const newEncryptedObj = 
+        encrypt(JSON.stringify({ usernameOrEmail: newEmail, password: dummyUser.password }));
+
       loginResponseAgain = 
-        await request(app)
-          .post('/api/user/login').send({ usernameOrEmail: newEmail, password: dummyUser.password });
+        await request(app).post('/api/user/login').send({ encryptedObj: newEncryptedObj });
 
     } catch (err) {
       console.error(err);

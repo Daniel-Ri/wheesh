@@ -3,6 +3,7 @@ const app = require('../../index');
 const { Passenger, sequelize } = require('../../models/index');
 const { up: upUser, down: downUser } = require('../../seeders/20231205021723-user');
 const { up: upPassenger, down: downPassenger } = require('../../seeders/20231205023546-passenger');
+const { encrypt, decrypt } = require('../../utils/handleCrypto');
 const { queryInterface } = sequelize;
 
 jest.mock("ioredis", () => require("ioredis-mock"));
@@ -12,9 +13,24 @@ jest.mock('node-cron', () => ({
   schedule: jest.fn(),
 }));
 
+let defaultToken;
+let defaultDecryptedUser;
+
+const defaultUserId = 2;
+const defaultDummyUser = {
+  usernameOrEmail: 'johndoe',
+  password: '123456',
+};
+const defaultEncryptedObj = encrypt(JSON.stringify(defaultDummyUser));
+
 beforeAll(async () => {
   await upUser(queryInterface, sequelize);
   await upPassenger(queryInterface, sequelize);
+
+  const defaultLoginResponse = 
+    await request(app).post('/api/user/login').send({ encryptedObj: defaultEncryptedObj });
+  defaultToken = defaultLoginResponse.body.token;
+  defaultDecryptedUser = JSON.parse(decrypt(defaultLoginResponse.body.user));
 });
 
 afterAll(async () => {
@@ -26,14 +42,8 @@ describe('Get My Passengers', () => {
   test('Success get my passengers with status 200', async () => {
     let response;
     try {
-      const dummyUser = {
-        usernameOrEmail: 'johndoe',
-        password: '123456',
-      };
-
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-
-      response = await request(app).get('/api/passenger').set('authorization', `Bearer ${loginResponse.body.token}`);
+      response = 
+        await request(app).get('/api/passenger').set('authorization', `Bearer ${defaultToken}`);
     } catch (err) {
       console.error(err);
     }
@@ -59,17 +69,11 @@ describe('Get Passenger', () => {
     let response;
     try {
       const passengerId = 2;
-      const dummyUser = {
-        usernameOrEmail: 'johndoe',
-        password: '123456',
-      };
-
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
 
       response = 
         await request(app)
           .get(`/api/passenger/${passengerId}`)
-          .set('authorization', `Bearer ${loginResponse.body.token}`);
+          .set('authorization', `Bearer ${defaultToken}`);
     } catch (err) {
       console.error(err);
     }
@@ -91,17 +95,11 @@ describe('Get Passenger', () => {
     let response;
     try {
       const passengerId = 1000;
-      const dummyUser = {
-        usernameOrEmail: 'johndoe',
-        password: '123456',
-      };
-
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
 
       response = 
         await request(app)
           .get(`/api/passenger/${passengerId}`)
-          .set('authorization', `Bearer ${loginResponse.body.token}`);
+          .set('authorization', `Bearer ${defaultToken}`);
     } catch (err) {
       console.error(err);
     }
@@ -113,21 +111,12 @@ describe('Get Passenger', () => {
     let response;
     try {
       const otherUserId = 3;
-
-      // User ID: 2
-      const dummyUser = {
-        usernameOrEmail: 'johndoe',
-        password: '123456',
-      };
-
       const otherUserPassenger = await Passenger.findOne({ where: { userId: otherUserId } });
-
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
 
       response = 
         await request(app)
           .get(`/api/passenger/${otherUserPassenger.id}`)
-          .set('authorization', `Bearer ${loginResponse.body.token}`);
+          .set('authorization', `Bearer ${defaultToken}`);
     } catch (err) {
       console.error(err);
     }
@@ -149,22 +138,15 @@ describe('Create Passenger', () => {
     }
 
     try {
-      const dummyUser = {
-        usernameOrEmail: 'johndoe',
-        password: '123456',
-      };
-  
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-  
       response = 
-          await request(app)
-            .post('/api/passenger')
-            .set('authorization', `Bearer ${loginResponse.body.token}`)
-            .send(dummyData);
+        await request(app)
+          .post('/api/passenger')
+          .set('authorization', `Bearer ${defaultToken}`)
+          .send(dummyData);
 
       passenger = await Passenger.findOne({ 
         where: {
-          userId: loginResponse.body.user.id,
+          userId: defaultDecryptedUser.id,
           idCard: dummyData.idCard,
         }  
       });
@@ -200,22 +182,15 @@ describe('Create Passenger', () => {
     }
 
     try {
-      const dummyUser = {
-        usernameOrEmail: 'johndoe',
-        password: '123456',
-      };
-  
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-  
       response = 
           await request(app)
             .post('/api/passenger')
-            .set('authorization', `Bearer ${loginResponse.body.token}`)
+            .set('authorization', `Bearer ${defaultToken}`)
             .send(dummyData);
 
       passenger = await Passenger.findOne({ 
         where: {
-          userId: loginResponse.body.user.id,
+          userId: defaultDecryptedUser.id,
           idCard: dummyData.idCard,
         }  
       });
@@ -246,17 +221,20 @@ describe('Create Passenger', () => {
         password: '123456',
       };
   
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+      const encryptedObj = encrypt(JSON.stringify(dummyUser));
+      const loginResponse = await request(app).post('/api/user/login').send({ encryptedObj });
   
       response = 
-          await request(app)
-            .post('/api/passenger')
-            .set('authorization', `Bearer ${loginResponse.body.token}`)
-            .send(dummyData);
+        await request(app)
+          .post('/api/passenger')
+          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .send(dummyData);
+
+      const decryptedUser = JSON.parse(decrypt(loginResponse.body.user));
 
       passenger = await Passenger.findOne({ 
         where: {
-          userId: loginResponse.body.user.id,
+          userId: decryptedUser.id,
           idCard: dummyData.idCard,
         }  
       });
@@ -274,11 +252,6 @@ describe('Update Passenger', () => {
   test('Success update passenger with status 200', async () => {
     let response;
     let passenger;
-    const userId = 2;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
 
     const dummyData = {
       gender: "Male",
@@ -292,23 +265,22 @@ describe('Update Passenger', () => {
       // Get the last passenger added of the user
       const passengerToBeUpdated = await Passenger.findOne({
         where: {
-          userId
+          userId: defaultUserId
         },
         order: [
           ['id', 'DESC'],
         ],
       });
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
       
       response = 
         await request(app)
           .put(`/api/passenger/${passengerToBeUpdated.id}`)
-          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .set('authorization', `Bearer ${defaultToken}`)
           .send(dummyData);
 
       passenger = await Passenger.findOne({ 
         where: {
-          userId: loginResponse.body.user.id,
+          userId: defaultDecryptedUser.id,
           idCard: dummyData.idCard,
         }  
       });
@@ -320,7 +292,7 @@ describe('Update Passenger', () => {
     expect(response.status).toBe(200);
     const { body } = response;
     expect(body.data).toHaveProperty('id');
-    expect(body.data.userId).toEqual(userId);
+    expect(body.data.userId).toEqual(defaultUserId);
     expect(body.data.isUser).toBe(false);
     expect(body.data.gender).toEqual(dummyData.gender);
     expect(body.data).toHaveProperty('dateOfBirth');
@@ -336,28 +308,22 @@ describe('Delete Passenger', () => {
   test('Success delete passenger with status 200', async () => {
     let response;
     let passenger;
-    const userId = 2;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
 
     try {
       // Get the last passenger added of the user
       const passengerToBeDeleted = await Passenger.findOne({
         where: {
-          userId
+          userId: defaultUserId
         },
         order: [
           ['id', 'DESC'],
         ],
       });
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
       
       response = 
         await request(app)
           .delete(`/api/passenger/${passengerToBeDeleted.id}`)
-          .set('authorization', `Bearer ${loginResponse.body.token}`);
+          .set('authorization', `Bearer ${defaultToken}`);
 
       passenger = await Passenger.findOne({ 
         where: {
@@ -376,18 +342,12 @@ describe('Delete Passenger', () => {
   test('Failed delete passenger: Not Found with status 404', async () => {
     let response;
     const passengerId = 1000;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
 
     try {
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-      
       response = 
         await request(app)
           .delete(`/api/passenger/${passengerId}`)
-          .set('authorization', `Bearer ${loginResponse.body.token}`);
+          .set('authorization', `Bearer ${defaultToken}`);
 
     } catch (err) {
       console.error(err);
@@ -400,21 +360,14 @@ describe('Delete Passenger', () => {
     let response;
     let passenger;
     const otherUserId = 3;
-    // User ID: 2
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
 
     try {
       const otherUserPassenger = await Passenger.findOne({ where: { userId: otherUserId } });
 
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-
       response = 
         await request(app)
           .delete(`/api/passenger/${otherUserPassenger.id}`)
-          .set('authorization', `Bearer ${loginResponse.body.token}`);
+          .set('authorization', `Bearer ${defaultToken}`);
 
       passenger = await Passenger.findByPk(otherUserPassenger.id);
 
@@ -429,22 +382,15 @@ describe('Delete Passenger', () => {
   test("Failed delete passenger: Cannot delete user's data with status 400", async () => {
     let response;
     let passenger;
-    const userId = 2;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
 
     try {
       const userPassengerSelf =
-      await Passenger.findOne({ where: { userId, isUser: true } });
-
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+      await Passenger.findOne({ where: { userId: defaultUserId, isUser: true } });
 
       response = 
         await request(app)
           .delete(`/api/passenger/${userPassengerSelf.id}`)
-          .set('authorization', `Bearer ${loginResponse.body.token}`);
+          .set('authorization', `Bearer ${defaultToken}`);
 
           passenger = await Passenger.findByPk(userPassengerSelf.id);
     } catch (err) {

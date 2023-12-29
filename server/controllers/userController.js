@@ -6,24 +6,29 @@ const { compare } = require("../utils/handlePassword");
 const { signToken, generateRandomToken } = require("../utils/handleToken");
 const { handleClientError, handleServerError } = require("../utils/handleError");
 const { transporter, generateMailOptionsForNewEmail, generateMailOptionsForUpdateEmail } = require("../utils/handleMail");
+const { decrypt, encrypt } = require("../utils/handleCrypto");
 
 exports.login = async(req, res) => {
   try {
-    const dataReq = req.body;
+    const { encryptedObj } = req.body;
+    const decryptedObj = decrypt(encryptedObj);
+    if (!decryptedObj) return handleClientError(res, 400, 'Cannot decrypt request body');
+    const { usernameOrEmail, password } = JSON.parse(decryptedObj);
+
     const scheme = Joi.object({
       usernameOrEmail: Joi.string().required(),
       password: Joi.string().required()
     });
 
-    const { error } = scheme.validate(dataReq);
+    const { error } = scheme.validate({ usernameOrEmail, password });
     if (error) 
       return res.status(400).json({ status: 'Validation Failed', message: error.details[0].message })
     
     const foundUser = await User.findOne({ 
       where: {
         [Op.or]: [
-          {username: dataReq.usernameOrEmail},
-          {email: dataReq.usernameOrEmail},
+          {username: usernameOrEmail},
+          {email: usernameOrEmail},
         ]
       },
       attributes: { exclude: [ 'createdAt', 'updatedAt'] }
@@ -33,7 +38,7 @@ exports.login = async(req, res) => {
     }
 
     const hashPassword = foundUser.password;
-    if (!compare(dataReq.password, hashPassword))
+    if (!compare(password, hashPassword))
       return handleClientError(res, 400, "Username / email or password is invalid");
     
     const token = signToken(foundUser.id, foundUser.role);
@@ -41,7 +46,7 @@ exports.login = async(req, res) => {
     const formattedUser = foundUser.toJSON();
     delete formattedUser.password;
 
-    return res.status(200).json({ token, user: formattedUser, status: 'Success' });
+    return res.status(200).json({ token, user: encrypt(JSON.stringify(formattedUser)), status: 'Success' });
 
   } catch (error) {
     console.error(error);

@@ -6,6 +6,7 @@ const { Banner, sequelize } = require('../../models/index');
 const { up: upUser, down: downUser } = require('../../seeders/20231205021723-user');
 const { up: upPassenger, down: downPassenger } = require('../../seeders/20231205023546-passenger');
 const { up: upBanner, down: downBanner } = require('../../seeders/20231215035650-banner');
+const { encrypt } = require('../../utils/handleCrypto');
 const { queryInterface } = sequelize;
 
 jest.mock("ioredis", () => require("ioredis-mock"));
@@ -15,10 +16,20 @@ jest.mock('node-cron', () => ({
   schedule: jest.fn(),
 }));
 
+let tokenAdmin;
+
+const dummyAdmin = {
+  usernameOrEmail: 'bangjoe',
+  password: '123456',
+};
+const encryptedObjAdmin = encrypt(JSON.stringify(dummyAdmin));
+
 beforeAll(async () => {
   await upUser(queryInterface, sequelize);
   await upPassenger(queryInterface, sequelize);
   await upBanner(queryInterface, sequelize);
+  const loginResponseAdmin = await request(app).post('/api/user/login').send({ encryptedObj: encryptedObjAdmin });
+  tokenAdmin = loginResponseAdmin.body.token;
 });
 
 afterAll(async () => {
@@ -75,18 +86,12 @@ describe('Create Banner', () => {
     const mobileImagePath = path.join(__dirname, '..', '..', 'backupPics', 'Frame 8 - Mobile.png');
 
     try {
-      const dummyAdmin = {
-        usernameOrEmail: 'bangjoe',
-        password: '123456',
-      };
-
       const bannersBeforeAdded = await Banner.findAll();
-      const loginResponse = await request(app).post('/api/user/login').send(dummyAdmin);
 
       response =
         await request(app)
           .post('/api/banner')
-          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .set('authorization', `Bearer ${tokenAdmin}`)
           .attach('imageDesktop', desktopImagePath)
           .attach('imageMobile', mobileImagePath);
 
@@ -113,9 +118,10 @@ describe('Create Banner', () => {
         usernameOrEmail: 'johndoe',
         password: '123456',
       };
+      const encryptedObj = encrypt(JSON.stringify(dummyUser));
 
       const bannersBeforeAdded = await Banner.findAll();
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+      const loginResponse = await request(app).post('/api/user/login').send({ encryptedObj });
 
       console.log('wait....');
       response =
@@ -149,19 +155,12 @@ describe('Update Banner', () => {
     const mobileImagePath = path.join(__dirname, '..', '..', 'backupPics', 'Frame 7 - Mobile.png');
 
     try {
-      const dummyAdmin = {
-        usernameOrEmail: 'bangjoe',
-        password: '123456',
-      };
-
       const lastBanner = await Banner.findOne({ order: [['id', 'DESC']] })
-
-      const loginResponse = await request(app).post('/api/user/login').send(dummyAdmin);
 
       response =
         await request(app)
           .put(`/api/banner/${lastBanner.id}`)
-          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .set('authorization', `Bearer ${tokenAdmin}`)
           .attach('imageDesktop', desktopImagePath)
           .attach('imageMobile', mobileImagePath);
 
@@ -180,17 +179,10 @@ describe('Update Banner', () => {
     const mobileImagePath = path.join(__dirname, '..', '..', 'backupPics', 'Frame 7 - Mobile.png');
 
     try {
-      const dummyAdmin = {
-        usernameOrEmail: 'bangjoe',
-        password: '123456',
-      };
-
-      const loginResponse = await request(app).post('/api/user/login').send(dummyAdmin);
-
       response =
         await request(app)
           .put(`/api/banner/${bannerId}`)
-          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .set('authorization', `Bearer ${tokenAdmin}`)
           .attach('imageDesktop', desktopImagePath)
           .attach('imageMobile', mobileImagePath);
 
@@ -208,20 +200,13 @@ describe('Delete Banner', () => {
     let isDecrease;
 
     try {
-      const dummyAdmin = {
-        usernameOrEmail: 'bangjoe',
-        password: '123456',
-      };
-
       const bannersBeforeAdded = await Banner.findAll();
       const lastBanner = await Banner.findOne({ order: [['id', 'DESC']] })
-
-      const loginResponse = await request(app).post('/api/user/login').send(dummyAdmin);
 
       response =
         await request(app)
           .delete(`/api/banner/${lastBanner.id}`)
-          .set('authorization', `Bearer ${loginResponse.body.token}`);
+          .set('authorization', `Bearer ${tokenAdmin}`);
 
       const bannersAfterAdded = await Banner.findAll();
       isDecrease = bannersAfterAdded.length === bannersBeforeAdded.length - 1;
@@ -239,17 +224,10 @@ describe('Delete Banner', () => {
     const bannerId = 1000;
 
     try {
-      const dummyAdmin = {
-        usernameOrEmail: 'bangjoe',
-        password: '123456',
-      };
-
-      const loginResponse = await request(app).post('/api/user/login').send(dummyAdmin);
-
       response =
         await request(app)
           .delete(`/api/banner/${bannerId}`)
-          .set('authorization', `Bearer ${loginResponse.body.token}`);
+          .set('authorization', `Bearer ${tokenAdmin}`);
 
     } catch (err) {
       console.error(err);

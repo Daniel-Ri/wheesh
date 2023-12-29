@@ -1,5 +1,31 @@
 # API Documentation
 
+## Crypto
+
+I create 4 files that help encryption and decryption for readers.
+
+1. genEncryption.js  
+   Create encryption of text  
+   How to Use:  
+   `node genEncryption.js <text>`
+
+2. genDecryption.js  
+   Create decryption of text  
+   How to Use:  
+   `node genDecryption.js <encrypted_text>`
+
+3. genObjectEncryption.js  
+   Create encryption of object (in file)  
+   How to Use:  
+   `node genObjectEncryption.js <file_path>`  
+   Example:  
+   `node genObjectEncryption.js ./demo.js`
+
+4. genObjectDecryption.js  
+   Create decryption of text into object  
+   How to Use:  
+   `node genObjectDecryption.js <encrypted_text>`
+
 ## URL
 
 _Server_
@@ -105,6 +131,13 @@ not needed
 _Request Body_
 ```
 {
+  "encryptedObj": <encryptedObj>
+}
+```
+
+Note: `encryptedObj` is the encryption text that contains
+```
+{
   "usernameOrEmail": <username_or_email>,
   "password": <password>
 }
@@ -114,13 +147,18 @@ _Response (200)_
 ```
 {
   "token": <jwt.token>,
-  "user": {
-    "id": <id>,
-    "username": <username>,
-    "email": <email>,
-    "role": <role>
-  },
+  "user": <encrypted_user>,
   "status": "Success"
+}
+```
+
+Note: `encryptedUser` is the encryption text that contains
+```
+{
+  "id": <id>,
+  "username": <username>,
+  "email": <email>,
+  "role": <role>
 }
 ```
 

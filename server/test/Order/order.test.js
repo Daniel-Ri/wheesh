@@ -15,6 +15,7 @@ const { up: upSeat, down: downSeat } = require('../../seeders/20231211041822-sea
 const { up: upOrder, down: downOrder } = require('../../seeders/20231211054219-order');
 const { up: upOrderedSeat, down: downOrderedSeat } = require('../../seeders/20231211063308-orderedSeat');
 const { up: upPayment, down: downPayment } = require('../../seeders/20231213090332-payment');
+const { encrypt, decrypt } = require('../../utils/handleCrypto');
 const { queryInterface } = sequelize;
 
 const mockRedisClient = new Redis();
@@ -24,6 +25,16 @@ jest.mock("ioredis", () => require("ioredis-mock"));
 jest.mock('node-cron', () => ({
   schedule: jest.fn(),
 }));
+
+let defaultToken;
+let defaultDecryptedUser;
+
+const defaultUserId = 2;
+const defaultDummyUser = {
+  usernameOrEmail: 'johndoe',
+  password: '123456',
+};
+const defaultEncryptedObj = encrypt(JSON.stringify(defaultDummyUser));
 
 beforeAll(async () => {
   await upUser(queryInterface, sequelize);
@@ -38,6 +49,11 @@ beforeAll(async () => {
   await upOrder(queryInterface, sequelize);
   await upOrderedSeat(queryInterface, sequelize);
   await upPayment(queryInterface, sequelize);
+
+  const defaultLoginResponse = 
+    await request(app).post('/api/user/login').send({ encryptedObj: defaultEncryptedObj });
+  defaultToken = defaultLoginResponse.body.token;
+  defaultDecryptedUser = JSON.parse(decrypt(defaultLoginResponse.body.user));
 }, 15000);
 
 afterAll(async () => {
@@ -109,16 +125,10 @@ describe('Create Order', () => {
     let response;
     let order;
     const whichOrderTomorrow = 2; // second order
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
-    const passengerIds = [2, 3] // passenger ids of this user
+    const passengerIds = [2, 3] // passenger ids of default user
 
     try {
       const tomorrowSchedules = await getTomorrowSchedules();
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-      
       const schedule = tomorrowSchedules[whichOrderTomorrow - 1];
       const choosenSeats = getTwoBusinessSeats(schedule);
 
@@ -131,12 +141,12 @@ describe('Create Order', () => {
       response =
         await request(app)
           .post('/api/order')
-          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .set('authorization', `Bearer ${defaultToken}`)
           .send(inputs);
 
       order = await Order.findOne({
         where: {
-          userId: loginResponse.body.user.id,
+          userId: defaultDecryptedUser.id,
           scheduleId: schedule.id,
         },
       });
@@ -154,11 +164,7 @@ describe('Create Order', () => {
     let order;
     const departureStationId = 3;
     const whichOrderTomorrowGoBack = 5;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
-    const passengerIds = [2, 3] // passenger ids of this user
+    const passengerIds = [2, 3] // passenger ids of default user
 
     try {
       const tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
@@ -189,7 +195,6 @@ describe('Create Order', () => {
           },
         ],
       });
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
       
       const schedule = tomorrowSchedules[whichOrderTomorrowGoBack - 1];
       const choosenSeats = getTwoBusinessSeats(schedule);
@@ -203,12 +208,12 @@ describe('Create Order', () => {
       response =
         await request(app)
           .post('/api/order')
-          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .set('authorization', `Bearer ${defaultToken}`)
           .send(inputs);
 
       order = await Order.findOne({
         where: {
-          userId: loginResponse.body.user.id,
+          userId: defaultDecryptedUser.id,
           scheduleId: schedule.id,
         },
       });
@@ -233,7 +238,8 @@ describe('Create Order', () => {
 
     try {
       const tomorrowSchedules = await getTomorrowSchedules();
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+      const encryptedObj = encrypt(JSON.stringify(dummyUser));
+      const loginResponse = await request(app).post('/api/user/login').send({ encryptedObj });
       
       const schedule = tomorrowSchedules[whichOrderTomorrow - 1];
       const choosenSeats = getTwoBusinessSeats(schedule);
@@ -250,9 +256,11 @@ describe('Create Order', () => {
           .set('authorization', `Bearer ${loginResponse.body.token}`)
           .send(inputs);
 
+      const decryptedUser = JSON.parse(decrypt(loginResponse.body.user));
+
       order = await Order.findOne({
         where: {
-          userId: loginResponse.body.user.id,
+          userId: decryptedUser.id,
           scheduleId: schedule.id,
         },
       });
@@ -277,7 +285,8 @@ describe('Create Order', () => {
 
     try {
       const tomorrowSchedules = await getTomorrowSchedules();
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
+      const encryptedObj = encrypt(JSON.stringify(dummyUser));
+      const loginResponse = await request(app).post('/api/user/login').send({ encryptedObj });
       
       const schedule = tomorrowSchedules[whichOrderTomorrow - 1];
       const choosenSeats = getTwoBusinessSeats(schedule);
@@ -294,9 +303,11 @@ describe('Create Order', () => {
           .set('authorization', `Bearer ${loginResponse.body.token}`)
           .send(inputs);
 
+      const decryptedUser = JSON.parse(decrypt(loginResponse.body.user));
+
       order = await Order.findOne({
         where: {
-          userId: loginResponse.body.user.id,
+          userId: decryptedUser.id,
           scheduleId: schedule.id,
         },
       });
@@ -313,19 +324,12 @@ describe('Create Order', () => {
 describe('Get Unpaid Orders', () => {
   test('Success get unpaid orders with status 200', async () => {
     let response;
-    const userId = 2;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
 
     try {
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-
       response =
         await request(app)
           .get('/api/order/unpaid')
-          .set('authorization', `Bearer ${loginResponse.body.token}`);
+          .set('authorization', `Bearer ${defaultToken}`);
 
     } catch (err) {
       console.error(err);
@@ -335,7 +339,7 @@ describe('Get Unpaid Orders', () => {
     const { data } = response.body;
     data.forEach((obj) => {
       expect(obj).toHaveProperty("id");
-      expect(obj.userId).toEqual(userId);
+      expect(obj.userId).toEqual(defaultUserId);
       expect(obj).toHaveProperty("isNotified");
       expect(obj).toHaveProperty("createdAt");
       expect(obj).toHaveProperty("Payment");
@@ -348,19 +352,12 @@ describe('Get Unpaid Orders', () => {
 describe('Get Paid Orders', () => {
   test('Success get paid orders with status 200', async () => {
     let response;
-    const userId = 2;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
 
     try {
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-
       response =
         await request(app)
           .get('/api/order/paid')
-          .set('authorization', `Bearer ${loginResponse.body.token}`);
+          .set('authorization', `Bearer ${defaultToken}`);
 
     } catch (err) {
       console.error(err);
@@ -370,7 +367,7 @@ describe('Get Paid Orders', () => {
     const { data } = response.body;
     data.forEach((obj) => {
       expect(obj).toHaveProperty("id");
-      expect(obj.userId).toEqual(userId);
+      expect(obj.userId).toEqual(defaultUserId);
       expect(obj).toHaveProperty("isNotified");
       expect(obj).toHaveProperty("createdAt");
       expect(obj).toHaveProperty("Payment");
@@ -383,19 +380,12 @@ describe('Get Paid Orders', () => {
 describe('Get History Orders', () => {
   test('Success get history orders with status 200', async () => {
     let response;
-    const userId = 2;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
 
     try {
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-
       response =
         await request(app)
           .get('/api/order/history')
-          .set('authorization', `Bearer ${loginResponse.body.token}`);
+          .set('authorization', `Bearer ${defaultToken}`);
 
     } catch (err) {
       console.error(err);
@@ -405,7 +395,7 @@ describe('Get History Orders', () => {
     const { data } = response.body;
     data.forEach((obj) => {
       expect(obj).toHaveProperty("id");
-      expect(obj.userId).toEqual(userId);
+      expect(obj.userId).toEqual(defaultUserId);
       expect(obj).toHaveProperty("isNotified");
       expect(obj).toHaveProperty("createdAt");
       expect(obj).toHaveProperty("Payment");
@@ -418,15 +408,10 @@ describe('Get History Orders', () => {
 describe('Get Order', () => {
   test('Success get paid order data with status 200', async () => {
     let response;
-    const userId = 2;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
 
     try {
       const order = await Order.findOne({ 
-        where: { userId },
+        where: { userId: defaultUserId },
         include: [
           {
             model: Payment,
@@ -437,12 +422,10 @@ describe('Get Order', () => {
         ]
       });
 
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-
       response =
         await request(app)
           .get(`/api/order/${order.id}`)
-          .set('authorization', `Bearer ${loginResponse.body.token}`);
+          .set('authorization', `Bearer ${defaultToken}`);
 
     } catch (err) {
       console.error(err);
@@ -451,7 +434,7 @@ describe('Get Order', () => {
     expect(response.status).toBe(200);
     const { data } = response.body;
     expect(data).toHaveProperty("id");
-    expect(data.userId).toEqual(userId);
+    expect(data.userId).toEqual(defaultUserId);
     expect(data).toHaveProperty("isNotified");
     expect(data).toHaveProperty("createdAt");
     expect(data).toHaveProperty("Payment");
@@ -464,15 +447,10 @@ describe('Get Order', () => {
 
   test('Success get unpaid order data with status 200', async () => {
     let response;
-    const userId = 2;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
 
     try {
       const order = await Order.findOne({ 
-        where: { userId },
+        where: { userId: defaultUserId },
         include: [
           {
             model: Payment,
@@ -483,12 +461,10 @@ describe('Get Order', () => {
         ]
       });
 
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-
       response =
         await request(app)
           .get(`/api/order/${order.id}`)
-          .set('authorization', `Bearer ${loginResponse.body.token}`);
+          .set('authorization', `Bearer ${defaultToken}`);
 
     } catch (err) {
       console.error(err);
@@ -497,7 +473,7 @@ describe('Get Order', () => {
     expect(response.status).toBe(200);
     const { data } = response.body;
     expect(data).toHaveProperty("id");
-    expect(data.userId).toEqual(userId);
+    expect(data.userId).toEqual(defaultUserId);
     expect(data).toHaveProperty("isNotified");
     expect(data).toHaveProperty("createdAt");
     expect(data).toHaveProperty("Payment");
@@ -511,18 +487,12 @@ describe('Get Order', () => {
   test('Failed get order: Order not found with status 404', async () => {
     let response;
     const orderId = 1000;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
 
     try {
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-
       response =
         await request(app)
           .get(`/api/order/${orderId}`)
-          .set('authorization', `Bearer ${loginResponse.body.token}`);
+          .set('authorization', `Bearer ${defaultToken}`);
 
     } catch (err) {
       console.error(err);
@@ -536,15 +506,10 @@ describe('Pay Order', () => {
   test('Success pay order with status 200', async () => {
     let response;
     let order;
-    const userId = 2;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
 
     try {
       const orderToBePaid = await Order.findOne({ 
-        where: { userId },
+        where: { userId: defaultUserId },
         include: [
           {
             model: Payment,
@@ -558,12 +523,10 @@ describe('Pay Order', () => {
         ],
       });
 
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-
       response =
         await request(app)
           .put(`/api/order/${orderToBePaid.id}`)
-          .set('authorization', `Bearer ${loginResponse.body.token}`);
+          .set('authorization', `Bearer ${defaultToken}`);
 
       order = await Order.findByPk(orderToBePaid.id, {
         include: [
@@ -587,15 +550,10 @@ describe('Cancel Order', () => {
     // Cancel second created order
     let response;
     let order;
-    const userId = 2;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
 
     try {
       const orderToBePaid = await Order.findOne({ 
-        where: { userId },
+        where: { userId: defaultUserId },
         include: [
           {
             model: Payment,
@@ -609,12 +567,10 @@ describe('Cancel Order', () => {
         ],
       });
 
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-
       response =
         await request(app)
           .delete(`/api/order/${orderToBePaid.id}`)
-          .set('authorization', `Bearer ${loginResponse.body.token}`);
+          .set('authorization', `Bearer ${defaultToken}`);
 
       order = await Order.findByPk(orderToBePaid.id);
 
@@ -629,18 +585,12 @@ describe('Cancel Order', () => {
   test('Failed cancel order: Order not found with status 404', async () => {
     let response;
     const orderId = 1000;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
 
     try {
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-
       response =
         await request(app)
           .delete(`/api/order/${orderId}`)
-          .set('authorization', `Bearer ${loginResponse.body.token}`);
+          .set('authorization', `Bearer ${defaultToken}`);
 
     } catch (err) {
       console.error(err);
@@ -653,10 +603,6 @@ describe('Cancel Order', () => {
     let response;
     let order;
     const otherUserId = 4;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
 
     try {
       const orderToBePaid = await Order.findOne({ 
@@ -674,12 +620,10 @@ describe('Cancel Order', () => {
         ],
       });
 
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-
       response =
         await request(app)
           .delete(`/api/order/${orderToBePaid.id}`)
-          .set('authorization', `Bearer ${loginResponse.body.token}`);
+          .set('authorization', `Bearer ${defaultToken}`);
 
       order = await Order.findByPk(orderToBePaid.id);
 
@@ -699,15 +643,10 @@ describe('Cancel Order', () => {
   test('Failed cancel order: Cannot cancel paid order with status 400', async () => {
     let response;
     let order;
-    const userId = 2;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
 
     try {
       const orderToBePaid = await Order.findOne({ 
-        where: { userId },
+        where: { userId: defaultUserId },
         include: [
           {
             model: Payment,
@@ -721,12 +660,10 @@ describe('Cancel Order', () => {
         ],
       });
 
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-
       response =
         await request(app)
           .delete(`/api/order/${orderToBePaid.id}`)
-          .set('authorization', `Bearer ${loginResponse.body.token}`);
+          .set('authorization', `Bearer ${defaultToken}`);
 
       order = await Order.findByPk(orderToBePaid.id);
 
@@ -747,16 +684,11 @@ describe('Cancel Order', () => {
 describe('Validate Ticket On Departure', () => {
   test('Failed validate ticket: Validation error with status 400', async () => {
     let response;
-    const userId = 2;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
     const departureStationId = 1; // Halim
 
     try {
       const paidOrder = await Order.findOne({ 
-        where: { userId },
+        where: { userId: defaultUserId },
         include: [
           {
             model: Payment,
@@ -773,12 +705,10 @@ describe('Validate Ticket On Departure', () => {
         }
       });
 
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-
       response = 
         await request(app)
           .post('/api/order/validateDepart')
-          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .set('authorization', `Bearer ${defaultToken}`)
           .send({
             departureStationId,
             orderedSeatId: orderedSeat.id,
@@ -796,16 +726,11 @@ describe('Validate Ticket On Departure', () => {
 
   test('Failed validate ticket: Depart at wrong station with status 400', async () => {
     let response;
-    const userId = 2;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
     const departureStationId = 3; // Padalarang
 
     try {
       const paidOrder = await Order.findOne({ 
-        where: { userId },
+        where: { userId: defaultUserId },
         include: [
           {
             model: Payment,
@@ -822,12 +747,10 @@ describe('Validate Ticket On Departure', () => {
         }
       });
 
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-
       response = 
         await request(app)
           .post('/api/order/validateDepart')
-          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .set('authorization', `Bearer ${defaultToken}`)
           .send({
             departureStationId,
             orderedSeatId: orderedSeat.id,
@@ -847,16 +770,11 @@ describe('Validate Ticket On Departure', () => {
 
   test('Failed validate ticket: Need to wait one hour before departure with status 400', async () => {
     let response;
-    const userId = 2;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
     const departureStationId = 1; // Halim
 
     try {
       const paidOrder = await Order.findOne({ 
-        where: { userId },
+        where: { userId: defaultUserId },
         include: [
           {
             model: Payment,
@@ -876,12 +794,10 @@ describe('Validate Ticket On Departure', () => {
         }
       });
 
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-
       response = 
         await request(app)
           .post('/api/order/validateDepart')
-          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .set('authorization', `Bearer ${defaultToken}`)
           .send({
             departureStationId,
             orderedSeatId: orderedSeat.id,
@@ -904,16 +820,11 @@ describe('Validate Ticket On Departure', () => {
 
   test('Failed validate ticket: Train has gone with status 400', async () => {
     let response;
-    const userId = 2;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
     const departureStationId = 1; // Halim
 
     try {
       const paidOrder = await Order.findOne({ 
-        where: { userId },
+        where: { userId: defaultUserId },
         include: [
           {
             model: Payment,
@@ -936,12 +847,10 @@ describe('Validate Ticket On Departure', () => {
         }
       });
 
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-
       response = 
         await request(app)
           .post('/api/order/validateDepart')
-          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .set('authorization', `Bearer ${defaultToken}`)
           .send({
             departureStationId,
             orderedSeatId: orderedSeat.id,
@@ -963,16 +872,11 @@ describe('Validate Ticket On Departure', () => {
 describe('Validate Ticket On Arrival', () => {
   test('Success validate ticket with status 200', async () => {
     let response;
-    const userId = 2;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
     const arrivalStationId = 3; // Padalarang
 
     try {
       const paidOrder = await Order.findOne({ 
-        where: { userId },
+        where: { userId: defaultUserId },
         include: [
           {
             model: Payment,
@@ -995,12 +899,10 @@ describe('Validate Ticket On Arrival', () => {
         }
       });
 
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-
       response = 
         await request(app)
           .post('/api/order/validateArrive')
-          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .set('authorization', `Bearer ${defaultToken}`)
           .send({
             arrivalStationId,
             orderedSeatId: orderedSeat.id,
@@ -1024,16 +926,11 @@ describe('Validate Ticket On Arrival', () => {
 
   test('Failed validation ticket: Validation Error with status 400', async () => {
     let response;
-    const userId = 2;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
     const arrivalStationId = 3; // Padalarang
 
     try {
       const paidOrder = await Order.findOne({ 
-        where: { userId },
+        where: { userId: defaultUserId },
         include: [
           {
             model: Payment,
@@ -1056,12 +953,10 @@ describe('Validate Ticket On Arrival', () => {
         }
       });
 
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-
       response = 
         await request(app)
           .post('/api/order/validateArrive')
-          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .set('authorization', `Bearer ${defaultToken}`)
           .send({
             arrivalStationId,
             orderedSeatId: orderedSeat.id,
@@ -1079,16 +974,11 @@ describe('Validate Ticket On Arrival', () => {
 
   test('Failed validation ticket: Arrive at wrong station with status 400', async () => {
     let response;
-    const userId = 2;
-    const dummyUser = {
-      usernameOrEmail: 'johndoe',
-      password: '123456',
-    };
     const arrivalStationId = 1; // Halim
 
     try {
       const paidOrder = await Order.findOne({ 
-        where: { userId },
+        where: { userId: defaultUserId },
         include: [
           {
             model: Payment,
@@ -1111,12 +1001,10 @@ describe('Validate Ticket On Arrival', () => {
         }
       });
 
-      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
-
       response = 
         await request(app)
           .post('/api/order/validateArrive')
-          .set('authorization', `Bearer ${loginResponse.body.token}`)
+          .set('authorization', `Bearer ${defaultToken}`)
           .send({
             arrivalStationId,
             orderedSeatId: orderedSeat.id,
