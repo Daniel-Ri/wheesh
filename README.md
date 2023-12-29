@@ -10,7 +10,7 @@ There are 10 features:
 6. Schedule
 7. Ticketing (Booking Ticket, _Pay Order_ (not implementing payment gateway), Cancel Order)
 8. See Orders (Unpaid Orders, Paid Orders, History Orders)
-9. QR Validation
+9. QR Validation  
    The QR Validation is on `Gate` page
 10. Reminder  
     Remind user about one hour before departure via email
