@@ -51,75 +51,99 @@
       }
 
       div.input {
-        flex: 45%;
+        width: 100%;
         padding: 0.5rem;
         @include directionX;
         justify-content: space-between;
         align-items: center;
-      }
+        gap: 0.5rem;
 
-      input {
-        flex: 45%;
-        width: 45%;
-        padding: 0.25rem 0.5rem;
-        font-size: 80%;
-        text-align: right;
-        border-radius: 5px;
-      }
-
-      input:focus {
-        outline: none;
-        border-color: $color-picton-blue;
-      }
-
-      .inputPassword {
-        flex: 45%;
-        width: 45%;
-        font-size: 100%;
-      }
-
-      .radios {
-        flex: 45%;
-        width: 45%;
-        @include directionX;
-        justify-content: space-around;
-        gap: 1rem;
-
-        .radio {
+        input {
+          flex: 45%;
+          width: 45%;
+          padding: 0.25rem 0.5rem;
+          font-size: 80%;
+          text-align: right;
+          border-radius: 5px;
+        }
+  
+        input:focus {
+          outline: none;
+          border-color: $color-picton-blue;
+        }
+  
+        .inputPassword {
+          flex: 45%;
+          width: 45%;
+          font-size: 100%;
+        }
+  
+        .radios {
+          flex: 45%;
+          width: 45%;
           @include directionX;
-          gap: 0.25rem;
-          cursor: pointer;
-
-          input {
+          justify-content: space-around;
+          gap: 1rem;
+  
+          .radio {
+            @include directionX;
+            gap: 0.25rem;
             cursor: pointer;
-          }
-
-          label {
-            cursor: pointer;
+  
+            input {
+              cursor: pointer;
+            }
+  
+            label {
+              cursor: pointer;
+            }
           }
         }
-      }
-
-      .datePickerWrapper {
-        @include directionX;
-        flex: 45%;
-
-        .datePicker {
+  
+        .datePickerWrapper {
+          @include directionX;
+          flex: 45%;
+  
+          .datePicker {
+            align-self: flex-end;
+          }
+        }
+  
+        .verification {
+          flex: 45%;
+          width: 45%;
+          text-align: left;
+        }
+  
+        .button {
           align-self: flex-end;
+          @include directionX;
+          justify-content: flex-end;
+          flex: 45%;
         }
       }
 
-      .verification {
-        flex: 45%;
-        width: 45%;
-        text-align: left;
-      }
-
-      .button {
-        align-self: flex-end;
+      .errorRowReverse {
+        width: 100%;
+        margin-top: -0.5rem;
+        padding: 0 0.5rem;
         @include directionX;
         justify-content: flex-end;
-        flex: 45%;
+        color: $color-strawberry-red;
+        font-size: 70%;
+
+        .errorMsg {
+          text-align: right;
+        }
+      }
+
+      .errorRow {
+        width: 100%;
+        margin-top: -0.5rem;
+        padding: 0 0.5rem;
+        @include directionX;
+        color: $color-strawberry-red;
+        font-size: 70%;
       }
     }
 
@@ -128,6 +152,14 @@
       margin-bottom: 1rem;
       @include directionY;
       gap: 1rem;
+    }
+
+    .mainError {
+      margin-top: 0.5rem;
+      margin-bottom: -0.5rem;
+      text-align: center;
+      color: $color-strawberry-red;
+      font-size: 70%;
     }
   }
 

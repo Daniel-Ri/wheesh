@@ -38,6 +38,23 @@ const Register = ({ login, intl: { formatMessage } }) => {
     emailToken: '',
   });
 
+  const [errors, setErrors] = useState({
+    username: '',
+    password: '',
+    passwordConfirmation: '',
+    gender: '',
+    dateOfBirth: '',
+    idCard: '',
+    name: '',
+    email: '',
+    emailToken: '',
+  });
+
+  const [mainError, setMainError] = useState('');
+
+  const today = new Date();
+  const isDateAvailable = (date) => date <= today;
+
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const handleMouseDownPassword = (event) => {
@@ -56,64 +73,115 @@ const Register = ({ login, intl: { formatMessage } }) => {
 
   const validateUsername = () => {
     if (!inputs.username) {
-      toast.error(formatMessage({ id: 'app_username_cannot_be_empty' }));
+      setErrors((prev) => ({ ...prev, username: formatMessage({ id: 'app_username_cannot_be_empty' }) }));
       return false;
     }
 
+    setErrors((prev) => ({ ...prev, username: '' }));
     return true;
   };
 
   const validatePassword = () => {
     if (!inputs.password) {
-      toast.error(formatMessage({ id: 'app_password_cannot_be_empty' }));
+      setErrors((prev) => ({ ...prev, password: formatMessage({ id: 'app_password_cannot_be_empty' }) }));
       return false;
     }
 
     if (inputs.password.length < 6) {
-      toast.error(formatMessage({ id: 'app_password_must_have_characters' }));
+      setErrors((prev) => ({ ...prev, password: formatMessage({ id: 'app_password_must_have_characters' }) }));
       return false;
     }
 
+    setErrors((prev) => ({ ...prev, password: '' }));
     return true;
   };
 
   const validatePasswordConfirmation = () => {
     if (!inputs.passwordConfirmation) {
-      toast.error(formatMessage({ id: 'app_must_insert_password_confirmation' }));
+      setErrors((prev) => ({
+        ...prev,
+        passwordConfirmation: formatMessage({ id: 'app_must_insert_password_confirmation' }),
+      }));
       return false;
     }
     if (inputs.passwordConfirmation !== inputs.password) {
-      toast.error(formatMessage({ id: 'app_password_confirmation_must_same' }));
+      setErrors((prev) => ({
+        ...prev,
+        passwordConfirmation: formatMessage({ id: 'app_password_confirmation_must_same' }),
+      }));
       return false;
     }
 
+    setErrors((prev) => ({ ...prev, passwordConfirmation: '' }));
+    return true;
+  };
+
+  const validateGender = () => {
+    if (!inputs.gender) {
+      setErrors((prev) => ({ ...prev, gender: formatMessage({ id: 'app_must_choose_gender' }) }));
+      return false;
+    }
+
+    setErrors((prev) => ({ ...prev, gender: '' }));
+    return true;
+  };
+
+  const validateDateOfBirth = () => {
+    if (!inputs.dateOfBirth) {
+      setErrors((prev) => ({ ...prev, dateOfBirth: formatMessage({ id: 'app_must_choose_date_birth' }) }));
+      return false;
+    }
+
+    setErrors((prev) => ({ ...prev, dateOfBirth: '' }));
     return true;
   };
 
   const validateIdCard = () => {
     if (!inputs.idCard) {
-      toast.error(formatMessage({ id: 'app_must_insert_id_card' }));
+      setErrors((prev) => ({ ...prev, idCard: formatMessage({ id: 'app_must_insert_id_card' }) }));
       return false;
     }
     if (inputs.idCard.length !== 16 || !/^\d+$/.test(inputs.idCard)) {
-      toast.error(formatMessage({ id: 'app_incorrect_id_card_format' }));
+      setErrors((prev) => ({ ...prev, idCard: formatMessage({ id: 'app_incorrect_id_card_format' }) }));
       return false;
     }
 
+    setErrors((prev) => ({ ...prev, idCard: '' }));
+    return true;
+  };
+
+  const validateName = () => {
+    if (!inputs.name) {
+      setErrors((prev) => ({ ...prev, name: formatMessage({ id: 'app_must_insert_name' }) }));
+      return false;
+    }
+
+    setErrors((prev) => ({ ...prev, name: '' }));
     return true;
   };
 
   const validateEmail = () => {
     if (!inputs.email) {
-      toast.error(formatMessage({ id: 'app_you_must_insert_email' }));
+      setErrors((prev) => ({ ...prev, email: formatMessage({ id: 'app_you_must_insert_email' }) }));
       return false;
     }
 
     if (!/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(inputs.email)) {
-      toast.error(formatMessage({ id: 'app_incorrect_email_format' }));
+      setErrors((prev) => ({ ...prev, email: formatMessage({ id: 'app_incorrect_email_format' }) }));
       return false;
     }
 
+    setErrors((prev) => ({ ...prev, email: '' }));
+    return true;
+  };
+
+  const validateEmailToken = () => {
+    if (!inputs.emailToken) {
+      setErrors((prev) => ({ ...prev, emailToken: formatMessage({ id: 'app_must_insert_verification_code' }) }));
+      return false;
+    }
+
+    setErrors((prev) => ({ ...prev, emailToken: '' }));
     return true;
   };
 
@@ -124,23 +192,43 @@ const Register = ({ login, intl: { formatMessage } }) => {
       validatePassword();
     } else if (e.target.name === 'passwordConfirmation') {
       validatePasswordConfirmation();
+    } else if (e.target.name === 'dateOfBirth') {
+      validateDateOfBirth();
     } else if (e.target.name === 'idCard') {
       validateIdCard();
+    } else if (e.target.name === 'name') {
+      validateName();
     } else if (e.target.name === 'email') {
       validateEmail();
+    } else if (e.target.name === 'emailToken') {
+      validateEmailToken();
     }
   };
 
   const validateInputs = () => {
-    if (!validateUsername()) return false;
+    const validatedUsername = validateUsername();
+    const validatedPassword = validatePassword();
+    const validatedPasswordConfirmation = validatePasswordConfirmation();
+    const validatedGender = validateGender();
+    const validatedDateOfBirth = validateDateOfBirth();
+    const validatedIdCard = validateIdCard();
+    const validatedName = validateName();
+    const validatedEmail = validateEmail();
+    const validatedEmailToken = validateEmailToken();
 
-    if (!validatePassword()) return false;
-
-    if (!validatePasswordConfirmation()) return false;
-
-    if (!validateIdCard()) return false;
-
-    if (!validateEmail()) return false;
+    if (
+      !validatedUsername ||
+      !validatedPassword ||
+      !validatedPasswordConfirmation ||
+      !validatedDateOfBirth ||
+      !validatedGender ||
+      !validatedIdCard ||
+      !validatedName ||
+      !validatedEmail ||
+      !validatedEmailToken
+    ) {
+      return false;
+    }
 
     return true;
   };
@@ -151,10 +239,22 @@ const Register = ({ login, intl: { formatMessage } }) => {
   };
 
   const handleErrorRegister = (errorMsg) => {
-    toast.error(errorMsg);
+    setMainError(errorMsg);
   };
 
   const handleSubmit = () => {
+    setErrors({
+      username: '',
+      password: '',
+      passwordConfirmation: '',
+      gender: '',
+      dateOfBirth: '',
+      idCard: '',
+      name: '',
+      email: '',
+      emailToken: '',
+    });
+    setMainError('');
     if (!validateInputs()) return;
 
     const formattedInputs = { ...inputs };
@@ -169,12 +269,13 @@ const Register = ({ login, intl: { formatMessage } }) => {
   };
 
   const handleErrorSendEmailToken = (errorMsg) => {
-    toast.error(errorMsg);
+    setErrors((prev) => ({ ...prev, email: errorMsg }));
     setInputs((prev) => ({ ...prev, email: '' }));
   };
 
   const handleGenerateEmailToken = () => {
     if (!validateEmail()) return;
+    setInputs((prev) => ({ ...prev, emailToken: '' }));
 
     const formattedInputs = { email: inputs.email, action: 'create' };
     dispatch(sendEmailToken(formattedInputs, handleSuccessSendEmailToken, handleErrorSendEmailToken));
@@ -212,6 +313,12 @@ const Register = ({ login, intl: { formatMessage } }) => {
               autoComplete="off"
             />
           </div>
+          {errors.username && (
+            <div className={classes.errorRowReverse}>
+              <div className={classes.errorMsg}>{errors.username}</div>
+            </div>
+          )}
+
           <div className={classes.input}>
             <label htmlFor="password">Password</label>
             <OutlinedInput
@@ -238,6 +345,12 @@ const Register = ({ login, intl: { formatMessage } }) => {
               label=""
             />
           </div>
+          {errors.password && (
+            <div className={classes.errorRowReverse}>
+              <div className={classes.errorMsg}>{errors.password}</div>
+            </div>
+          )}
+
           <div className={classes.input}>
             <label htmlFor="passwordConfirmation">
               <FormattedMessage id="app_password_confirmation" />
@@ -266,12 +379,24 @@ const Register = ({ login, intl: { formatMessage } }) => {
               label=""
             />
           </div>
+          {errors.passwordConfirmation && (
+            <div className={classes.errorRowReverse}>
+              <div className={classes.errorMsg}>{errors.passwordConfirmation}</div>
+            </div>
+          )}
+
           <div className={classes.input}>
             <label htmlFor="gender">
               <FormattedMessage id="app_gender" />
             </label>
             <div className={classes.radios}>
-              <div className={classes.radio} onClick={() => setInputs((prev) => ({ ...prev, gender: 'Male' }))}>
+              <div
+                className={classes.radio}
+                onClick={() => {
+                  setInputs((prev) => ({ ...prev, gender: 'Male' }));
+                  setErrors((prev) => ({ ...prev, gender: '' }));
+                }}
+              >
                 <input
                   type="radio"
                   name="gender"
@@ -283,7 +408,13 @@ const Register = ({ login, intl: { formatMessage } }) => {
                   <FormattedMessage id="app_male" />
                 </label>
               </div>
-              <div className={classes.radio} onClick={() => setInputs((prev) => ({ ...prev, gender: 'Female' }))}>
+              <div
+                className={classes.radio}
+                onClick={() => {
+                  setInputs((prev) => ({ ...prev, gender: 'Female' }));
+                  setErrors((prev) => ({ ...prev, gender: '' }));
+                }}
+              >
                 <input
                   type="radio"
                   name="gender"
@@ -297,6 +428,12 @@ const Register = ({ login, intl: { formatMessage } }) => {
               </div>
             </div>
           </div>
+          {errors.gender && (
+            <div className={classes.errorRowReverse}>
+              <div className={classes.errorMsg}>{errors.gender}</div>
+            </div>
+          )}
+
           <div className={classes.input}>
             <label htmlFor="dateOfBirth">
               <FormattedMessage id="app_date_of_birth" />
@@ -310,11 +447,18 @@ const Register = ({ login, intl: { formatMessage } }) => {
                 dropdownMode="select"
                 showYearDropdown
                 dateFormat="dd/MM/yyyy"
+                filterDate={isDateAvailable}
                 className={classes.datePicker}
                 onChange={(date) => setInputs((prev) => ({ ...prev, dateOfBirth: date }))}
+                onBlur={handleFocusOut}
               />
             </div>
           </div>
+          {errors.dateOfBirth && (
+            <div className={classes.errorRowReverse}>
+              <div className={classes.errorMsg}>{errors.dateOfBirth}</div>
+            </div>
+          )}
 
           <div className={classes.header}>
             <FormattedMessage id="app_certificate_information" />
@@ -334,6 +478,12 @@ const Register = ({ login, intl: { formatMessage } }) => {
               autoComplete="off"
             />
           </div>
+          {errors.idCard && (
+            <div className={classes.errorRowReverse}>
+              <div className={classes.errorMsg}>{errors.idCard}</div>
+            </div>
+          )}
+
           <div className={classes.input}>
             <label htmlFor="name">
               <FormattedMessage id="app_name" />
@@ -344,10 +494,16 @@ const Register = ({ login, intl: { formatMessage } }) => {
               id="name"
               value={inputs.name}
               onChange={handleInputChange}
+              onBlur={handleFocusOut}
               placeholder={formatMessage({ id: 'app_enter_name_on_your_id' })}
               autoComplete="off"
             />
           </div>
+          {errors.name && (
+            <div className={classes.errorRowReverse}>
+              <div className={classes.errorMsg}>{errors.name}</div>
+            </div>
+          )}
 
           <div className={classes.header}>
             <FormattedMessage id="app_contact_information" />
@@ -365,6 +521,12 @@ const Register = ({ login, intl: { formatMessage } }) => {
               autoComplete="off"
             />
           </div>
+          {errors.email && (
+            <div className={classes.errorRowReverse}>
+              <div className={classes.errorMsg}>{errors.email}</div>
+            </div>
+          )}
+
           <div className={classes.input}>
             <input
               className={classes.verification}
@@ -373,6 +535,7 @@ const Register = ({ login, intl: { formatMessage } }) => {
               id="emailToken"
               value={inputs.emailToken}
               onChange={handleInputChange}
+              onBlur={handleFocusOut}
               placeholder={formatMessage({ id: 'app_please_enter_verification_code' })}
               autoComplete="off"
             />
@@ -382,7 +545,14 @@ const Register = ({ login, intl: { formatMessage } }) => {
               </Button>
             </div>
           </div>
+          {errors.emailToken && (
+            <div className={classes.errorRow}>
+              <div className={classes.errorMsg}>{errors.emailToken}</div>
+            </div>
+          )}
         </form>
+
+        {mainError && <div className={classes.mainError}>{mainError}</div>}
 
         <div className={classes.buttons}>
           <Button variant="contained" className={classes.submit} onClick={handleSubmit}>
