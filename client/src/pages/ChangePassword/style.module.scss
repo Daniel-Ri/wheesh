@@ -51,6 +51,23 @@
           }
         }
       }
+
+      .errorRow {
+        width: 100%;
+        margin-top: -0.5rem;
+        padding: 0 0.5rem;
+        @include directionX;
+        color: $color-strawberry-red;
+        font-size: 70%;
+      }
+    }
+
+    .mainError {
+      margin-top: 0.5rem;
+      margin-bottom: -0.5rem;
+      text-align: center;
+      color: $color-strawberry-red;
+      font-size: 70%;
     }
 
     .buttons {

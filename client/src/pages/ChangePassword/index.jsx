@@ -21,6 +21,14 @@ const ChangePassword = ({ intl: { formatMessage } }) => {
     newPasswordConfirmation: '',
   });
 
+  const [errors, setErrors] = useState({
+    oldPassword: '',
+    newPassword: '',
+    newPasswordConfirmation: '',
+  });
+
+  const [mainError, setMainError] = useState('');
+
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showNewPasswordConfirmation, setShowNewPasswordConfirmation] = useState(false);
@@ -49,37 +57,46 @@ const ChangePassword = ({ intl: { formatMessage } }) => {
 
   const validateOldPassword = () => {
     if (!inputs.oldPassword) {
-      toast.error(formatMessage({ id: 'app_must_insert_original_password' }));
+      setErrors((prev) => ({ ...prev, oldPassword: formatMessage({ id: 'app_must_insert_original_password' }) }));
       return false;
     }
 
+    setErrors((prev) => ({ ...prev, oldPassword: '' }));
     return true;
   };
 
   const validateNewPassword = () => {
     if (!inputs.newPassword) {
-      toast.error(formatMessage({ id: 'app_new_password_cannot_empty' }));
+      setErrors((prev) => ({ ...prev, newPassword: formatMessage({ id: 'app_new_password_cannot_empty' }) }));
       return false;
     }
 
     if (inputs.newPassword.length < 6) {
-      toast.error(formatMessage({ id: 'app_new_password_have_characters' }));
+      setErrors((prev) => ({ ...prev, newPassword: formatMessage({ id: 'app_new_password_have_characters' }) }));
       return false;
     }
 
+    setErrors((prev) => ({ ...prev, newPassword: '' }));
     return true;
   };
 
   const validateNewPasswordConfirmation = () => {
     if (!inputs.newPasswordConfirmation) {
-      toast.error(formatMessage({ id: 'app_must_insert_password_confirmation' }));
+      setErrors((prev) => ({
+        ...prev,
+        newPasswordConfirmation: formatMessage({ id: 'app_must_insert_password_confirmation' }),
+      }));
       return false;
     }
     if (inputs.newPasswordConfirmation !== inputs.newPassword) {
-      toast.error(formatMessage({ id: 'app_confirmation_must_same_new' }));
+      setErrors((prev) => ({
+        ...prev,
+        newPasswordConfirmation: formatMessage({ id: 'app_confirmation_must_same_new' }),
+      }));
       return false;
     }
 
+    setErrors((prev) => ({ ...prev, newPasswordConfirmation: '' }));
     return true;
   };
 
@@ -94,11 +111,13 @@ const ChangePassword = ({ intl: { formatMessage } }) => {
   };
 
   const validateInputs = () => {
-    if (!validateOldPassword()) return false;
+    const validatedOldPassword = validateOldPassword();
+    const validatedNewPassword = validateNewPassword();
+    const validatedNewPasswordConfirmation = validateNewPasswordConfirmation();
 
-    if (!validateNewPassword()) return false;
-
-    if (!validateNewPasswordConfirmation()) return false;
+    if (!validatedOldPassword || !validatedNewPassword || !validatedNewPasswordConfirmation) {
+      return false;
+    }
 
     return true;
   };
@@ -109,11 +128,17 @@ const ChangePassword = ({ intl: { formatMessage } }) => {
   };
 
   const handleError = (errorMsg) => {
-    toast.error(errorMsg);
+    setMainError(errorMsg);
     setInputs({ oldPassword: '', newPassword: '', newPasswordConfirmation: '' });
   };
 
   const handleSubmit = () => {
+    setErrors({
+      oldPassword: '',
+      newPassword: '',
+      newPasswordConfirmation: '',
+    });
+    setMainError('');
     if (!validateInputs()) return;
 
     const formattedInputs = { ...inputs };
@@ -156,6 +181,12 @@ const ChangePassword = ({ intl: { formatMessage } }) => {
             }
             label=""
           />
+          {errors.oldPassword && (
+            <div className={classes.errorRow}>
+              <div className={classes.errorMsg}>{errors.oldPassword}</div>
+            </div>
+          )}
+
           <OutlinedInput
             id="outlined-adornment-password"
             name="newPassword"
@@ -179,6 +210,12 @@ const ChangePassword = ({ intl: { formatMessage } }) => {
             }
             label=""
           />
+          {errors.newPassword && (
+            <div className={classes.errorRow}>
+              <div className={classes.errorMsg}>{errors.newPassword}</div>
+            </div>
+          )}
+
           <OutlinedInput
             id="outlined-adornment-password"
             name="newPasswordConfirmation"
@@ -202,7 +239,14 @@ const ChangePassword = ({ intl: { formatMessage } }) => {
             }
             label=""
           />
+          {errors.newPasswordConfirmation && (
+            <div className={classes.errorRow}>
+              <div className={classes.errorMsg}>{errors.newPasswordConfirmation}</div>
+            </div>
+          )}
         </form>
+
+        {mainError && <div className={classes.mainError}>{mainError}</div>}
 
         <div className={classes.buttons}>
           <Button variant="contained" className={classes.submit} onClick={handleSubmit}>
