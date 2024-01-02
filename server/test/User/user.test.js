@@ -200,7 +200,9 @@ describe('Register', () => {
             .post('/api/user/sendEmailToken').send({ email: dummyData.email, action: "create" });
       emailToken = await EmailToken.findOne({ where: {email: dummyData.email} });
       dummyData.emailToken = emailToken.token;
-      response = await request(app).post('/api/user/register').send(dummyData);
+      const encryptedObj = encrypt(JSON.stringify(dummyData));
+
+      response = await request(app).post('/api/user/register').send({ encryptedObj });
 
       // Check the email is still in database
       emailToken = await EmailToken.findOne({ where: {email: dummyData.email} });
@@ -213,10 +215,11 @@ describe('Register', () => {
     }
 
     expect(response.status).toBe(201);
-    expect(response.body.data.username).toEqual(dummyData.username);
-    expect(response.body.data.email).toEqual(dummyData.email);
-    expect(response.body.data.Passengers[0].isUser).toBe(true);
-    expect(response.body.data.Passengers[0].name).toEqual(dummyData.name);
+    const decryptedData = JSON.parse(decrypt(response.body.data));
+    expect(decryptedData.username).toEqual(dummyData.username);
+    expect(decryptedData.email).toEqual(dummyData.email);
+    expect(decryptedData.Passengers[0].isUser).toBe(true);
+    expect(decryptedData.Passengers[0].name).toEqual(dummyData.name);
     expect(emailToken).toBeNull();
     expect(user).not.toBeNull();
   });
@@ -236,9 +239,8 @@ describe('Register', () => {
     let user;
 
     try {
-      await request(app)
-            .post('/api/user/sendEmailToken').send({ email: dummyData.email, action: "create" });
-      response = await request(app).post('/api/user/register').send(dummyData);
+      const encryptedObj = encrypt(JSON.stringify(dummyData));
+      response = await request(app).post('/api/user/register').send({ encryptedObj });
 
       // Check user is added on database
       user = await User.findOne({ where: {username: dummyData.username} }); 

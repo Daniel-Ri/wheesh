@@ -31,7 +31,8 @@ function* doSendEmailToken({ inputs, handleSuccess, handleError }) {
 
 function* doRegisterUser({ inputs, handleSuccess, handleError }) {
   try {
-    yield call(register, inputs);
+    const encryptedObj = yield call(encrypt, JSON.stringify(inputs));
+    yield call(register, { encryptedObj });
     yield call(handleSuccess);
   } catch (error) {
     yield call(handleError, error.response.data.message);

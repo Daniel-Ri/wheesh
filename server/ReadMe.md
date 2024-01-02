@@ -183,6 +183,13 @@ not needed
 _Request Body_
 ```
 {
+  "encryptedObj": <encryptedObj>
+}
+```
+
+Note: `encryptedObj` is the encryption text that contains
+```
+{
   "username": <username>,
   "password": <password>,
   "gender": <gender>,          // 'Male' or 'Female'
@@ -197,25 +204,30 @@ _Request Body_
 _Response (201)_
 ```
 {
-  "data": {
-    "id": <userId>,
-    "username": <username>,
-    "role": <role>,
-    "email": <email>,
-    "Passengers": [
-      {
-        "id": <passengerId>,
-        "userId": <userId>,
-        "isUser": true,
-        "gender": <gender>,
-        "dateOfBirth": <dateOfBirth>,
-        "idCard": <idCard>,
-        "name": <name>,
-        "email": <email>
-      }
-    ]
-  },
+  "data": <encryptedData>,
   "status": "Success"
+}
+```
+
+Note: `encryptedData` is the encryption text that contains
+```
+{
+  "id": <userId>,
+  "username": <username>,
+  "role": <role>,
+  "email": <email>,
+  "Passengers": [
+    {
+      "id": <passengerId>,
+      "userId": <userId>,
+      "isUser": true,
+      "gender": <gender>,
+      "dateOfBirth": <dateOfBirth>,
+      "idCard": <idCard>,
+      "name": <name>,
+      "email": <email>
+    }
+  ]
 }
 ```
 

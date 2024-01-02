@@ -123,7 +123,11 @@ exports.sendEmailToken = async(req, res) => {
 
 exports.register = async(req, res) => {
   try {
-    const newData = req.body;
+    const { encryptedObj } = req.body;
+    const decryptedObj = decrypt(encryptedObj);
+    if (!decryptedObj) return handleClientError(res, 400, 'Cannot decrypt request body');
+    const newData = JSON.parse(decryptedObj);
+
     const scheme = Joi.object({
       username: Joi.string().required(),
       password: Joi.string().min(6).required(),
@@ -216,7 +220,7 @@ exports.register = async(req, res) => {
         ],
         transaction: t
       })
-      return res.status(201).json({ data: reloadedUser, status: 'Success' });
+      return res.status(201).json({ data: encrypt(JSON.stringify(reloadedUser)), status: 'Success' });
     });
 
   } catch (error) {
