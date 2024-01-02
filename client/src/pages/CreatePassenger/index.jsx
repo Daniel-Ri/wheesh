@@ -28,49 +28,105 @@ const CreatePassenger = ({ intl: { formatMessage } }) => {
     email: '',
   });
 
+  const [errors, setErrors] = useState({
+    gender: '',
+    dateOfBirth: '',
+    idCard: '',
+    name: '',
+    email: '',
+  });
+
+  const [mainError, setMainError] = useState('');
+
+  const today = new Date();
+  const isDateAvailable = (date) => date <= today;
+
   const handleInputChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const validateIdCard = () => {
-    if (!inputs.idCard) {
-      toast.error(formatMessage({ id: 'app_must_insert_id_card' }));
-      return false;
-    }
-    if (inputs.idCard.length !== 16 || !/^\d+$/.test(inputs.idCard)) {
-      toast.error(formatMessage({ id: 'app_incorrect_id_card_format' }));
+  const validateGender = () => {
+    if (!inputs.gender) {
+      setErrors((prev) => ({ ...prev, gender: formatMessage({ id: 'app_must_choose_gender' }) }));
       return false;
     }
 
+    setErrors((prev) => ({ ...prev, gender: '' }));
+    return true;
+  };
+
+  const validateDateOfBirth = () => {
+    if (!inputs.dateOfBirth) {
+      setErrors((prev) => ({ ...prev, dateOfBirth: formatMessage({ id: 'app_must_choose_date_birth' }) }));
+      return false;
+    }
+
+    setErrors((prev) => ({ ...prev, dateOfBirth: '' }));
+    return true;
+  };
+
+  const validateIdCard = () => {
+    if (!inputs.idCard) {
+      setErrors((prev) => ({ ...prev, idCard: formatMessage({ id: 'app_must_insert_id_card' }) }));
+      return false;
+    }
+    if (inputs.idCard.length !== 16 || !/^\d+$/.test(inputs.idCard)) {
+      setErrors((prev) => ({ ...prev, idCard: formatMessage({ id: 'app_incorrect_id_card_format' }) }));
+      return false;
+    }
+
+    setErrors((prev) => ({ ...prev, idCard: '' }));
+    return true;
+  };
+
+  const validateName = () => {
+    if (!inputs.name) {
+      setErrors((prev) => ({ ...prev, name: formatMessage({ id: 'app_must_insert_name' }) }));
+      return false;
+    }
+
+    setErrors((prev) => ({ ...prev, name: '' }));
     return true;
   };
 
   const validateEmail = () => {
     if (!inputs.email) {
+      setErrors((prev) => ({ ...prev, email: '' }));
       return true;
     }
 
     if (!/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(inputs.email)) {
-      toast.error(formatMessage({ id: 'app_incorrect_email_format' }));
+      setErrors((prev) => ({ ...prev, email: formatMessage({ id: 'app_incorrect_email_format' }) }));
       return false;
     }
 
+    setErrors((prev) => ({ ...prev, email: '' }));
     return true;
   };
 
   const handleFocusOut = (e) => {
-    if (e.target.name === 'idCard') {
+    if (e.target.name === 'dateOfBirth') {
+      validateDateOfBirth();
+    } else if (e.target.name === 'idCard') {
       validateIdCard();
-    }
-
-    if (e.target.name === 'email') {
+    } else if (e.target.name === 'name') {
+      validateName();
+    } else if (e.target.name === 'email') {
       validateEmail();
     }
   };
 
   const validateInputs = () => {
-    if (!validateIdCard()) return false;
-    if (!validateEmail()) return false;
+    const validatedGender = validateGender();
+    const validatedDateOfBirth = validateDateOfBirth();
+    const validatedIdCard = validateIdCard();
+    const validatedName = validateName();
+    const validatedEmail = validateEmail();
+
+    if (!validatedGender || !validatedDateOfBirth || !validatedIdCard || !validatedName || !validatedEmail) {
+      return false;
+    }
+
     return true;
   };
 
@@ -80,10 +136,18 @@ const CreatePassenger = ({ intl: { formatMessage } }) => {
   };
 
   const handleError = (errorMsg) => {
-    toast.error(errorMsg);
+    setMainError(errorMsg);
   };
 
   const handleSubmit = () => {
+    setErrors({
+      gender: '',
+      dateOfBirth: '',
+      idCard: '',
+      name: '',
+      email: '',
+    });
+    setMainError('');
     if (!validateInputs()) return;
 
     const formattedInputs = { ...inputs };
@@ -113,7 +177,13 @@ const CreatePassenger = ({ intl: { formatMessage } }) => {
               <FormattedMessage id="app_gender" />
             </label>
             <div className={classes.radios}>
-              <div className={classes.radio} onClick={() => setInputs((prev) => ({ ...prev, gender: 'Male' }))}>
+              <div
+                className={classes.radio}
+                onClick={() => {
+                  setInputs((prev) => ({ ...prev, gender: 'Male' }));
+                  setErrors((prev) => ({ ...prev, gender: '' }));
+                }}
+              >
                 <input
                   type="radio"
                   name="gender"
@@ -125,7 +195,13 @@ const CreatePassenger = ({ intl: { formatMessage } }) => {
                   <FormattedMessage id="app_male" />
                 </label>
               </div>
-              <div className={classes.radio} onClick={() => setInputs((prev) => ({ ...prev, gender: 'Female' }))}>
+              <div
+                className={classes.radio}
+                onClick={() => {
+                  setInputs((prev) => ({ ...prev, gender: 'Female' }));
+                  setErrors((prev) => ({ ...prev, gender: '' }));
+                }}
+              >
                 <input
                   type="radio"
                   name="gender"
@@ -139,6 +215,12 @@ const CreatePassenger = ({ intl: { formatMessage } }) => {
               </div>
             </div>
           </div>
+          {errors.gender && (
+            <div className={classes.errorRowReverse}>
+              <div className={classes.errorMsg}>{errors.gender}</div>
+            </div>
+          )}
+
           <div className={classes.input}>
             <label htmlFor="dateOfBirth">
               <FormattedMessage id="app_date_of_birth" />
@@ -152,11 +234,18 @@ const CreatePassenger = ({ intl: { formatMessage } }) => {
                 dropdownMode="select"
                 showYearDropdown
                 dateFormat="dd/MM/yyyy"
+                filterDate={isDateAvailable}
                 className={classes.datePicker}
                 onChange={(date) => setInputs((prev) => ({ ...prev, dateOfBirth: date }))}
+                onBlur={handleFocusOut}
               />
             </div>
           </div>
+          {errors.dateOfBirth && (
+            <div className={classes.errorRowReverse}>
+              <div className={classes.errorMsg}>{errors.dateOfBirth}</div>
+            </div>
+          )}
 
           <div className={classes.header}>
             <FormattedMessage id="app_certificate_information" />
@@ -176,6 +265,12 @@ const CreatePassenger = ({ intl: { formatMessage } }) => {
               autoComplete="off"
             />
           </div>
+          {errors.idCard && (
+            <div className={classes.errorRowReverse}>
+              <div className={classes.errorMsg}>{errors.idCard}</div>
+            </div>
+          )}
+
           <div className={classes.input}>
             <label htmlFor="name">
               <FormattedMessage id="app_name" />
@@ -186,10 +281,16 @@ const CreatePassenger = ({ intl: { formatMessage } }) => {
               id="name"
               value={inputs.name}
               onChange={handleInputChange}
+              onBlur={handleFocusOut}
               placeholder={formatMessage({ id: 'app_enter_name_on_id_card' })}
               autoComplete="off"
             />
           </div>
+          {errors.name && (
+            <div className={classes.errorRowReverse}>
+              <div className={classes.errorMsg}>{errors.name}</div>
+            </div>
+          )}
 
           <div className={classes.header}>
             <FormattedMessage id="app_contact_information" />
@@ -207,7 +308,14 @@ const CreatePassenger = ({ intl: { formatMessage } }) => {
               autoComplete="off"
             />
           </div>
+          {errors.email && (
+            <div className={classes.errorRowReverse}>
+              <div className={classes.errorMsg}>{errors.email}</div>
+            </div>
+          )}
         </form>
+
+        {mainError && <div className={classes.mainError}>{mainError}</div>}
 
         <div className={classes.buttons}>
           <Button variant="contained" className={classes.submit} onClick={handleSubmit}>
