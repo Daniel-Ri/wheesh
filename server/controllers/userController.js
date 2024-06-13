@@ -6,14 +6,10 @@ const { compare } = require("../utils/handlePassword");
 const { signToken, generateRandomToken } = require("../utils/handleToken");
 const { handleClientError, handleServerError } = require("../utils/handleError");
 const { transporter, generateMailOptionsForNewEmail, generateMailOptionsForUpdateEmail } = require("../utils/handleMail");
-const { decrypt, encrypt } = require("../utils/handleCrypto");
 
 exports.login = async(req, res) => {
   try {
-    const { encryptedObj } = req.body;
-    const decryptedObj = decrypt(encryptedObj);
-    if (!decryptedObj) return handleClientError(res, 400, 'Cannot decrypt request body');
-    const { usernameOrEmail, password } = JSON.parse(decryptedObj);
+    const { usernameOrEmail, password } = req.body;
 
     const scheme = Joi.object({
       usernameOrEmail: Joi.string().required(),
@@ -46,7 +42,7 @@ exports.login = async(req, res) => {
     const formattedUser = foundUser.toJSON();
     delete formattedUser.password;
 
-    return res.status(200).json({ token, user: encrypt(JSON.stringify(formattedUser)), status: 'Success' });
+    return res.status(200).json({ token, user: formattedUser, status: 'Success' });
 
   } catch (error) {
     console.error(error);
@@ -123,10 +119,7 @@ exports.sendEmailToken = async(req, res) => {
 
 exports.register = async(req, res) => {
   try {
-    const { encryptedObj } = req.body;
-    const decryptedObj = decrypt(encryptedObj);
-    if (!decryptedObj) return handleClientError(res, 400, 'Cannot decrypt request body');
-    const newData = JSON.parse(decryptedObj);
+    const newData = req.body;
 
     const scheme = Joi.object({
       username: Joi.string().required(),
@@ -220,7 +213,7 @@ exports.register = async(req, res) => {
         ],
         transaction: t
       })
-      return res.status(201).json({ data: encrypt(JSON.stringify(reloadedUser)), status: 'Success' });
+      return res.status(201).json({ data: reloadedUser, status: 'Success' });
     });
 
   } catch (error) {

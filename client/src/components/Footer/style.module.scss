@@ -1,0 +1,71 @@
+@import '@styles/base';
+
+.footer {
+  margin-left: 200px;
+  padding-bottom: 0.5rem;
+  background: $color-alabaster;
+  display: flex;
+  justify-content: center;
+  width: calc(100vw - 200px);
+
+  .container {
+    width: 90%;
+    max-width: 40rem;
+    margin-bottom: 0.5rem;
+    @include directionY;
+
+    hr {
+      margin-top: 2rem;
+      border: 0;
+      border-top: 1px solid $color-cool-gray;
+    }
+
+    .author {
+      margin-top: 0.5rem;
+      text-align: center;
+      font-size: 90%;
+
+      a:link, a:visited {
+        color: $color-marine-blue;
+      }
+
+      a:hover {
+        color: $color-purplish-blue;
+      }
+    }
+
+    .socialIcons {
+      margin-top: 0.5rem;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+
+      a {
+        width: 1.5rem;
+        height: 1.5rem;
+        transition-property: transform;
+        transition-duration: 300ms;
+      }
+
+      a:hover {
+        transform: scale(1.25);
+      }
+    }
+  }
+
+  @media screen and (max-width: $screen-lg-limit) {
+    margin-left: 192px;
+    width: calc(100vw - 192px);
+  }
+
+  @media screen and (max-width: $screen-md-limit) {
+    margin-left: 10rem;
+    width: calc(100vw - 10rem);
+  }
+
+  @media screen and (max-width: $screen-sm-limit) {
+    margin-left: 0;
+    width: 100vw;
+    margin-bottom: 56px;
+  }
+}

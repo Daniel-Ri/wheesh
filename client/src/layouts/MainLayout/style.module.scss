@@ -1,0 +1,9 @@
+@import '@styles/base';
+
+.mainLayout {
+  width: 100vw;
+  min-height: 100vh;
+  background: $color-alabaster;
+  display: flex;
+  flex-direction: column;
+}

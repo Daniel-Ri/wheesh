@@ -14,23 +14,22 @@ jest.mock('node-cron', () => ({
 }));
 
 let defaultToken;
-let defaultDecryptedUser;
+let defaultUser;
 
 const defaultUserId = 2;
 const defaultDummyUser = {
   usernameOrEmail: 'johndoe',
   password: '123456',
 };
-const defaultEncryptedObj = encrypt(JSON.stringify(defaultDummyUser));
 
 beforeAll(async () => {
   await upUser(queryInterface, sequelize);
   await upPassenger(queryInterface, sequelize);
 
   const defaultLoginResponse = 
-    await request(app).post('/api/user/login').send({ encryptedObj: defaultEncryptedObj });
+    await request(app).post('/api/user/login').send(defaultDummyUser);
   defaultToken = defaultLoginResponse.body.token;
-  defaultDecryptedUser = JSON.parse(decrypt(defaultLoginResponse.body.user));
+  defaultUser = defaultLoginResponse.body.user;
 });
 
 afterAll(async () => {
@@ -46,6 +45,7 @@ describe('Get My Passengers', () => {
         await request(app).get('/api/passenger').set('authorization', `Bearer ${defaultToken}`);
     } catch (err) {
       console.error(err);
+      fail('The request failed with an error.');
     }
 
     expect(response.status).toBe(200);
@@ -146,7 +146,7 @@ describe('Create Passenger', () => {
 
       passenger = await Passenger.findOne({ 
         where: {
-          userId: defaultDecryptedUser.id,
+          userId: defaultUser.id,
           idCard: dummyData.idCard,
         }  
       });
@@ -190,13 +190,14 @@ describe('Create Passenger', () => {
 
       passenger = await Passenger.findOne({ 
         where: {
-          userId: defaultDecryptedUser.id,
+          userId: defaultUser.id,
           idCard: dummyData.idCard,
         }  
       });
       
     } catch (err) {
       console.error(err);
+      expect()
     }
 
     expect(response.status).toBe(400);
@@ -221,8 +222,7 @@ describe('Create Passenger', () => {
         password: '123456',
       };
   
-      const encryptedObj = encrypt(JSON.stringify(dummyUser));
-      const loginResponse = await request(app).post('/api/user/login').send({ encryptedObj });
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
   
       response = 
         await request(app)
@@ -230,7 +230,7 @@ describe('Create Passenger', () => {
           .set('authorization', `Bearer ${loginResponse.body.token}`)
           .send(dummyData);
 
-      const decryptedUser = JSON.parse(decrypt(loginResponse.body.user));
+      const decryptedUser = loginResponse.body.user;
 
       passenger = await Passenger.findOne({ 
         where: {
@@ -280,7 +280,7 @@ describe('Update Passenger', () => {
 
       passenger = await Passenger.findOne({ 
         where: {
-          userId: defaultDecryptedUser.id,
+          userId: defaultUser.id,
           idCard: dummyData.idCard,
         }  
       });

@@ -45,7 +45,7 @@ exports.generateMailOptionsForNewEmail = (recipientEmail, token) => {
   const mailOptions = {
     from: process.env.USERNAME_NODEMAILER, // replace with your email
     to: recipientEmail,
-    subject: `Register Email - ${recipientEmail}`,
+    subject: `Register Email - Wheesh Dev Website`,
     html: htmlContent,
   };
 
@@ -86,7 +86,7 @@ exports.generateMailOptionsForUpdateEmail = (recipientEmail, token) => {
   const mailOptions = {
     from: process.env.USERNAME_NODEMAILER, // replace with your email
     to: recipientEmail,
-    subject: `Email Address Modification - ${recipientEmail}`,
+    subject: `Email Address Modification - Wheesh Dev Website`,
     html: htmlContent,
   };
 
@@ -129,7 +129,7 @@ exports.generateMailOptionsForRemindSchedule = (user, order) => {
   const mailOptions = {
     from: process.env.USERNAME_NODEMAILER, // replace with your email
     to: user.email,
-    subject: `Journey Reminder - ${user.email}`,
+    subject: `Journey Reminder - Wheesh Dev Website`,
     html: htmlContent,
   };
 

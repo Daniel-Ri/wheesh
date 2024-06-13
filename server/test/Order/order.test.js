@@ -34,7 +34,6 @@ const defaultDummyUser = {
   usernameOrEmail: 'johndoe',
   password: '123456',
 };
-const defaultEncryptedObj = encrypt(JSON.stringify(defaultDummyUser));
 
 beforeAll(async () => {
   await upUser(queryInterface, sequelize);
@@ -51,9 +50,9 @@ beforeAll(async () => {
   await upPayment(queryInterface, sequelize);
 
   const defaultLoginResponse = 
-    await request(app).post('/api/user/login').send({ encryptedObj: defaultEncryptedObj });
+    await request(app).post('/api/user/login').send(defaultDummyUser);
   defaultToken = defaultLoginResponse.body.token;
-  defaultDecryptedUser = JSON.parse(decrypt(defaultLoginResponse.body.user));
+  defaultDecryptedUser = defaultLoginResponse.body.user;
 }, 15000);
 
 afterAll(async () => {
@@ -238,8 +237,7 @@ describe('Create Order', () => {
 
     try {
       const tomorrowSchedules = await getTomorrowSchedules();
-      const encryptedObj = encrypt(JSON.stringify(dummyUser));
-      const loginResponse = await request(app).post('/api/user/login').send({ encryptedObj });
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
       
       const schedule = tomorrowSchedules[whichOrderTomorrow - 1];
       const choosenSeats = getTwoBusinessSeats(schedule);
@@ -256,7 +254,7 @@ describe('Create Order', () => {
           .set('authorization', `Bearer ${loginResponse.body.token}`)
           .send(inputs);
 
-      const decryptedUser = JSON.parse(decrypt(loginResponse.body.user));
+      const decryptedUser = loginResponse.body.user;
 
       order = await Order.findOne({
         where: {
@@ -285,8 +283,7 @@ describe('Create Order', () => {
 
     try {
       const tomorrowSchedules = await getTomorrowSchedules();
-      const encryptedObj = encrypt(JSON.stringify(dummyUser));
-      const loginResponse = await request(app).post('/api/user/login').send({ encryptedObj });
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
       
       const schedule = tomorrowSchedules[whichOrderTomorrow - 1];
       const choosenSeats = getTwoBusinessSeats(schedule);
@@ -303,7 +300,7 @@ describe('Create Order', () => {
           .set('authorization', `Bearer ${loginResponse.body.token}`)
           .send(inputs);
 
-      const decryptedUser = JSON.parse(decrypt(loginResponse.body.user));
+      const decryptedUser = loginResponse.body.user;
 
       order = await Order.findOne({
         where: {

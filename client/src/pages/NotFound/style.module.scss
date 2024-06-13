@@ -1,6 +1,7 @@
 @import '@styles/base';
 
 .contentWrapper {
+  flex-grow: 1;
   margin-left: 200px;
   @include directionY;
   padding: 1rem;
@@ -8,8 +9,6 @@
   align-items: center;
   justify-content: center;
   width: calc(100vw - 200px);
-  height: 100%;
-  min-height: 100vh;
 
   .image {
     width: 7rem;
@@ -34,9 +33,6 @@
   @media screen and (max-width: $screen-sm-limit) {
     margin-left: 0;
     width: 100vw;
-    margin-bottom: 76px;
-    height: 100%;
-    min-height: calc(100vh - 76px);
     
   }
 }

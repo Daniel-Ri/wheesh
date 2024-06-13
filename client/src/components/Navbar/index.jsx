@@ -12,6 +12,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import HomeIcon from '@mui/icons-material/Home';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
+import DoorSlidingIcon from '@mui/icons-material/DoorSliding';
 
 import { setLocale } from '@containers/App/actions';
 
@@ -51,6 +52,10 @@ const Navbar = ({ title, locale, theme }) => {
     navigate('/my-tickets');
   };
 
+  const goGatePage = () => {
+    navigate('/gate');
+  };
+
   const goMePage = () => {
     navigate('/me');
   };
@@ -69,9 +74,11 @@ const Navbar = ({ title, locale, theme }) => {
             onClick={goHome}
           >
             <HomeIcon className={classes.icon} />
-            <div className={classes.namePage}>
-              <FormattedMessage id="app_home" />
-            </div>
+            {!isSMMaxSize && (
+              <div className={classes.namePage}>
+                <FormattedMessage id="app_home" />
+              </div>
+            )}
           </div>
           <div
             data-testid="MyTicketsLink"
@@ -79,9 +86,23 @@ const Navbar = ({ title, locale, theme }) => {
             onClick={goMyTicketsPage}
           >
             <ReceiptLongIcon className={classes.icon} />
-            <div className={classes.namePage}>
-              <FormattedMessage id="app_my_tickets" />
-            </div>
+            {!isSMMaxSize && (
+              <div className={classes.namePage}>
+                <FormattedMessage id="app_my_tickets" />
+              </div>
+            )}
+          </div>
+          <div
+            data-testid="GateLink"
+            className={`${classes.link} ${pathname === '/gate' && classes.linkSelected}`}
+            onClick={goGatePage}
+          >
+            <DoorSlidingIcon className={classes.icon} />
+            {!isSMMaxSize && (
+              <div className={classes.namePage}>
+                <FormattedMessage id="app_gate" />
+              </div>
+            )}
           </div>
           <div
             data-testid="MeLink"
@@ -89,9 +110,11 @@ const Navbar = ({ title, locale, theme }) => {
             onClick={goMePage}
           >
             <SentimentSatisfiedAltIcon className={classes.icon} />
-            <div className={classes.namePage}>
-              <FormattedMessage id="app_me" />
-            </div>
+            {!isSMMaxSize && (
+              <div className={classes.namePage}>
+                <FormattedMessage id="app_me" />
+              </div>
+            )}
           </div>
           <div data-testid="ToggleLang" className={classes.toggle} onClick={handleClick}>
             <Avatar className={classes.avatar} src={locale === 'id' ? '/id.png' : '/en.png'} />
