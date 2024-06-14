@@ -1,3 +1,5 @@
+const dotenv = require('dotenv');
+dotenv.config();
 const Redis = require('ioredis');
 
 let redisClient;
@@ -5,10 +7,8 @@ let redisClient;
 if (process.env.NODE_ENV === "production") {
   redisClient = new Redis({
     password: process.env.REDIS_PASSWORD,
-    socket: {
-      host: process.env.REDIS_HOST,
-      port: process.env.REDIS_PORT
-    }
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT
   });
 } else {
   redisClient = new Redis({
