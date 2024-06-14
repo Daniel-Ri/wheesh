@@ -131,6 +131,3 @@ dist
 
 # Public images
 public/
-
-# Config database file
-config/config.json

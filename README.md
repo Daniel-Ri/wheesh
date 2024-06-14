@@ -42,6 +42,8 @@ There are 10 features:
    CRYPTO_KEY=c19571ba9750025e67c5db31d094fe70
    USERNAME_NODEMAILER=<EMAIL_THAT_IS_SET_TO_SEND_EMAIL>
    PASSWORD_NODEMAILER=<PASSWORD_EMAIL_FOR_SEND_EMAIL>
+   DATABASE_DEV_URL=mysql://root@localhost:3306/wheesh   // you can change it if you want
+   DATABASE_TEST_URL=mysql://root@localhost:3306/wheesh_test
    ```
 
 4. Setup the database
