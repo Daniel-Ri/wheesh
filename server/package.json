@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon index.js",
     "test": "jest --coverage=true --forceExit --runInBand",
-    "prod": "node index.js --env production"
+    "prod": "cross-env NODE_ENV=production node index.js"
   },
   "author": "d4n1el-ri",
   "license": "ISC",
@@ -29,6 +29,7 @@
     "sequelize": "^6.35.1"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "jest": "^29.7.0",
     "nodemon": "^3.0.2",
     "supertest": "^6.3.3"
