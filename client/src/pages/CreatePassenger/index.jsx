@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import { useDispatch } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
@@ -10,13 +10,16 @@ import toast from 'react-hot-toast';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './custom.css';
+import { enGB, id } from 'date-fns/locale';
 
 import { Button } from '@mui/material';
+import { createStructuredSelector } from 'reselect';
+import { selectLocale } from '@containers/App/selectors';
 import { createPassenger } from './actions';
 
 import classes from './style.module.scss';
 
-const CreatePassenger = ({ intl: { formatMessage } }) => {
+const CreatePassenger = ({ locale, intl: { formatMessage } }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -228,6 +231,7 @@ const CreatePassenger = ({ intl: { formatMessage } }) => {
             <div className={classes.datePickerWrapper}>
               <DatePicker
                 name="dateOfBirth"
+                locale={locale === 'id' ? id : enGB}
                 placeholderText={formatMessage({ id: 'app_select_the_date_of_birth' })}
                 selected={inputs.dateOfBirth}
                 showMonthDropdown
@@ -328,7 +332,12 @@ const CreatePassenger = ({ intl: { formatMessage } }) => {
 };
 
 CreatePassenger.propTypes = {
+  locale: PropTypes.string,
   intl: PropTypes.object,
 };
 
-export default injectIntl(CreatePassenger);
+const mapStateToProps = createStructuredSelector({
+  locale: selectLocale,
+});
+
+export default injectIntl(connect(mapStateToProps)(CreatePassenger));

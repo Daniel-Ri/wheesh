@@ -12,16 +12,18 @@ import './custom.css';
 import { useMediaQuery } from 'react-responsive';
 import { createStructuredSelector } from 'reselect';
 import { Autocomplete, Button, TextField } from '@mui/material';
+import { enGB, id } from 'date-fns/locale';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { formatDate } from '@utils/handleValue';
+import { selectLocale } from '@containers/App/selectors';
 import ImageCarousel from './components/ImageCarousel';
 import { selectBanners, selectLatestDateSchedule, selectStations } from './selectors';
 import { getAllStations, getBanners, getLatestDateSchedule } from './actions';
 
 import classes from './style.module.scss';
 
-const Home = ({ stations, latestDateSchedule, banners, intl: { formatMessage } }) => {
+const Home = ({ stations, latestDateSchedule, banners, locale, intl: { formatMessage } }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const today = new Date(new Date().setHours(0, 0, 0, 0));
@@ -148,6 +150,7 @@ const Home = ({ stations, latestDateSchedule, banners, intl: { formatMessage } }
               <div className={classes.datePickerWrapper}>
                 <DatePicker
                   name="date"
+                  locale={locale === 'id' ? id : enGB}
                   placeholderText={formatMessage({ id: 'app_select_departure_date' })}
                   selected={inputs.date}
                   dropdownMode="select"
@@ -173,6 +176,7 @@ Home.propTypes = {
   stations: PropTypes.array,
   latestDateSchedule: PropTypes.string,
   banners: PropTypes.array,
+  locale: PropTypes.string,
   intl: PropTypes.object,
 };
 
@@ -180,6 +184,7 @@ const mapStateToProps = createStructuredSelector({
   stations: selectStations,
   latestDateSchedule: selectLatestDateSchedule,
   banners: selectBanners,
+  locale: selectLocale,
 });
 
 export default injectIntl(connect(mapStateToProps)(Home));

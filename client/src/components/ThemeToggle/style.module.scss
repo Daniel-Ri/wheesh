@@ -1,0 +1,8 @@
+@import '@styles/base';
+
+.theme {
+  @include directionX;
+  align-items: center;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}

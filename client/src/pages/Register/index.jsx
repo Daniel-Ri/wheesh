@@ -9,6 +9,7 @@ import { Button, IconButton, InputAdornment, OutlinedInput } from '@mui/material
 import BackBtn from '@components/BackBtn';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import DatePicker from 'react-datepicker';
+import { enGB, id } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import './custom.css';
 
@@ -17,9 +18,10 @@ import { registerUser, sendEmailToken } from '@containers/Client/actions';
 import { createStructuredSelector } from 'reselect';
 import { selectLogin } from '@containers/Client/selectors';
 
+import { selectLocale } from '@containers/App/selectors';
 import classes from './style.module.scss';
 
-const Register = ({ login, intl: { formatMessage } }) => {
+const Register = ({ login, locale, intl: { formatMessage } }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -441,6 +443,7 @@ const Register = ({ login, intl: { formatMessage } }) => {
             <div className={classes.datePickerWrapper}>
               <DatePicker
                 name="dateOfBirth"
+                locale={locale === 'id' ? id : enGB}
                 placeholderText={formatMessage({ id: 'app_select_your_date_of_birth' })}
                 selected={inputs.dateOfBirth}
                 showMonthDropdown
@@ -566,11 +569,13 @@ const Register = ({ login, intl: { formatMessage } }) => {
 
 Register.propTypes = {
   login: PropTypes.bool,
+  locale: PropTypes.string,
   intl: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
   login: selectLogin,
+  locale: selectLocale,
 });
 
 export default injectIntl(connect(mapStateToProps)(Register));

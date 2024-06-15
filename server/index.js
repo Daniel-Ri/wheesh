@@ -30,6 +30,9 @@ cron.schedule('* * * * *', async () => {
 cron.schedule('1 0 0 * * *', async () => {
   console.log('Job running every midnight.');
   await addDailyData();
+}, {
+  scheduled: true,
+  timezone: "Asia/Jakarta"
 });
 
 // Only start the server if this file is the main module

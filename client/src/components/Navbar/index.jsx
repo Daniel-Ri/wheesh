@@ -16,6 +16,7 @@ import DoorSlidingIcon from '@mui/icons-material/DoorSliding';
 
 import { setLocale } from '@containers/App/actions';
 
+import ThemeToggle from '@components/ThemeToggle';
 import classes from './style.module.scss';
 
 // eslint-disable-next-line no-unused-vars
@@ -116,6 +117,7 @@ const Navbar = ({ title, locale, theme }) => {
               </div>
             )}
           </div>
+          <ThemeToggle theme={theme} />
           <div data-testid="ToggleLang" className={classes.toggle} onClick={handleClick}>
             <Avatar className={classes.avatar} src={locale === 'id' ? '/id.png' : '/en.png'} />
             <div className={classes.lang}>{locale}</div>

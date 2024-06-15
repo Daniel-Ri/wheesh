@@ -13,11 +13,13 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './custom.css';
 
 import { Button } from '@mui/material';
+import { selectLocale } from '@containers/App/selectors';
+import { enGB, id } from 'date-fns/locale';
 import classes from './style.module.scss';
 import { getProfile, updateProfile } from './actions';
 import { selectProfile } from './selectors';
 
-const Profile = ({ profile, intl: { formatMessage } }) => {
+const Profile = ({ profile, locale, intl: { formatMessage } }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -237,6 +239,7 @@ const Profile = ({ profile, intl: { formatMessage } }) => {
             <div className={classes.datePickerWrapper}>
               <DatePicker
                 name="dateOfBirth"
+                locale={locale === 'id' ? id : enGB}
                 placeholderText={formatMessage({ id: 'app_select_your_date_of_birth' })}
                 selected={inputs.dateOfBirth}
                 showMonthDropdown
@@ -338,11 +341,13 @@ const Profile = ({ profile, intl: { formatMessage } }) => {
 
 Profile.propTypes = {
   profile: PropTypes.object,
+  locale: PropTypes.string,
   intl: PropTypes.object,
 };
 
 const mapStateToProps = createStructuredSelector({
   profile: selectProfile,
+  locale: selectLocale,
 });
 
 export default injectIntl(connect(mapStateToProps)(Profile));

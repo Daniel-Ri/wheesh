@@ -17,13 +17,15 @@ import { useMediaQuery } from 'react-responsive';
 import { Autocomplete, TextField } from '@mui/material';
 import toast from 'react-hot-toast';
 import { formatDate } from '@utils/handleValue';
+import { selectLocale } from '@containers/App/selectors';
+import { enGB, id } from 'date-fns/locale';
 import { selectLatestDateSchedule, selectSchedules, selectStations } from './selectors';
 import { getAllStations, getLatestDateSchedule, getSchedules } from './actions';
 import ScheduleCard from './components/ScheduleCard';
 
 import classes from './style.module.scss';
 
-const Schedule = ({ stations, latestDateSchedule, schedules, intl: { formatMessage } }) => {
+const Schedule = ({ stations, latestDateSchedule, schedules, locale, intl: { formatMessage } }) => {
   const { departureStationId, arrivalStationId, date } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -146,6 +148,7 @@ const Schedule = ({ stations, latestDateSchedule, schedules, intl: { formatMessa
               <div className={classes.datePickerWrapper}>
                 <DatePicker
                   name="date"
+                  locale={locale === 'id' ? id : enGB}
                   placeholderText={formatMessage({ id: 'app_select_departure_date' })}
                   selected={inputs.date}
                   dropdownMode="select"
@@ -187,6 +190,7 @@ Schedule.propTypes = {
   stations: PropTypes.array,
   latestDateSchedule: PropTypes.string,
   schedules: PropTypes.array,
+  locale: PropTypes.string,
   intl: PropTypes.object,
 };
 
@@ -194,6 +198,7 @@ const mapStateToProps = createStructuredSelector({
   stations: selectStations,
   latestDateSchedule: selectLatestDateSchedule,
   schedules: selectSchedules,
+  locale: selectLocale,
 });
 
 export default injectIntl(connect(mapStateToProps)(Schedule));
