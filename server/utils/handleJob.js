@@ -127,8 +127,6 @@ exports.addDailyData = async () => {
   const sevenDaysAfter = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
   const tempDate = new Date(sevenDaysAfter);
 
-  console.log(tempDate, "<< tempDate");
-
   // Add schedule Data
   const newSchedules = [];
   const scheduleDays = await ScheduleDay.findAll();
