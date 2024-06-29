@@ -1,6 +1,6 @@
 package com.daniel.wheesh.user;
 
-import com.daniel.wheesh.config.ValidEnum;
+import com.daniel.wheesh.constraints.ValidEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;

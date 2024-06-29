@@ -1,11 +1,9 @@
 package com.daniel.wheesh.user;
 
-import com.daniel.wheesh.config.MinAge;
-import com.daniel.wheesh.config.NullOrNotBlank;
-import com.daniel.wheesh.config.ValidEnum;
+import com.daniel.wheesh.constraints.MinAge;
+import com.daniel.wheesh.constraints.NullOrNotBlank;
+import com.daniel.wheesh.constraints.ValidEnum;
 import com.daniel.wheesh.passenger.Gender;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

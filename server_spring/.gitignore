@@ -34,3 +34,6 @@ build/
 
 # Env file
 .env
+
+# Public images files
+src/main/resources/images/

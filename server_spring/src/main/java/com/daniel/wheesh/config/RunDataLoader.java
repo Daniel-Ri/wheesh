@@ -1,5 +1,6 @@
 package com.daniel.wheesh.config;
 
+import com.daniel.wheesh.banner.BannerSeeder;
 import com.daniel.wheesh.passenger.PassengerSeeder;
 import com.daniel.wheesh.user.UserSeeder;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +17,12 @@ public class RunDataLoader implements CommandLineRunner {
 
     private final PassengerSeeder passengerSeeder;
 
+    private final BannerSeeder bannerSeeder;
+
     @Override
     public void run(String... args) throws Exception {
         userSeeder.seedUsers();
         passengerSeeder.seedPassengers();
+        bannerSeeder.seedBanners();
     }
 }

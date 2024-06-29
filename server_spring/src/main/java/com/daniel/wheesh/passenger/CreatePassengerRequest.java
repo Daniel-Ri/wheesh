@@ -1,11 +1,10 @@
 package com.daniel.wheesh.passenger;
 
-import com.daniel.wheesh.config.MinAge;
-import com.daniel.wheesh.config.ValidEnum;
+import com.daniel.wheesh.constraints.MinAge;
+import com.daniel.wheesh.constraints.ValidEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package com.daniel.wheesh.passenger;
 
-import com.daniel.wheesh.config.MinAge;
+import com.daniel.wheesh.constraints.MinAge;
 import com.daniel.wheesh.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

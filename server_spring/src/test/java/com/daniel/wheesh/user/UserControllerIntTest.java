@@ -848,7 +848,7 @@ class UserControllerIntTest {
                     .header("Authorization", "Bearer " + "lolololo")
                     .with(csrf())
             )
-            .andExpect(status().isForbidden());
+            .andExpect(status().isUnauthorized());
     }
 
     @Test

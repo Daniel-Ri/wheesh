@@ -14,7 +14,7 @@ import java.util.Arrays;
 @Component
 @RequiredArgsConstructor
 public class PassengerSeeder {
-    private static final Logger logger = LoggerFactory.getLogger(UserSeeder.class);
+    private static final Logger logger = LoggerFactory.getLogger(PassengerSeeder.class);
 
     private final UserRepository userRepository;
 

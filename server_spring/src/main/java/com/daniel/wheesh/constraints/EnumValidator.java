@@ -1,4 +1,4 @@
-package com.daniel.wheesh.config;
+package com.daniel.wheesh.constraints;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
