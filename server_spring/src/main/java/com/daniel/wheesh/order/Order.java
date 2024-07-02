@@ -1,10 +1,10 @@
-package com.daniel.wheesh.passenger;
+package com.daniel.wheesh.order;
 
-import com.daniel.wheesh.constraints.MinAge;
+import com.daniel.wheesh.orderedseat.OrderedSeat;
+import com.daniel.wheesh.payment.Payment;
+import com.daniel.wheesh.schedule.Schedule;
 import com.daniel.wheesh.user.User;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,8 +13,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
@@ -22,8 +22,8 @@ import java.util.Date;
 @AllArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "passengers")
-public class Passenger {
+@Table(name = "orders")
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -33,27 +33,18 @@ public class Passenger {
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    @Column(nullable = false, name = "isUser")
-    public Boolean isUser;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "scheduleId", nullable = false)
+    private Schedule schedule;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    public Gender gender;
+    @Column(nullable = false, name = "isNotified")
+    private Boolean isNotified;
 
-    @MinAge(value = 17, message = "Must be at least 17 years old")
-    @Column(nullable = false, name = "dateOfBirth")
-    public LocalDate dateOfBirth;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderedSeat> orderedSeats;
 
-    @Pattern(regexp = "\\d{16}", message = "ID Card must be exactly 16 digits")
-    @Column(nullable = false, name = "idCard")
-    public String idCard;
-
-    @Column(nullable = false)
-    public String name;
-
-    @Email
-    @Column(nullable = false)
-    public String email;
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Payment payment;
 
     @CreatedDate
     @Column(nullable = false, name = "createdAt")

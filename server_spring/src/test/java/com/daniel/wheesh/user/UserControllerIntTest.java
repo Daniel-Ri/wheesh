@@ -1,21 +1,17 @@
 package com.daniel.wheesh.user;
 
 import com.daniel.wheesh.TestEmailConfig;
-import com.daniel.wheesh.WheeshServerApplication;
+import com.daniel.wheesh.config.DataSeeder;
 import com.daniel.wheesh.config.EmailService;
 import com.daniel.wheesh.config.JwtService;
+import com.daniel.wheesh.config.RunDataLoader;
 import com.daniel.wheesh.emailtoken.EmailToken;
 import com.daniel.wheesh.emailtoken.EmailTokenRepository;
 import com.daniel.wheesh.passenger.Gender;
 import com.daniel.wheesh.passenger.PassengerRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,7 +26,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;

@@ -88,11 +88,11 @@ CREATE TABLE `trains` (
 
 CREATE TABLE `schedules` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `trainId` int(11) DEFAULT NULL,
-  `departureStationId` int(11) DEFAULT NULL,
-  `arrivalStationId` int(11) DEFAULT NULL,
-  `departureTime` datetime DEFAULT NULL,
-  `arrivalTime` datetime DEFAULT NULL,
+  `trainId` int(11) NOT NULL,
+  `departureStationId` int(11) NOT NULL,
+  `arrivalStationId` int(11) NOT NULL,
+  `departureTime` datetime NOT NULL,
+  `arrivalTime` datetime NOT NULL,
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
   PRIMARY KEY (`id`),
@@ -141,8 +141,8 @@ CREATE TABLE `seats` (
 
 CREATE TABLE `orders` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `userId` int(11) DEFAULT NULL,
-  `scheduleId` int(11) DEFAULT NULL,
+  `userId` int(11) NOT NULL,
+  `scheduleId` int(11) NOT NULL,
   `isNotified` tinyint(1) DEFAULT 0,
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
@@ -155,8 +155,8 @@ CREATE TABLE `orders` (
 
 CREATE TABLE `orderedseats` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `orderId` int(11) DEFAULT NULL,
-  `seatId` int(11) DEFAULT NULL,
+  `orderId` int(11) NOT NULL,
+  `seatId` int(11) NOT NULL,
   `price` int(11) NOT NULL,
   `gender` varchar(255) NOT NULL,
   `dateOfBirth` datetime NOT NULL,
@@ -175,7 +175,7 @@ CREATE TABLE `orderedseats` (
 
 CREATE TABLE `payments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `orderId` int(11) DEFAULT NULL,
+  `orderId` int(11) NOT NULL,
   `amount` int(11) NOT NULL,
   `isPaid` tinyint(1) NOT NULL,
   `duePayment` datetime NOT NULL,

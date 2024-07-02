@@ -1,7 +1,6 @@
 package com.daniel.wheesh.passenger;
 
 import com.daniel.wheesh.user.LoginResponse;
-import com.daniel.wheesh.user.ProfileResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

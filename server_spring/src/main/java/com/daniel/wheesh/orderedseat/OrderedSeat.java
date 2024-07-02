@@ -1,7 +1,9 @@
-package com.daniel.wheesh.passenger;
+package com.daniel.wheesh.orderedseat;
 
 import com.daniel.wheesh.constraints.MinAge;
-import com.daniel.wheesh.user.User;
+import com.daniel.wheesh.order.Order;
+import com.daniel.wheesh.passenger.Gender;
+import com.daniel.wheesh.seat.Seat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -22,23 +24,27 @@ import java.util.Date;
 @AllArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "passengers")
-public class Passenger {
+@Table(name = "orderedseats")
+public class OrderedSeat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     public Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId", nullable = false)
-    private User user;
+    @JoinColumn(name = "orderId", nullable = false)
+    private Order order;
 
-    @Column(nullable = false, name = "isUser")
-    public Boolean isUser;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seatId", nullable = false)
+    private Seat seat;
+
+    @Column(nullable = false)
+    private Long price;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    public Gender gender;
+    private Gender gender;
 
     @MinAge(value = 17, message = "Must be at least 17 years old")
     @Column(nullable = false, name = "dateOfBirth")
@@ -54,6 +60,9 @@ public class Passenger {
     @Email
     @Column(nullable = false)
     public String email;
+
+    @Column(nullable = false)
+    public String secret;
 
     @CreatedDate
     @Column(nullable = false, name = "createdAt")

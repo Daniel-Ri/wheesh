@@ -1,5 +1,6 @@
 package com.daniel.wheesh.user;
 
+import com.daniel.wheesh.order.Order;
 import com.daniel.wheesh.passenger.Passenger;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -47,6 +48,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Passenger> passengers;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order> orders;
 
     @CreatedDate
     @Column(nullable = false, name = "createdAt")
