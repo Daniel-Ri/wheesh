@@ -1,6 +1,5 @@
 package com.daniel.wheesh.passenger;
 
-import com.daniel.wheesh.passenger.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

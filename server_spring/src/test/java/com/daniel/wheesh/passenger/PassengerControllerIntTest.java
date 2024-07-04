@@ -149,6 +149,44 @@ class PassengerControllerIntTest {
 
     @Test
     @DirtiesContext
+    void shouldSuccessCreatePassengerWithDifferentFormatDate() throws Exception {
+        String responseJson = this.mvc.perform(
+                post("/api/passenger")
+                    .header("Authorization", "Bearer " + defaultToken)
+                    .contentType("application/json")
+                    .content("""
+                        {
+                            "gender": "Male",
+                            "dateOfBirth": "Wed Jul 19 2000",
+                            "idCard": "1233234323563257",
+                            "name": "James Bond",
+                            "email": "jamesbond@gmail.com"
+                        }
+                        """)
+            )
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.data").exists())
+            .andExpect(jsonPath("$.data.id").exists())
+            .andExpect(jsonPath("$.data.userId").value(2))
+            .andExpect(jsonPath("$.data.isUser").value("false"))
+            .andExpect(jsonPath("$.data.gender").value("Male"))
+            .andExpect(jsonPath("$.data.dateOfBirth").value("2000-07-19"))
+            .andExpect(jsonPath("$.data.idCard").value("1233234323563257"))
+            .andExpect(jsonPath("$.data.name").value("James Bond"))
+            .andExpect(jsonPath("$.data.email").value("jamesbond@gmail.com"))
+            .andReturn().getResponse().getContentAsString();
+
+        OnePassengerResponse profileResponse = objectMapper.readValue(responseJson, OnePassengerResponse.class);
+        Long passengerId = profileResponse.getPassenger().getId();
+        this.mvc.perform(
+                get("/api/passenger/%d".formatted(passengerId))
+                    .header("Authorization", "Bearer " + defaultToken)
+            )
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    @DirtiesContext
     void shouldSuccessCreatePassengerEvenEmailIsEmpty() throws Exception {
         String responseJson = this.mvc.perform(
                 post("/api/passenger")
