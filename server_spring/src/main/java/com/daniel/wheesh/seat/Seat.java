@@ -49,4 +49,16 @@ public class Seat {
     @LastModifiedDate
     @Column(nullable = false, name = "updatedAt")
     public Date updatedAt;
+
+    @Override
+    public String toString() {
+        return "Seat{" +
+            "id=" + id +
+            ", carriageId=" + carriage.getId() +
+            ", seatNumber='" + seatNumber + "'" +
+            ", seatClass='" + seatClass + "'" +
+            ", createdAt=" + createdAt + "'" +
+            ", updatedAt=" + updatedAt +
+            "}";
+    }
 }

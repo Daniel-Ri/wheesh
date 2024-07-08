@@ -1,7 +1,9 @@
 package com.daniel.wheesh.schedule;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,4 +23,9 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     @Query("SELECT s FROM Schedule s WHERE s.departureTime >= :localDateTime ORDER BY s.departureTime ASC LIMIT 1")
     Optional<Schedule> findOneAfterLocalDateTime(LocalDateTime localDateTime);
+
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM Schedule s WHERE s.departureTime >= :timeLimit")
+    void deleteAfterTimeLimit(LocalDateTime timeLimit);
 }

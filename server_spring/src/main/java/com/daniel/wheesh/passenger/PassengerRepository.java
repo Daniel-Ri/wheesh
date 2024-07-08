@@ -16,4 +16,6 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long> {
     @Query("SELECT COUNT(p) FROM Passenger p WHERE p.user.id = :userId")
     Long countByUserId(@Param("userId") Long userId);
 
+    @Query("SELECT p FROM Passenger p WHERE p.id IN :ids AND p.user.id = :userId")
+    List<Passenger> findByIdInAndUserId(@Param("ids") List<Long> ids, @Param("userId") Long userId);
 }

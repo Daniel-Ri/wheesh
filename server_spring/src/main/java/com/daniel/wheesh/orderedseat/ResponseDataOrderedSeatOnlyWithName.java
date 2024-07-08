@@ -1,4 +1,4 @@
-package com.daniel.wheesh.carriage;
+package com.daniel.wheesh.orderedseat;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseDataCarriage {
-    private Long id;
-    private Long carriageNumber;
+public class ResponseDataOrderedSeatOnlyWithName {
+    private String name;
 }

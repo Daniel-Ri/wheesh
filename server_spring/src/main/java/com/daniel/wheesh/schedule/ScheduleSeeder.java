@@ -2,6 +2,7 @@ package com.daniel.wheesh.schedule;
 
 import com.daniel.wheesh.scheduleday.ScheduleDay;
 import com.daniel.wheesh.scheduleday.ScheduleDayRepository;
+import com.daniel.wheesh.train.Train;
 import com.daniel.wheesh.train.TrainRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ public class ScheduleSeeder {
             logger.info("No schedules found in the database. Seeding initial data.");
 
             List<ScheduleDay> scheduleDays = scheduleDayRepository.findAll();
+            List<Train> trains = trainRepository.findAll();
             ZoneId zoneId = ZoneId.of("Asia/Jakarta");
 
             List<Schedule> schedules = new ArrayList<>();
@@ -43,7 +45,7 @@ public class ScheduleSeeder {
                         .withMinute(scheduleDays.get(j).getArrivalTime().toLocalTime().getMinute());
 
                     Schedule schedule = Schedule.builder()
-                        .train(trainRepository.findById((long) j + 1).orElseThrow())
+                        .train(trains.get(j))
                         .departureStation(scheduleDays.get(j).getDepartureStation())
                         .arrivalStation(scheduleDays.get(j).getArrivalStation())
                         .departureTime(departureTime.toLocalDateTime())

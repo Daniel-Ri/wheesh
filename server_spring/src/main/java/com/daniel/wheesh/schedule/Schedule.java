@@ -16,6 +16,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @Builder
@@ -61,4 +62,33 @@ public class Schedule {
     @LastModifiedDate
     @Column(nullable = false, name = "updatedAt")
     public Date updatedAt;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, departureTime, arrivalTime, createdAt, updatedAt);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Schedule schedule = (Schedule) o;
+        return Objects.equals(id, schedule.id) && Objects.equals(departureTime, schedule.departureTime) &&
+            Objects.equals(arrivalTime, schedule.arrivalTime) && Objects.equals(createdAt, schedule.createdAt) &&
+            Objects.equals(updatedAt, schedule.updatedAt);
+    }
+
+    @Override
+    public String toString() {
+        return "Schedule{" +
+            "id=" + id +
+            ", trainId=" + train.getId() +
+            ", departureStationId=" + departureStation.getId() +
+            ", arrivalStationId=" + arrivalStation.getId() +
+            ", departureTime=" + departureTime +
+            ", arrivalTime=" + arrivalTime +
+            ", createdAt=" + createdAt +
+            ", updatedAt=" + updatedAt +
+            '}';
+    }
 }

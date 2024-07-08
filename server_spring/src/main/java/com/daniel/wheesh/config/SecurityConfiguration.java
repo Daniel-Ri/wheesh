@@ -29,6 +29,7 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/api/station").permitAll()
                 .requestMatchers("/api/schedule/**").permitAll()
+                .requestMatchers("/api/order/validate**").permitAll()
                 .requestMatchers("/api/user/login").permitAll()
                 .requestMatchers("/api/user/register").permitAll()
                 .requestMatchers("/api/user/sendEmailToken").permitAll()

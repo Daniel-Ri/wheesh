@@ -1,17 +1,31 @@
 package com.daniel.wheesh.config;
 
+import com.daniel.wheesh.order.Order;
+import com.daniel.wheesh.passenger.Gender;
+import com.daniel.wheesh.schedule.Schedule;
+import com.daniel.wheesh.user.User;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class EmailService {
 
     private final JavaMailSender mailSender;
+
+    private final DateTimeFormatter sdfDate = DateTimeFormatter.ofPattern("EEE, d MMM yyyy");
+
+    private final DateTimeFormatter sdfHour = DateTimeFormatter.ofPattern("HH:mm");
 
     @Autowired
     public EmailService(JavaMailSender mailSender) {
@@ -99,5 +113,49 @@ public class EmailService {
             """.formatted(token);
 
         sendHtmlEmail(to, "Email Address Modification - Wheesh Dev Website", htmlContent);
+    }
+
+    @Transactional
+    public void sendEmailForRemindSchedule(Gender gender, String nameOfUser, String email, String nameOfDepartureStation, String nameOfArrivalStation, LocalDateTime departureTime, LocalDateTime arrivalTime) throws MessagingException {
+        String htmlContent = """
+            <p style="font-size:16px;height:30px;font-weight:bold;margin:0">
+                Dear %s %s:
+              </p>
+              <div style="font-size:14px;line-height:20px;margin-left:2em">
+                <p style="margin:0;margin-top:8px">Warmest greetings to you,</p>
+                <p style="margin:0;margin-top:8px">
+                  We want to remind you about your upcoming journey from\s
+                  <b>%s</b> to <b>%s</b>.
+                </p>
+                <div style="margin-top:1em;margin-bottom:2em;margin-left:2em;">
+                  <table>
+                    <tbody>
+                      <tr>
+                        <th style="text-align:left">Date</th>
+                        <td><b>:</b> %s</td>
+                      </tr>
+                      <tr>
+                        <th style="text-align: left">Schedule</th>
+                        <td><b>:</b> %s - %s WIB</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p style="margin:0;margin-top:8px">
+                  We wish you a comfortable and safe journey.
+                </p>
+              </div>
+              <div style="text-align:end">Wheesh</div>
+            """.formatted(
+            gender == Gender.Male ? "Mr." : "Mrs.",
+            nameOfUser,
+            nameOfDepartureStation,
+            nameOfArrivalStation,
+            departureTime.format(sdfDate),
+            departureTime.format(sdfHour),
+            arrivalTime.format(sdfHour)
+        );
+
+        sendHtmlEmail(email, "Journey Reminder - Wheesh Dev Website", htmlContent);
     }
 }

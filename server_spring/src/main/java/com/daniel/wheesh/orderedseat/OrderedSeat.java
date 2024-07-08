@@ -71,4 +71,21 @@ public class OrderedSeat {
     @LastModifiedDate
     @Column(nullable = false, name = "updatedAt")
     public Date updatedAt;
+
+    @Override
+    public String toString() {
+        return "OrderedSeat{" +
+            "id=" + id +
+            ", orderId=" + order.getId() +
+            ", seatId=" + seat.getId() +
+            ", price=" + price +
+            ", gender='" + gender + '\'' +
+            ", dateOfBirth=" + dateOfBirth +
+            ", idCard='" + idCard + '\'' +
+            ", name='" + name + '\'' +
+            ", email='" + email + '\'' +
+            ", createdAt='" + createdAt + '\'' +
+            ", updatedAt='" + updatedAt + '\'' +
+            "}";
+    }
 }

@@ -13,6 +13,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @Builder
@@ -43,4 +44,18 @@ public class Train {
     @LastModifiedDate
     @Column(nullable = false, name = "updatedAt")
     public Date updatedAt;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, createdAt, updatedAt);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Train train = (Train) o;
+        return Objects.equals(id, train.id) && Objects.equals(name, train.name) &&
+            Objects.equals(createdAt, train.createdAt) && Objects.equals(updatedAt, train.updatedAt);
+    }
 }

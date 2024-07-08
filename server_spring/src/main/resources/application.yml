@@ -9,7 +9,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   sql:
     init:
-      mode: always
+      mode: never
   jpa:
     hibernate:
       ddl-auto: none
@@ -36,6 +36,9 @@ spring:
           connectiontimeout: 5000
           timeout: 3000
           writetimeout: 5000
+server:
+  port: ${PORT:8080}
+  jwt-secret: ${JWT_SECRET}
 
 ---
 
@@ -75,6 +78,8 @@ spring:
           connectiontimeout: 5000
           timeout: 3000
           writetimeout: 5000
+server:
+  jwt-secret: ${JWT_SECRET}
 
 ---
 
@@ -89,7 +94,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   sql:
     init:
-      mode: always
+      mode: never
   jpa:
     hibernate:
       ddl-auto: none
@@ -116,3 +121,6 @@ spring:
           connectiontimeout: 5000
           timeout: 3000
           writetimeout: 5000
+server:
+  port: ${PORT:8080}
+  jwt-secret: ${JWT_SECRET}

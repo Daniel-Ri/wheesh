@@ -15,6 +15,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.Objects;
 
 @Data
 @Builder
@@ -62,4 +63,29 @@ public class Passenger {
     @LastModifiedDate
     @Column(nullable = false, name = "updatedAt")
     public Date updatedAt;
+
+    @Override
+    public String toString() {
+        return "Passenger {id=" + id + ", userId=" + user.getId() + ", isUser=" + isUser +
+            ", gender='" + gender + "', dateOfBirth=" + dateOfBirth + ", idCard='" + idCard +
+            "', name='" + name + "', email='" + email + "', createdAt=" + createdAt +
+            ", updatedAt=" + updatedAt + "}";
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, isUser, gender, dateOfBirth, idCard, name, email, createdAt, updatedAt);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Passenger passenger = (Passenger) o;
+        return Objects.equals(id, passenger.id) && Objects.equals(isUser, passenger.isUser) &&
+            Objects.equals(gender, passenger.gender) && Objects.equals(dateOfBirth, passenger.dateOfBirth) &&
+            Objects.equals(idCard, passenger.idCard)  && Objects.equals(name, passenger.name) &&
+            Objects.equals(email, user.email) &&
+            Objects.equals(createdAt, user.createdAt) && Objects.equals(updatedAt, user.updatedAt);
+    }
 }

@@ -45,7 +45,7 @@ public class SchedulePriceSeeder {
         }
     }
 
-    private Long calculatePrice(SeatClass seatClass, LocalDateTime departureTime) {
+    public static Long calculatePrice(SeatClass seatClass, LocalDateTime departureTime) {
         if (seatClass == SeatClass.first) {
             return 600000L;
         } else if (seatClass == SeatClass.business) {

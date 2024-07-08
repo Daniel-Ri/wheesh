@@ -1,6 +1,6 @@
 package com.daniel.wheesh.schedule;
 
-import com.daniel.wheesh.carriage.ResponseDataCarriage;
+import com.daniel.wheesh.carriage.ResponseDataCarriageWithSeats;
 import com.daniel.wheesh.scheduleprice.ResponseDataSchedulePrice;
 import com.daniel.wheesh.station.ResponseDataStation;
 import com.daniel.wheesh.train.TrainDTO;
@@ -47,5 +47,5 @@ public class ResponseDataScheduleWithMoreDetails {
 
     private List<ResponseDataSchedulePrice> prices;
 
-    private List<ResponseDataCarriage> carriages;
+    private List<ResponseDataCarriageWithSeats> carriages;
 }

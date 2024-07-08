@@ -13,8 +13,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @Builder
@@ -48,9 +49,35 @@ public class Order {
 
     @CreatedDate
     @Column(nullable = false, name = "createdAt")
-    public Date createdAt;
+    public LocalDateTime createdAt;
 
     @LastModifiedDate
     @Column(nullable = false, name = "updatedAt")
-    public Date updatedAt;
+    public LocalDateTime updatedAt;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, isNotified, createdAt, updatedAt);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Order order = (Order) o;
+        return Objects.equals(id, order.id) && Objects.equals(isNotified, order.isNotified) &&
+            Objects.equals(createdAt, order.createdAt) && Objects.equals(updatedAt, order.updatedAt);
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+            "id=" + id + "," +
+            ", userId=" + user.getId() +
+            ", scheduleId=" + schedule.getId() +
+            ", isNotified=" + isNotified +
+            ", createdAt='" + createdAt + '\'' +
+            ", updatedAt='" + updatedAt + '\'' +
+            "}";
+    }
 }

@@ -1,7 +1,7 @@
 package com.daniel.wheesh.schedule;
 
 import com.daniel.wheesh.carriage.Carriage;
-import com.daniel.wheesh.carriage.ResponseDataCarriage;
+import com.daniel.wheesh.carriage.ResponseDataCarriageWithSeats;
 import com.daniel.wheesh.global.CustomException;
 import com.daniel.wheesh.order.Order;
 import com.daniel.wheesh.scheduleprice.ResponseDataSchedulePrice;
@@ -15,6 +15,7 @@ import com.daniel.wheesh.train.TrainDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -107,11 +108,13 @@ public class ScheduleService {
             .collect(Collectors.groupingBy(Seat::getSeatClass, Collectors.counting()));
     }
 
+    @Transactional
     private Map<SeatClass, Long> countBookedSeats(List<Carriage> carriages, List<Order> orderList) {
         return carriages.stream()
             .flatMap(carriage -> carriage.getSeats().stream())
             .filter(seat -> seat.getOrderedSeats().stream()
-                .anyMatch(orderedSeat -> orderList.contains(orderedSeat.getOrder()))
+                .anyMatch(orderedSeat -> orderList.contains(orderedSeat.getOrder())
+                )
             )
             .collect(Collectors.groupingBy(Seat::getSeatClass, Collectors.counting()));
     }
@@ -139,7 +142,7 @@ public class ScheduleService {
         Map<SeatClass, Long> totalSeats = countSeats(train.getCarriages());
         Map<SeatClass, Long> bookedSeats = countBookedSeats(train.getCarriages(), orderList);
 
-        List<ResponseDataCarriage> responseDataCarriageList = train.getCarriages().stream()
+        List<ResponseDataCarriageWithSeats> responseDataCarriageWithSeatsList = train.getCarriages().stream()
             .map(carriage -> createResponseDataCarriage(carriage, orderList))
             .toList();
 
@@ -161,13 +164,13 @@ public class ScheduleService {
                     .prices(schedule.getSchedulePrices().stream()
                         .map(price -> new ResponseDataSchedulePrice(price.getId(), price.getSeatClass(), price.getPrice()))
                         .toList())
-                    .carriages(responseDataCarriageList)
+                    .carriages(responseDataCarriageWithSeatsList)
                     .build()
             )
             .build();
     }
 
-    private ResponseDataCarriage createResponseDataCarriage(Carriage carriage, List<Order> orderList) {
+    private ResponseDataCarriageWithSeats createResponseDataCarriage(Carriage carriage, List<Order> orderList) {
         List<ResponseDataSeat> responseDataSeatList = carriage.getSeats().stream()
             .map(seat -> ResponseDataSeat.builder()
                 .id(seat.getId())
@@ -177,6 +180,6 @@ public class ScheduleService {
                 .build())
             .toList();
 
-        return new ResponseDataCarriage(carriage.getId(), carriage.getCarriageNumber(), responseDataSeatList);
+        return new ResponseDataCarriageWithSeats(carriage.getId(), carriage.getCarriageNumber(), responseDataSeatList);
     }
 }

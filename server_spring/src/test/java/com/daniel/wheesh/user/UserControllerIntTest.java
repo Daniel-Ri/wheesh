@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,6 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -54,10 +56,7 @@ class UserControllerIntTest {
     @Autowired
     private EmailTokenRepository emailTokenRepository;
 
-    @Autowired
-    private JavaMailSender mailSender;
-
-    @Autowired
+    @SpyBean
     private EmailService emailService;
 
     private static String defaultToken;
@@ -185,9 +184,8 @@ class UserControllerIntTest {
                 "emailToken record is not created")
             );
 
-        // TODO: Add checking send the right email
-//        verify(emailService, times(1))
-//            .sendTokenForNewEmail("daniel@gmail.com", emailToken.getToken());
+        verify(emailService)
+            .sendTokenForNewEmail("daniel@gmail.com", emailToken.getToken());
     }
 
     @Test
@@ -212,9 +210,8 @@ class UserControllerIntTest {
                 "emailToken record is not created")
             );
 
-        // TODO: Add checking send the right email
-//        verify(emailService, times(1))
-//            .sendTokenForUpdateEmail("daniel@gmail.com", emailToken.getToken());
+        verify(emailService)
+            .sendTokenForUpdateEmail("daniel@gmail.com", emailToken.getToken());
     }
 
     @Test

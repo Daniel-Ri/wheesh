@@ -16,7 +16,8 @@ public class LocalDateDeserializer extends JsonDeserializer<LocalDate> {
 
     private static final List<DateTimeFormatter> FORMATTERS = Arrays.asList(
         DateTimeFormatter.ISO_LOCAL_DATE,
-        DateTimeFormatter.ofPattern("EEE MMM dd yyyy")
+        DateTimeFormatter.ofPattern("EEE MMM dd yyyy"),
+        DateTimeFormatter.ISO_DATE_TIME
     );
 
     @Override
