@@ -1,6 +1,6 @@
 # Wheesh
 
-Wheesh is a prototype website that helps people to book train tickets online.
+Wheesh is a prototype website designed to help people simulate the process of booking train tickets online.
 There are 10 features:
 1. Registration and Login
 2. Profile Management
