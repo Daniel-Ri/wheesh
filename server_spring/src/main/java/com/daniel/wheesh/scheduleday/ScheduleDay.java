@@ -19,7 +19,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "scheduledays")
+@Table(name = "\"ScheduleDays\"")
 public class ScheduleDay {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,24 +27,24 @@ public class ScheduleDay {
     public Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "departureStationId", nullable = false)
+    @JoinColumn(name = "\"departureStationId\"", nullable = false)
     private Station departureStation;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "arrivalStationId", nullable = false)
+    @JoinColumn(name = "\"arrivalStationId\"", nullable = false)
     private Station arrivalStation;
 
-    @Column(nullable = false, name = "departureTime")
+    @Column(nullable = false, name = "\"departureTime\"")
     private Time departureTime;
 
-    @Column(nullable = false, name = "arrivalTime")
+    @Column(nullable = false, name = "\"arrivalTime\"")
     private Time arrivalTime;
 
     @CreatedDate
-    @Column(nullable = false, name = "createdAt")
+    @Column(nullable = false, name = "\"createdAt\"")
     public Date createdAt;
 
     @LastModifiedDate
-    @Column(nullable = false, name = "updatedAt")
+    @Column(nullable = false, name = "\"updatedAt\"")
     public Date updatedAt;
 }

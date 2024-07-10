@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderedSeatSeeder {
     private static final Logger logger = LoggerFactory.getLogger(OrderedSeatSeeder.class);
-    private static final int BATCH_SIZE = 1000;
+    private static final int BATCH_SIZE = 100;
 
     private final OrderRepository orderRepository;
     private final OrderedSeatRepository orderedSeatRepository;

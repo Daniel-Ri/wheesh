@@ -21,8 +21,7 @@ public class BannerService {
     private final String IMAGES_DIR = "src/main/resources/images";
 
     public BannersResponse getBanners() {
-        List<Banner> banners = bannerRepository.findAll();
-
+        List<Banner> banners = bannerRepository.findAllByOrderByIdAsc();
         List<ResponseDataBanner> responseDataBanners = banners.stream()
             .map(banner -> ResponseDataBanner.builder()
                 .id(banner.getId())
@@ -80,7 +79,7 @@ public class BannerService {
         Path filePath = uploadPath.resolve(fileName).normalize();
         Files.copy(file.getInputStream(), filePath);
 
-        return fileName;
+        return "public/" + fileName;
     }
 
     public OneBannerResponse updateBanner(MultipartFile imageDesktop, MultipartFile imageMobile, Long bannerId) throws IOException {

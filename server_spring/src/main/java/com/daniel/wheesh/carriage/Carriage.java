@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "carriages")
+@Table(name = "\"Carriages\"")
 public class Carriage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,20 +28,20 @@ public class Carriage {
     public Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "trainId", nullable = false)
+    @JoinColumn(name = "\"trainId\"", nullable = false)
     private Train train;
 
-    @Column(nullable = false, name = "carriageNumber")
+    @Column(nullable = false, name = "\"carriageNumber\"")
     private Long carriageNumber;
 
     @OneToMany(mappedBy = "carriage", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Seat> seats;
 
     @CreatedDate
-    @Column(nullable = false, name = "createdAt")
+    @Column(nullable = false, name = "\"createdAt\"")
     public Date createdAt;
 
     @LastModifiedDate
-    @Column(nullable = false, name = "updatedAt")
+    @Column(nullable = false, name = "\"updatedAt\"")
     public Date updatedAt;
 }

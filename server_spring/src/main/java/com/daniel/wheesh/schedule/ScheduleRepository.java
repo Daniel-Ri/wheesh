@@ -10,19 +10,28 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
-    List<Schedule> findByDepartureTimeAfter(LocalDateTime departureTime);
+    List<Schedule> findByDepartureTimeAfterOrderById(LocalDateTime departureTime);
+
+    List<Schedule> findByDepartureTimeAfterOrderByDepartureTime(LocalDateTime departureTime);
 
     @Query("SELECT s FROM Schedule s ORDER BY s.departureTime DESC LIMIT 1")
     Optional<Schedule> findLatestSchedule();
 
-    List<Schedule> findByDepartureStationIdAndArrivalStationIdAndDepartureTimeBetween(
+    @Query("SELECT s FROM Schedule s " +
+        "JOIN FETCH s.departureStation ds " +
+        "JOIN FETCH s.arrivalStation as_ " +
+        "LEFT JOIN FETCH s.orders " +
+        "WHERE ds.id = :departureStationId " +
+        "AND as_.id = :arrivalStationId " +
+        "AND s.departureTime >= :startLimit " +
+        "AND s.departureTime < :endLimit " +
+        "ORDER BY s.departureTime ASC"
+    )
+    List<Schedule> findByDepartureStationIdAndArrivalStationIdAndDepartureTimeBetweenOrderByDepartureTime(
         Long departureStationId, Long arrivalStationId, LocalDateTime startLimit, LocalDateTime endLimit);
 
     @Query("SELECT s FROM Schedule s WHERE s.departureTime >= :localDateTime ORDER BY s.departureTime ASC")
     List<Schedule> findAfterLocalDateTime(LocalDateTime localDateTime);
-
-    @Query("SELECT s FROM Schedule s WHERE s.departureTime >= :localDateTime ORDER BY s.departureTime ASC LIMIT 1")
-    Optional<Schedule> findOneAfterLocalDateTime(LocalDateTime localDateTime);
 
     @Transactional
     @Modifying

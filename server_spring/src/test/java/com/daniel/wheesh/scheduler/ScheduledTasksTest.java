@@ -104,7 +104,7 @@ class ScheduledTasksTest {
             ZonedDateTime.now(jakartaZone).withHour(0).withMinute(0).withSecond(0).withNano(0).plusDays(1);
         LocalDateTime tomorrowLocal = tomorrowZoned.toLocalDateTime();
 
-        List<Schedule> tomorrowSchedules = scheduleRepository.findByDepartureTimeAfter(tomorrowLocal);
+        List<Schedule> tomorrowSchedules = scheduleRepository.findByDepartureTimeAfterOrderById(tomorrowLocal);
         Schedule tomorrowSecondSchedule = tomorrowSchedules.get(1);
 
         List<Seat> businessSeats = tomorrowSecondSchedule.getTrain().getCarriages().getFirst().getSeats().stream()

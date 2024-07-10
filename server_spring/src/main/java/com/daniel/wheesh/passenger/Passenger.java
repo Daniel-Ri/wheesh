@@ -23,7 +23,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "passengers")
+@Table(name = "\"Passengers\"")
 public class Passenger {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,10 +31,10 @@ public class Passenger {
     public Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "\"userId\"", nullable = false)
     private User user;
 
-    @Column(nullable = false, name = "isUser")
+    @Column(nullable = false, name = "\"isUser\"")
     public Boolean isUser;
 
     @Enumerated(EnumType.STRING)
@@ -42,11 +42,11 @@ public class Passenger {
     public Gender gender;
 
     @MinAge(value = 17, message = "Must be at least 17 years old")
-    @Column(nullable = false, name = "dateOfBirth")
+    @Column(nullable = false, name = "\"dateOfBirth\"")
     public LocalDate dateOfBirth;
 
     @Pattern(regexp = "\\d{16}", message = "ID Card must be exactly 16 digits")
-    @Column(nullable = false, name = "idCard")
+    @Column(nullable = false, name = "\"idCard\"")
     public String idCard;
 
     @Column(nullable = false)
@@ -57,11 +57,11 @@ public class Passenger {
     public String email;
 
     @CreatedDate
-    @Column(nullable = false, name = "createdAt")
+    @Column(nullable = false, name = "\"createdAt\"")
     public Date createdAt;
 
     @LastModifiedDate
-    @Column(nullable = false, name = "updatedAt")
+    @Column(nullable = false, name = "\"updatedAt\"")
     public Date updatedAt;
 
     @Override

@@ -51,6 +51,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT o FROM Order o " +
         "JOIN FETCH o.payment p " +
         "JOIN FETCH o.schedule s " +
+        "JOIN FETCH s.departureStation ds " +
+        "JOIN FETCH s.arrivalStation as " +
+        "JOIN FETCH o.user u " +
+        "JOIN FETCH u.passengers " +
         "WHERE p.isPaid = true " +
         "AND o.isNotified = false " +
         "AND s.departureTime > :now " +

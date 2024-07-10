@@ -23,7 +23,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "orders")
+@Table(name = "\"Orders\"")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,14 +31,14 @@ public class Order {
     public Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "\"userId\"", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "scheduleId", nullable = false)
+    @JoinColumn(name = "\"scheduleId\"", nullable = false)
     private Schedule schedule;
 
-    @Column(nullable = false, name = "isNotified")
+    @Column(nullable = false, name = "\"isNotified\"")
     private Boolean isNotified;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -48,11 +48,11 @@ public class Order {
     private Payment payment;
 
     @CreatedDate
-    @Column(nullable = false, name = "createdAt")
+    @Column(nullable = false, name = "\"createdAt\"")
     public LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(nullable = false, name = "updatedAt")
+    @Column(nullable = false, name = "\"updatedAt\"")
     public LocalDateTime updatedAt;
 
     @Override

@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SeatSeeder {
     private static final Logger logger = LoggerFactory.getLogger(SeatSeeder.class);
-    private static final int BATCH_SIZE = 1000;
+    private static final int BATCH_SIZE = 100;
 
     private final CarriageRepository carriageRepository;
     private final SeatRepository seatRepository;

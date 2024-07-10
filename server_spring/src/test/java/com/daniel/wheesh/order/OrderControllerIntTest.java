@@ -165,7 +165,7 @@ public class OrderControllerIntTest {
             ZonedDateTime.now(jakartaZone).withHour(0).withMinute(0).withSecond(0).withNano(0).plusDays(1);
         LocalDateTime tomorrowLocal = tomorrowZoned.toLocalDateTime();
 
-        List<Schedule> tomorrowSchedules = scheduleRepository.findByDepartureTimeAfter(tomorrowLocal);
+        List<Schedule> tomorrowSchedules = scheduleRepository.findByDepartureTimeAfterOrderByDepartureTime(tomorrowLocal);
         Schedule tomorrowSecondSchedule = tomorrowSchedules.get(1);
 
         List<Seat> seats = tomorrowSecondSchedule.getTrain().getCarriages().getFirst().getSeats().stream()
@@ -256,7 +256,7 @@ public class OrderControllerIntTest {
             ZonedDateTime.now(jakartaZone).withHour(0).withMinute(0).withSecond(0).withNano(0).plusDays(1);
         LocalDateTime tomorrowLocal = tomorrowZoned.toLocalDateTime();
 
-        List<Schedule> tomorrowSchedules = scheduleRepository.findByDepartureTimeAfter(tomorrowLocal);
+        List<Schedule> tomorrowSchedules = scheduleRepository.findByDepartureTimeAfterOrderByDepartureTime(tomorrowLocal);
         Schedule tomorrowSecondSchedule = tomorrowSchedules.get(1);
 
         List<Seat> seats = tomorrowSecondSchedule.getTrain().getCarriages().getFirst().getSeats().stream()
@@ -426,7 +426,7 @@ public class OrderControllerIntTest {
             ZonedDateTime.now(jakartaZone).withHour(0).withMinute(0).withSecond(0).withNano(0).plusDays(1);
         LocalDateTime tomorrowLocal = tomorrowZoned.toLocalDateTime();
 
-        List<Schedule> tomorrowSchedules = scheduleRepository.findByDepartureTimeAfter(tomorrowLocal);
+        List<Schedule> tomorrowSchedules = scheduleRepository.findByDepartureTimeAfterOrderByDepartureTime(tomorrowLocal);
         Schedule tomorrowSecondSchedule = tomorrowSchedules.get(1);
 
         List<Seat> seats = tomorrowSecondSchedule.getTrain().getCarriages().getFirst().getSeats().stream()
@@ -507,7 +507,7 @@ public class OrderControllerIntTest {
             ZonedDateTime.now(jakartaZone).withHour(0).withMinute(0).withSecond(0).withNano(0).plusDays(1);
         LocalDateTime tomorrowLocal = tomorrowZoned.toLocalDateTime();
 
-        List<Schedule> tomorrowSchedules = scheduleRepository.findByDepartureTimeAfter(tomorrowLocal);
+        List<Schedule> tomorrowSchedules = scheduleRepository.findByDepartureTimeAfterOrderByDepartureTime(tomorrowLocal);
         Schedule tomorrowSecondSchedule = tomorrowSchedules.get(1);
 
         List<Seat> seats = tomorrowSecondSchedule.getTrain().getCarriages().getFirst().getSeats().stream()
@@ -552,7 +552,7 @@ public class OrderControllerIntTest {
             ZonedDateTime.now(jakartaZone).withHour(0).withMinute(0).withSecond(0).withNano(0).plusDays(1);
         LocalDateTime tomorrowLocal = tomorrowZoned.toLocalDateTime();
 
-        List<Schedule> tomorrowSchedules = scheduleRepository.findByDepartureTimeAfter(tomorrowLocal);
+        List<Schedule> tomorrowSchedules = scheduleRepository.findByDepartureTimeAfterOrderByDepartureTime(tomorrowLocal);
         Schedule tomorrowSecondSchedule = tomorrowSchedules.get(1);
 
         List<Seat> seats = tomorrowSecondSchedule.getTrain().getCarriages().getFirst().getSeats().stream()
@@ -594,7 +594,7 @@ public class OrderControllerIntTest {
             ZonedDateTime.now(jakartaZone).withHour(0).withMinute(0).withSecond(0).withNano(0).plusDays(1);
         LocalDateTime tomorrowLocal = tomorrowZoned.toLocalDateTime();
 
-        List<Schedule> tomorrowSchedules = scheduleRepository.findByDepartureTimeAfter(tomorrowLocal);
+        List<Schedule> tomorrowSchedules = scheduleRepository.findByDepartureTimeAfterOrderByDepartureTime(tomorrowLocal);
         Schedule tomorrowSecondSchedule = tomorrowSchedules.get(1);
 
         List<Seat> seats = tomorrowSecondSchedule.getTrain().getCarriages().getFirst().getSeats().stream()
@@ -626,7 +626,7 @@ public class OrderControllerIntTest {
             ZonedDateTime.now(jakartaZone).withHour(0).withMinute(0).withSecond(0).withNano(0).plusDays(1);
         LocalDateTime tomorrowLocal = tomorrowZoned.toLocalDateTime();
 
-        List<Schedule> tomorrowSchedules = scheduleRepository.findByDepartureTimeAfter(tomorrowLocal);
+        List<Schedule> tomorrowSchedules = scheduleRepository.findByDepartureTimeAfterOrderByDepartureTime(tomorrowLocal);
         Schedule tomorrowSecondSchedule = tomorrowSchedules.get(1);
 
         List<Seat> seats = tomorrowSecondSchedule.getTrain().getCarriages().getFirst().getSeats().stream()

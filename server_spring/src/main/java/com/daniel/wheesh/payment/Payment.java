@@ -20,7 +20,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "payments")
+@Table(name = "\"Payments\"")
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,24 +28,24 @@ public class Payment {
     public Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "orderId", nullable = false)
+    @JoinColumn(name = "\"orderId\"", nullable = false)
     private Order order;
 
     @Column(nullable = false)
     private Long amount;
 
-    @Column(nullable = false, name = "isPaid")
+    @Column(nullable = false, name = "\"isPaid\"")
     private Boolean isPaid;
 
-    @Column(nullable = false, name = "duePayment")
+    @Column(nullable = false, name = "\"duePayment\"")
     private LocalDateTime duePayment;
 
     @CreatedDate
-    @Column(nullable = false, name = "createdAt")
+    @Column(nullable = false, name = "\"createdAt\"")
     public Date createdAt;
 
     @LastModifiedDate
-    @Column(nullable = false, name = "updatedAt")
+    @Column(nullable = false, name = "\"updatedAt\"")
     public Date updatedAt;
 
     @Override

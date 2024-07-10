@@ -1,8 +1,78 @@
-# API Documentation
+# Server - Express, Sequelize & MySQL (on dev & test) 
+
+## How to Setup
+
+1. Install the dependencies
+   ```
+   npm i
+   ```
+2. Create `uploads` folder on `server` folder
+3. Copy these files from `backupPics` to `public` folder
+   ```
+   Frame 1 - Desktop.png
+   Frame 1 - Mobile.png
+   Frame 2 - Desktop.png
+   Frame 2 - Mobile.png
+   Frame 3 - Desktop.png
+   Frame 3 - Mobile.png
+   Frame 4 - Desktop.png
+   Frame 4 - Mobile.png
+   Frame 5 - Desktop.png
+   Frame 5 - Mobile.png
+   ```
+4. Setup `.env` file
+   ```
+   PORT=<PORT>
+   JWT_SECRET=<JWT_SECRET>
+   CRYPTO_KEY=  // It's okay if empty (it should be deleted)
+   USERNAME_NODEMAILER=<EMAIL_THAT_IS_SET_TO_SEND_EMAIL>
+   PASSWORD_NODEMAILER=<PASSWORD_EMAIL_FOR_SEND_EMAIL>
+   DATABASE_DEV_URL=mysql://root@localhost:3306/wheesh   // you can change it if you want
+   DATABASE_TEST_URL=mysql://root@localhost:3306/wheesh_test
+   DATABASE_PROD_URL=<DATABASE_PROD_URL>   // It's okay to be empty if not running in production mode
+   DATABASE_PROD_DIALECT=<DATABASE_DIALECT> // It's okay to be empty if not running in production mode
+   SSL_REQUIRED= // It's okay to be empty if not running in production mode
+   REDIS_PASSWORD = // It's okay to be empty if not running in production mode
+   REDIS_HOST= // It's okay to be empty if not running in production mode
+   REDIS_PORT= // It's okay to be empty if not running in production mode
+   ```
+
+5. Setup the database (make sure "sequelize-cli" is installed)
+   ```
+   npx sequelize-cli db:drop
+   npx sequelize-cli db:create
+   npx sequelize-cli db:migrate
+   npx sequelize-cli db:seed:all
+   ```
+
+6. Make sure MySQL Server & Redis is installed
+
+## How to Run
+
+1. Start the MySQL server & run the redis-server
+
+2. Run the backend
+   ```
+   npm run dev
+   ```
+
+## How to Test
+
+1. Setup the database first (no need to repeat this step after migrate the **test** database)
+   ```
+   npx sequelize-cli db:drop --env test
+   npx sequelize-cli db:create --env test
+   npx sequelize-cli db:migrate --env test
+   ```
+
+2. Run the test
+   ```
+   npm run test
+   ```
 
 ## Crypto
 
-I create 4 files that help encryption and decryption for readers.
+I create 4 files that help encryption and decryption for readers. This can only works properly if you set the "CRYPTO_KEY" environment variables in ".env" file.
 
 1. genEncryption.js  
    Create encryption of text  
@@ -25,6 +95,8 @@ I create 4 files that help encryption and decryption for readers.
    Create decryption of text into object  
    How to Use:  
    `node genObjectDecryption.js <encrypted_text>`
+
+# API Documentation with Express
 
 ## URL
 

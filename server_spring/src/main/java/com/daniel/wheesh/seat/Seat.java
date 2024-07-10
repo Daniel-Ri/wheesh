@@ -21,7 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "seats")
+@Table(name = "\"Seats\"")
 public class Seat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,25 +29,25 @@ public class Seat {
     public Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "carriageId", nullable = false)
+    @JoinColumn(name = "\"carriageId\"", nullable = false)
     private Carriage carriage;
 
-    @Column(nullable = false, name = "seatNumber")
+    @Column(nullable = false, name = "\"seatNumber\"")
     private String seatNumber;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, name = "seatClass")
+    @Column(nullable = false, name = "\"seatClass\"")
     private SeatClass seatClass;
 
     @OneToMany(mappedBy = "seat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderedSeat> orderedSeats;
 
     @CreatedDate
-    @Column(nullable = false, name = "createdAt")
+    @Column(nullable = false, name = "\"createdAt\"")
     public Date createdAt;
 
     @LastModifiedDate
-    @Column(nullable = false, name = "updatedAt")
+    @Column(nullable = false, name = "\"updatedAt\"")
     public Date updatedAt;
 
     @Override

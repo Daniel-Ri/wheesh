@@ -14,7 +14,6 @@ import com.daniel.wheesh.scheduleprice.SchedulePriceRepository;
 import com.daniel.wheesh.scheduleprice.SchedulePriceSeeder;
 import com.daniel.wheesh.train.Train;
 import com.daniel.wheesh.train.TrainRepository;
-import com.daniel.wheesh.user.User;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -105,7 +104,7 @@ public class ScheduledTasks {
         LocalDateTime afterMidnightSevenDaysAway = afterMidnightNow.plusDays(7L);
 
         List<ScheduleDay> scheduleDays = scheduleDayRepository.findAll();
-        List<Train> trains = trainRepository.findAll();
+        List<Train> trains = trainRepository.findAllByOrderById();
 
         List<Schedule> scheduleList = new ArrayList<>();
         for (int i = 0; i < scheduleDays.size(); i++) {

@@ -17,24 +17,24 @@ import java.util.Date;
 @AllArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "banners")
+@Table(name = "\"Banners\"")
 public class Banner {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     public Long id;
 
-    @Column(nullable = false, name = "imageDesktop")
+    @Column(nullable = false, name = "\"imageDesktop\"")
     private String imageDesktop;
 
-    @Column(nullable = false, name = "imageMobile")
+    @Column(nullable = false, name = "\"imageMobile\"")
     private String imageMobile;
 
     @CreatedDate
-    @Column(nullable = false, name = "createdAt")
+    @Column(nullable = false, name = "\"createdAt\"")
     public Date createdAt;
 
     @LastModifiedDate
-    @Column(nullable = false, name = "updatedAt")
+    @Column(nullable = false, name = "\"updatedAt\"")
     public Date updatedAt;
 }

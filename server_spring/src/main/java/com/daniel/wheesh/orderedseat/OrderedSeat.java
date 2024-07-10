@@ -24,7 +24,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "orderedseats")
+@Table(name = "\"OrderedSeats\"")
 public class OrderedSeat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,11 +32,11 @@ public class OrderedSeat {
     public Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "orderId", nullable = false)
+    @JoinColumn(name = "\"orderId\"", nullable = false)
     private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seatId", nullable = false)
+    @JoinColumn(name = "\"seatId\"", nullable = false)
     private Seat seat;
 
     @Column(nullable = false)
@@ -47,11 +47,11 @@ public class OrderedSeat {
     private Gender gender;
 
     @MinAge(value = 17, message = "Must be at least 17 years old")
-    @Column(nullable = false, name = "dateOfBirth")
+    @Column(nullable = false, name = "\"dateOfBirth\"")
     public LocalDate dateOfBirth;
 
     @Pattern(regexp = "\\d{16}", message = "ID Card must be exactly 16 digits")
-    @Column(nullable = false, name = "idCard")
+    @Column(nullable = false, name = "\"idCard\"")
     public String idCard;
 
     @Column(nullable = false)
@@ -65,11 +65,11 @@ public class OrderedSeat {
     public String secret;
 
     @CreatedDate
-    @Column(nullable = false, name = "createdAt")
+    @Column(nullable = false, name = "\"createdAt\"")
     public Date createdAt;
 
     @LastModifiedDate
-    @Column(nullable = false, name = "updatedAt")
+    @Column(nullable = false, name = "\"updatedAt\"")
     public Date updatedAt;
 
     @Override

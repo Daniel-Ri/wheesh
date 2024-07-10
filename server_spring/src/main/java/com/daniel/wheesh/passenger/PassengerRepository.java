@@ -11,7 +11,7 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long> {
     Optional<Passenger> findByUserIdAndIsUserIsTrue(Long userId);
     Optional<Passenger> findByEmail(String email);
 
-    List<Passenger> findByUserId(Long userId);
+    List<Passenger> findByUserIdOrderById(Long userId);
 
     @Query("SELECT COUNT(p) FROM Passenger p WHERE p.user.id = :userId")
     Long countByUserId(@Param("userId") Long userId);

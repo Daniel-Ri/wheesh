@@ -24,7 +24,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "schedules")
+@Table(name = "\"Schedules\"")
 public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,21 +32,21 @@ public class Schedule {
     public Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "trainId", nullable = false)
+    @JoinColumn(name = "\"trainId\"", nullable = false)
     private Train train;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "departureStationId", nullable = false)
+    @JoinColumn(name = "\"departureStationId\"", nullable = false)
     private Station departureStation;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "arrivalStationId", nullable = false)
+    @JoinColumn(name = "\"arrivalStationId\"", nullable = false)
     private Station arrivalStation;
 
-    @Column(nullable = false, name = "departureTime")
+    @Column(nullable = false, name = "\"departureTime\"")
     public LocalDateTime departureTime;
 
-    @Column(nullable = false, name = "arrivalTime")
+    @Column(nullable = false, name = "\"arrivalTime\"")
     public LocalDateTime arrivalTime;
 
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -56,11 +56,11 @@ public class Schedule {
     private List<Order> orders;
 
     @CreatedDate
-    @Column(nullable = false, name = "createdAt")
+    @Column(nullable = false, name = "\"createdAt\"")
     public Date createdAt;
 
     @LastModifiedDate
-    @Column(nullable = false, name = "updatedAt")
+    @Column(nullable = false, name = "\"updatedAt\"")
     public Date updatedAt;
 
     @Override

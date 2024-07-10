@@ -37,7 +37,7 @@ public class OrderSeeder {
             LocalDateTime startOfTomorrowInJakartaLocal = startOfTomorrowInJakarta.toLocalDateTime();
 
             List<Schedule> afterTodaySchedules =
-                scheduleRepository.findByDepartureTimeAfter(startOfTomorrowInJakartaLocal);
+                scheduleRepository.findByDepartureTimeAfterOrderById(startOfTomorrowInJakartaLocal);
             User user2 = userRepository.findById(2L).orElseThrow(() -> new Exception("Something wrong happen"));
             User user3 = userRepository.findById(3L).orElseThrow(() -> new Exception("Something wrong happen"));
             Schedule schedule1 = scheduleRepository.findById(1L).orElseThrow(() -> new Exception("Something wrong " +

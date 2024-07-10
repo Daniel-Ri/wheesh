@@ -63,7 +63,7 @@ public class ScheduleService {
             .orElseThrow(() -> new CustomException("Arrival Station Not Found", HttpStatus.NOT_FOUND));
 
         List<Schedule> schedules =
-            scheduleRepository.findByDepartureStationIdAndArrivalStationIdAndDepartureTimeBetween(
+            scheduleRepository.findByDepartureStationIdAndArrivalStationIdAndDepartureTimeBetweenOrderByDepartureTime(
                 departureStationId, arrivalStationId, startLimit, endLimit);
 
         return SchedulesResponse.builder()

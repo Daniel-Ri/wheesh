@@ -30,7 +30,7 @@ public class PassengerService {
     public PassengersResponse getPassengers() throws Exception {
         User currentUser = getCurrentUser();
 
-        List<Passenger> passengers = passengerRepository.findByUserId(currentUser.getId());
+        List<Passenger> passengers = passengerRepository.findByUserIdOrderById(currentUser.getId());
 
         List<ResponseDataPassenger> responseDataPassengers = passengers.stream()
             .map(passenger -> ResponseDataPassenger.builder()

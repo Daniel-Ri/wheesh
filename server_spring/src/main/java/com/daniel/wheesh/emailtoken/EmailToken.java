@@ -19,7 +19,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "emailtokens")
+@Table(name = "\"EmailTokens\"")
 public class EmailToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,14 +33,14 @@ public class EmailToken {
     @Column(nullable = false)
     public String token;
 
-    @Column(nullable = false, name = "expiredAt")
+    @Column(nullable = false, name = "\"expiredAt\"")
     public LocalDateTime expiredAt;
 
     @CreatedDate
-    @Column(nullable = false, name = "createdAt")
+    @Column(nullable = false, name = "\"createdAt\"")
     public Date createdAt;
 
     @LastModifiedDate
-    @Column(nullable = false, name = "updatedAt")
+    @Column(nullable = false, name = "\"updatedAt\"")
     public Date updatedAt;
 }
