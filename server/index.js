@@ -5,7 +5,7 @@ const cors = require('cors');
 const app = express()
 const port = process.env.PORT;
 const router = require('./routes/index');
-const { deleteNotPaidOrderPassedDueTime, remindUserBeforeOneHourOfDeparture } = require("./utils/handleJob");
+const { deleteNotPaidOrderPassedDueTime, remindUserBeforeOneHourOfDeparture, addDailyData } = require("./utils/handleJob");
 
 app.use(cors())
 app.use(express.json())
@@ -25,6 +25,14 @@ cron.schedule('* * * * *', async () => {
   console.log('Job running every minute.');
   await deleteNotPaidOrderPassedDueTime();
   await remindUserBeforeOneHourOfDeparture();
+});
+
+cron.schedule('1 0 0 * * *', async () => {
+  console.log('Job running every midnight.');
+  await addDailyData();
+}, {
+  scheduled: true,
+  timezone: "Asia/Jakarta"
 });
 
 // Only start the server if this file is the main module

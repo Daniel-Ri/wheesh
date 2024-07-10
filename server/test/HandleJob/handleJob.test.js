@@ -50,9 +50,6 @@ const secondDummyUser = {
   password: '123456',
 };
 
-const firstEncryptedObj = encrypt(JSON.stringify(firstDummyUser));
-const secondEncryptedObj = encrypt(JSON.stringify(secondDummyUser));
-
 beforeAll(async () => {
   await upUser(queryInterface, sequelize);
   await upPassenger(queryInterface, sequelize);
@@ -68,9 +65,9 @@ beforeAll(async () => {
   await upPayment(queryInterface, sequelize);
 
   const firstLoginResponse = 
-    await request(app).post('/api/user/login').send({ encryptedObj: firstEncryptedObj });
+    await request(app).post('/api/user/login').send(firstDummyUser);
   const secondLoginResponse = 
-    await request(app).post('/api/user/login').send({ encryptedObj: secondEncryptedObj });
+    await request(app).post('/api/user/login').send(secondDummyUser);
   firstToken = firstLoginResponse.body.token;
   secondToken = secondLoginResponse.body.token;
 }, 15000);

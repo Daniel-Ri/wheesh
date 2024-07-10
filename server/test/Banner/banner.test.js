@@ -22,13 +22,12 @@ const dummyAdmin = {
   usernameOrEmail: 'bangjoe',
   password: '123456',
 };
-const encryptedObjAdmin = encrypt(JSON.stringify(dummyAdmin));
 
 beforeAll(async () => {
   await upUser(queryInterface, sequelize);
   await upPassenger(queryInterface, sequelize);
   await upBanner(queryInterface, sequelize);
-  const loginResponseAdmin = await request(app).post('/api/user/login').send({ encryptedObj: encryptedObjAdmin });
+  const loginResponseAdmin = await request(app).post('/api/user/login').send(dummyAdmin);
   tokenAdmin = loginResponseAdmin.body.token;
 });
 
@@ -118,12 +117,10 @@ describe('Create Banner', () => {
         usernameOrEmail: 'johndoe',
         password: '123456',
       };
-      const encryptedObj = encrypt(JSON.stringify(dummyUser));
 
       const bannersBeforeAdded = await Banner.findAll();
-      const loginResponse = await request(app).post('/api/user/login').send({ encryptedObj });
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
 
-      console.log('wait....');
       response =
         await request(app)
           .post('/api/banner')

@@ -17,55 +17,39 @@ There are 10 features:
 
 ![Prototype Web](./media/prototype-web.png)
 
+## Demo
+
+This project supports server creation in two languages: JavaScript using the Express framework and Java using the Spring Boot framework. For demonstration purposes, the Java implementation is showcased here.
+
+You can view the demo [here](https://wheesh.vercel.app/).
+
 ## How to Setup
 
 ### Server
 
-1. Create `uploads` folder on `server` folder
-2. Copy these files from `backupPics` to `public` folder
-   ```
-   Frame 1 - Desktop.png
-   Frame 1 - Mobile.png
-   Frame 2 - Desktop.png
-   Frame 2 - Mobile.png
-   Frame 3 - Desktop.png
-   Frame 3 - Mobile.png
-   Frame 4 - Desktop.png
-   Frame 4 - Mobile.png
-   Frame 5 - Desktop.png
-   Frame 5 - Mobile.png
-   ```
-3. Setup `.env` file
-   ```
-   PORT=<PORT>
-   JWT_SECRET=<JWT_SECRET>
-   CRYPTO_KEY=c19571ba9750025e67c5db31d094fe70
-   USERNAME_NODEMAILER=<EMAIL_THAT_IS_SET_TO_SEND_EMAIL>
-   PASSWORD_NODEMAILER=<PASSWORD_EMAIL_FOR_SEND_EMAIL>
-   ```
+1. [Express](./server/ReadMe.md#how-to-setup)
 
-4. Setup the database
-   ```
-   npx sequelize-cli db:drop
-   npx sequelize-cli db:create
-   npx sequelize-cli db:migrate
-   npx sequelize-cli db:seed:all
-   ```
+2. [Spring Boot](./server_spring/ReadMe.md#how-to-setup)
 
 ### Client
 
-No need to setup anything, but if the style of the website is weird, try to delete the local storage of the website (`localhost:3000`) to reset the theme to be `light`.
+1. Setup `.env` file
+   ```
+   VITE_API_HOST=<SERVERL_URL_API> // Remember to add "/api" at the back
+   VITE_CRYPTO_KEY=        // This is okay if empty (it should be deleted)
+   ```
+2. Install the dependencies
+   ```
+   npm i
+   ```
 
 ## How to Run
 
 ### Server
 
-1. Run the redis-server
+1. [Express](./server/ReadMe.md#how-to-run)
 
-2. Run the backend
-   ```
-   npm run dev
-   ```
+2. [Spring Boot](./server_spring/ReadMe.md#how-to-run)
 
 ### Client
 
@@ -77,17 +61,9 @@ npm start
 
 ### Server
 
-1. Setup the database first (no need to repeat this step after migrate the **test** database)
-   ```
-   npx sequelize-cli db:drop --env test
-   npx sequelize-cli db:create --env test
-   npx sequelize-cli db:migrate --env test
-   ```
+1. [Express](./server//ReadMe.md#how-to-test)
 
-2. Run the test
-   ```
-   npm run test
-   ```
+2. [Spring Boot](./server_spring/ReadMe.md#how-to-test)
 
 ### Client
 
@@ -97,7 +73,10 @@ npm run test
 
 ## Server Documentation
 
-Click this [link](server/ReadMe.md) to read the API Documentation
+1. Express  
+   Click this [link](server/ReadMe.md#api-documentation-with-express) to read the API Documentation
+2. Spring Boot  
+   It's almost the same with the Express one.
 
 ## Client Routes
 
@@ -107,7 +86,7 @@ For detailed information about the client routes, please refer to the [Client Ro
 
 Summary of what the stack looks like on each side:
 
-### Backend
+### Backend (for Express)
 
 Tech stacks:
 1. express, framework that helps developing backend (or server)
@@ -170,7 +149,7 @@ Similarly, when a user initiates a create, update, or delete operation, the page
 
 ![Program Flow - Client](./media/program-flow-client.png) 
 
-### Server (or Backend)
+### Server (for Express)
 
 When a request is sent to the server, it follows a specific route. Some routes directly invoke a method within the `controller`, while others pass through various middlewares before reaching a method inside the `controller`. For instance, when a client requests profile data via the `/api/user` endpoint, the request is initially directed to the `authentication` middleware to verify the presence and validity of an authorization token. If the request fails within the `authentication` middleware, a `BAD REQUEST` response is sent to the client. Otherwise, the request proceeds to the specified method within the controller. Within these controller methods, distinct logic is implemented for various purposes. For example, on the `/api/user` endpoint, the method might execute a query using `sequelize`'s `Model` to retrieve user data and subsequently send a response containing the profile data to the client. Additionally, some controller methods utilize utility methods for specific logic, such as hashing passwords or creating authorization tokens.
 

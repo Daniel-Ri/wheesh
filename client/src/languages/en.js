@@ -9,6 +9,7 @@ export default {
   app_popup_close_button_label: 'Close',
   app_home: 'Home',
   app_my_tickets: 'My Tickets',
+  app_gate: 'Gate',
   app_me: 'Me',
   app_please_enter_account_and_password: 'Please enter your account and password',
   app_please_log_in_using_registered: 'Please log in using your registered username or email',
@@ -162,4 +163,5 @@ export default {
   app_scan_again: 'Scan Again',
   app_success_validate_qr: 'Success validate QR',
   app_invalid_qr_ticket: 'Invalid QR Ticket',
+  app_website_created_by: 'This website is created by',
 };

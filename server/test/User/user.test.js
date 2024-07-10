@@ -4,7 +4,7 @@ const { User, EmailToken, sequelize } = require('../../models/index');
 const { up: upUser, down: downUser } = require('../../seeders/20231205021723-user');
 const { up: upPassenger, down: downPassenger } = require('../../seeders/20231205023546-passenger');
 const { signToken } = require('../../utils/handleToken');
-const { encrypt, decrypt } = require('../../utils/handleCrypto');
+const { encrypt } = require('../../utils/handleCrypto');
 const { queryInterface } = sequelize;
 
 jest.mock("ioredis", () => require("ioredis-mock"));
@@ -50,9 +50,8 @@ describe('Login', () => {
         usernameOrEmail: 'johndoe',
         password: '123456',
       };
-      const encryptedObj = encrypt(JSON.stringify(dummyData));
 
-      response = await request(app).post('/api/user/login').send({ encryptedObj });
+      response = await request(app).post('/api/user/login').send(dummyData);
     } catch (err) {
       console.error(err);
     }
@@ -61,7 +60,7 @@ describe('Login', () => {
     expect(response.body).toHaveProperty('token');
     expect(response.body).toHaveProperty('user');
 
-    const decryptedUser = JSON.parse(decrypt(response.body.user));
+    const decryptedUser = response.body.user;
     expect(decryptedUser).toHaveProperty('id');
     expect(decryptedUser).toHaveProperty('username');
     expect(decryptedUser).toHaveProperty('email');
@@ -75,9 +74,8 @@ describe('Login', () => {
         username: 'johndoe',
         password: '123456',
       };
-      const encryptedObj = encrypt(JSON.stringify(dummyData));
 
-      response = await request(app).post('/api/user/login').send({ encryptedObj });
+      response = await request(app).post('/api/user/login').send(dummyData);
     } catch (err) {
       console.error(err);
     }
@@ -92,9 +90,8 @@ describe('Login', () => {
         usernameOrEmail: 'jamesbond',
         password: '123456',
       };
-      const encryptedObj = encrypt(JSON.stringify(dummyData));
 
-      response = await request(app).post('/api/user/login').send({ encryptedObj });
+      response = await request(app).post('/api/user/login').send(dummyData);
     } catch (err) {
       console.error(err);
     }
@@ -109,9 +106,8 @@ describe('Login', () => {
         usernameOrEmail: 'johndoe',
         password: '1234567',
       };
-      const encryptedObj = encrypt(JSON.stringify(dummyData));
 
-      response = await request(app).post('/api/user/login').send({ encryptedObj });
+      response = await request(app).post('/api/user/login').send(dummyData);
     } catch (err) {
       console.error(err);
     }
@@ -200,9 +196,8 @@ describe('Register', () => {
             .post('/api/user/sendEmailToken').send({ email: dummyData.email, action: "create" });
       emailToken = await EmailToken.findOne({ where: {email: dummyData.email} });
       dummyData.emailToken = emailToken.token;
-      const encryptedObj = encrypt(JSON.stringify(dummyData));
 
-      response = await request(app).post('/api/user/register').send({ encryptedObj });
+      response = await request(app).post('/api/user/register').send(dummyData);
 
       // Check the email is still in database
       emailToken = await EmailToken.findOne({ where: {email: dummyData.email} });
@@ -215,11 +210,11 @@ describe('Register', () => {
     }
 
     expect(response.status).toBe(201);
-    const decryptedData = JSON.parse(decrypt(response.body.data));
-    expect(decryptedData.username).toEqual(dummyData.username);
-    expect(decryptedData.email).toEqual(dummyData.email);
-    expect(decryptedData.Passengers[0].isUser).toBe(true);
-    expect(decryptedData.Passengers[0].name).toEqual(dummyData.name);
+    const responseData = response.body.data;
+    expect(responseData.username).toEqual(dummyData.username);
+    expect(responseData.email).toEqual(dummyData.email);
+    expect(responseData.Passengers[0].isUser).toBe(true);
+    expect(responseData.Passengers[0].name).toEqual(dummyData.name);
     expect(emailToken).toBeNull();
     expect(user).not.toBeNull();
   });
@@ -262,8 +257,7 @@ describe('Verify Token', () => {
         usernameOrEmail: 'johndoe',
         password: '123456',
       };
-      const encryptedObj = encrypt(JSON.stringify(dummyData));
-      const loginResponse = await request(app).post('/api/user/login').send({ encryptedObj });
+      const loginResponse = await request(app).post('/api/user/login').send(dummyData);
 
       response = 
         await request(app)
@@ -321,8 +315,7 @@ describe('Get Profile', () => {
       password: '123456',
     };
     try {
-      const encryptedObj = encrypt(JSON.stringify(dummyData));
-      const loginResponse = await request(app).post('/api/user/login').send({ encryptedObj });
+      const loginResponse = await request(app).post('/api/user/login').send(dummyData);
 
       response = 
         await request(app)
@@ -372,8 +365,7 @@ describe('Update Profile', () => {
         usernameOrEmail: 'johndoe',
         password: '123456',
       };
-      const encryptedObj = encrypt(JSON.stringify(dummyUser));
-      const loginResponse = await request(app).post('/api/user/login').send({ encryptedObj });
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
 
       response = 
         await request(app)
@@ -408,8 +400,7 @@ describe('Update Profile', () => {
         usernameOrEmail: 'johndoe@gmail.com',
         password: '123456',
       };
-      const encryptedObj = encrypt(JSON.stringify(dummyUser));
-      const loginResponse = await request(app).post('/api/user/login').send({ encryptedObj });
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
 
       response = 
         await request(app)
@@ -438,8 +429,7 @@ describe('Change Password', () => {
         usernameOrEmail: 'johndoe@gmail.com',
         password: dummyData.oldPassword,
       };
-      const encryptedObj = encrypt(JSON.stringify(dummyUser));
-      const loginResponse = await request(app).post('/api/user/login').send({ encryptedObj });
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
 
       response = 
         await request(app)
@@ -450,8 +440,7 @@ describe('Change Password', () => {
         usernameOrEmail: dummyUser.usernameOrEmail,
         password: dummyData.newPassword,
       };
-      const encryptedObjWithNewPassword = encrypt(JSON.stringify(dummyUserWithNewPassword));
-      loginResponseAgain = await request(app).post('/api/user/login').send({ encryptedObj: encryptedObjWithNewPassword });
+      loginResponseAgain = await request(app).post('/api/user/login').send(dummyUserWithNewPassword);
 
     } catch (err) {
       console.error(err);
@@ -478,8 +467,7 @@ describe('Change Email', () => {
         usernameOrEmail: 'johndoe@gmail.com',
         password: '1234567',
       };
-      const encryptedObj = encrypt(JSON.stringify(dummyUser));
-      const loginResponse = await request(app).post('/api/user/login').send({ encryptedObj });
+      const loginResponse = await request(app).post('/api/user/login').send(dummyUser);
 
       emailToken = await EmailToken.findOne({ where: {email: newEmail} });
 
@@ -491,11 +479,10 @@ describe('Change Email', () => {
 
       emailToken = await EmailToken.findOne({ where: {email: newEmail} });
 
-      const newEncryptedObj = 
-        encrypt(JSON.stringify({ usernameOrEmail: newEmail, password: dummyUser.password }));
+      const newDummyUser = { usernameOrEmail: newEmail, password: dummyUser.password };
 
       loginResponseAgain = 
-        await request(app).post('/api/user/login').send({ encryptedObj: newEncryptedObj });
+        await request(app).post('/api/user/login').send(newDummyUser);
 
     } catch (err) {
       console.error(err);

@@ -15,7 +15,7 @@ const urls = {
 
 export const callAPI = async (endpoint, method, header = {}, params = {}, data = {}) => {
   const defaultHeader = {
-    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    'Content-Type': 'application/json; charset=UTF-8',
   };
 
   const headers = merge(defaultHeader, header);
@@ -59,26 +59,21 @@ export const getHistoryOrders = () => callAPI(`${urls.order}/history`, 'GET');
 export const getOrder = (orderId) => callAPI(`${urls.order}/${orderId}`, 'GET');
 export const payOrder = (orderId) => callAPI(`${urls.order}/${orderId}`, 'PUT');
 export const cancelOrder = (orderId) => callAPI(`${urls.order}/${orderId}`, 'DELETE');
-export const createOrder = (inputs) => {
-  const header = {
-    'Content-Type': 'application/json; charset=UTF-8',
-  };
-  return callAPI(urls.order, 'POST', header, {}, inputs);
-};
+export const createOrder = (inputs) => callAPI(urls.order, 'POST', {}, {}, inputs);
 export const getAllBanners = () => callAPI(urls.banner, 'GET');
 export const getBanner = (bannerId) => callAPI(`${urls.banner}/${bannerId}`, 'GET');
-export const createBanner = (inputs) => callAPI(urls.banner, 'POST', {}, {}, inputs);
-export const updateBanner = (bannerId, inputs) => callAPI(`${urls.banner}/${bannerId}`, 'PUT', {}, {}, inputs);
+export const createBanner = (inputs) => {
+  const header = {
+    'Content-Type': 'multipart/form-data; charset=UTF-8',
+  };
+  return callAPI(urls.banner, 'POST', header, {}, inputs);
+};
+export const updateBanner = (bannerId, inputs) => {
+  const header = {
+    'Content-Type': 'multipart/form-data; charset=UTF-8',
+  };
+  return callAPI(`${urls.banner}/${bannerId}`, 'PUT', header, {}, inputs);
+};
 export const deleteBanner = (bannerId) => callAPI(`${urls.banner}/${bannerId}`, 'DELETE');
-export const validateTicketOnDeparture = (inputs) => {
-  const header = {
-    'Content-Type': 'application/json; charset=UTF-8',
-  };
-  return callAPI(`${urls.order}/validateDepart`, 'POST', header, {}, inputs);
-};
-export const validateTicketOnArrival = (inputs) => {
-  const header = {
-    'Content-Type': 'application/json; charset=UTF-8',
-  };
-  return callAPI(`${urls.order}/validateArrive`, 'POST', header, {}, inputs);
-};
+export const validateTicketOnDeparture = (inputs) => callAPI(`${urls.order}/validateDepart`, 'POST', {}, {}, inputs);
+export const validateTicketOnArrival = (inputs) => callAPI(`${urls.order}/validateArrive`, 'POST', {}, {}, inputs);

@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { connect, useDispatch } from 'react-redux';
 
 import BackBtn from '@components/BackBtn';
-import { createOrder, getSchedule, setChosenSeats, setStep } from '@pages/Book/actions';
+import { createOrder, getSchedule, setChosenSeats, setPassengerIds, setStep } from '@pages/Book/actions';
 import { createStructuredSelector } from 'reselect';
 import {
   selectChosenSeats,
@@ -82,6 +82,7 @@ const ChooseSeat = ({ step, schedule, myPassengers, passengerIds, chosenSeats, l
       navigate('/');
     } else if (errorRes.status === 409) {
       toast.error(formatMessage({ id: 'app_seat_has_been_booked' }));
+      dispatch(setPassengerIds([]));
       dispatch(setStep(0));
       dispatch(getSchedule(scheduleId));
     } else {

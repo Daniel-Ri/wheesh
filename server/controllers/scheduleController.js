@@ -55,13 +55,18 @@ exports.getSchedules = async(req, res) => {
 
     const inputDate = new Date(date);
     const nowDate = new Date();
-    if (inputDate < nowDate && inputDate.toDateString() !== nowDate.toDateString()) {
+
+    // Get today's date in UTC to avoid timezone issues
+    const todayUTC = new Date(Date.UTC(nowDate.getUTCFullYear(), nowDate.getUTCMonth(), nowDate.getUTCDate()));
+    const inputDateUTC = new Date(Date.UTC(inputDate.getUTCFullYear(), inputDate.getUTCMonth(), inputDate.getUTCDate()));
+
+    if (inputDateUTC < todayUTC && inputDateUTC.toDateString() !== todayUTC.toDateString()) {
       return handleClientError(res, 400, "Cannot get before today's schedules")
-    } else if (inputDate.toDateString() === nowDate.toDateString()) {
+    } else if (inputDateUTC.toDateString() === todayUTC.toDateString()) {
       startLimit = new Date(new Date().getTime() + 30 * 60 * 1000);
-      endLimit = new Date(new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000);
+      endLimit = new Date(new Date().setUTCHours(0, 0, 0, 0) + 17 * 60 * 60 * 1000);
     } else {
-      startLimit = new Date(new Date(date).setHours(0, 0, 0, 0));
+      startLimit = new Date(new Date(date).setUTCHours(0, 0, 0, 0) - 7 * 60 * 60 * 1000);
       endLimit = new Date(startLimit.getTime() + 24 * 60 * 60 * 1000);
     }
 

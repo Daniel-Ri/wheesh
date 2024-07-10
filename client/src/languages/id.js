@@ -9,6 +9,7 @@ export default {
   app_popup_close_button_label: 'Tutup',
   app_home: 'Beranda',
   app_my_tickets: 'Tiket Saya',
+  app_gate: 'Gerbang',
   app_me: 'Saya',
   app_please_enter_account_and_password: 'Silakan masukkan akun dan kata sandi Anda',
   app_please_log_in_using_registered: 'Silakan login menggunakan nama pengguna atau email Anda yang terdaftar',
@@ -162,4 +163,5 @@ export default {
   app_scan_again: 'Scan Lagi',
   app_success_validate_qr: 'Berhasil validasi QR',
   app_invalid_qr_ticket: 'Tiket QR Tidak Valid',
+  app_website_created_by: 'Website ini dibuat oleh',
 };
