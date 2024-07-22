@@ -181,3 +181,6 @@ CREATE TABLE "Banners" (
   "createdAt" TIMESTAMP NOT NULL,
   "updatedAt" TIMESTAMP NOT NULL
 );
+
+-- Add index on departureTime column in Schedules table
+CREATE INDEX idx_departure_time ON "Schedules"("departureTime");
