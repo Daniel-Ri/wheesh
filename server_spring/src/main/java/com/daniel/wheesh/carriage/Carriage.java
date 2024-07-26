@@ -1,5 +1,6 @@
 package com.daniel.wheesh.carriage;
 
+import com.daniel.wheesh.orderedseat.OrderedSeat;
 import com.daniel.wheesh.seat.Seat;
 import com.daniel.wheesh.train.Train;
 import jakarta.persistence.*;
@@ -36,6 +37,9 @@ public class Carriage {
 
     @OneToMany(mappedBy = "carriage", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Seat> seats;
+
+    @OneToMany(mappedBy = "carriage", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderedSeat> orderedSeats;
 
     @CreatedDate
     @Column(nullable = false, name = "\"createdAt\"")

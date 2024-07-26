@@ -21,8 +21,8 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-
     private final CustomUserDetailsService customUserDetailsService;
+    private final AllowedPathsConfig allowedPathsConfig;
 
     @Override
     protected void doFilterInternal(
@@ -33,6 +33,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userId;
+
+        // Check if the request URI matches any of the permitted paths
+        String requestUri = request.getRequestURI();
+        String requestMethod = request.getMethod();
+        boolean isPermittedPath = allowedPathsConfig.getPermittedPaths().stream()
+            .anyMatch(path -> path.equals(requestUri) ||
+                (path.endsWith("/**") && requestUri.startsWith(path.substring(0, path.length() - 3)))
+            );
+
+        boolean isMethodSpecificPath = allowedPathsConfig.getMethodSpecificPaths().entrySet().stream()
+            .anyMatch(entry -> entry.getKey().equals(requestUri) ||
+                (entry.getKey().endsWith("/**") &&
+                    requestUri.startsWith(entry.getKey().substring(0, entry.getKey().length() - 3)) &&
+                    entry.getValue().equalsIgnoreCase(requestMethod)
+                )
+            );
+
+        if (isPermittedPath || isMethodSpecificPath) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;

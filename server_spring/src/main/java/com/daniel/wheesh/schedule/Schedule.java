@@ -1,6 +1,7 @@
 package com.daniel.wheesh.schedule;
 
 import com.daniel.wheesh.order.Order;
+import com.daniel.wheesh.orderedseat.OrderedSeat;
 import com.daniel.wheesh.scheduleprice.SchedulePrice;
 import com.daniel.wheesh.station.Station;
 import com.daniel.wheesh.train.Train;
@@ -54,6 +55,10 @@ public class Schedule {
 
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orders;
+
+    // Not creating OneToMany relation to orderedSeat cause of performance issues
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderedSeat> orderedSeats;
 
     @CreatedDate
     @Column(nullable = false, name = "\"createdAt\"")

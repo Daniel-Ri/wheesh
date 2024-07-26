@@ -31,6 +31,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT o FROM Order o " +
         "JOIN FETCH o.payment p " +
         "JOIN FETCH o.schedule s " +
+        "LEFT JOIN FETCH o.orderedSeats " +
         "WHERE o.user.id = :userId " +
         "AND p.isPaid = false " +
         "AND p.duePayment > :now " +
@@ -45,6 +46,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT o FROM Order o " +
         "JOIN FETCH o.payment p " +
+        "LEFT JOIN FETCH o.orderedSeats " +
         "WHERE p.isPaid = false")
     List<Order> findAllUnpaidOrders();
 
