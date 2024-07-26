@@ -98,7 +98,9 @@ class ScheduleControllerIntTest {
         ZonedDateTime todayJakarta = ZonedDateTime.now(jakartaZone).withHour(0).withMinute(0).withSecond(0).withNano(0);
         LocalDateTime localJakarta = todayJakarta.toLocalDateTime();
 
-        List<Schedule> scheduleList = scheduleRepository.findAfterLocalDateTime(localJakarta.plusDays(1));
+        List<Schedule> scheduleList = scheduleRepository.findAfterLocalDateTimeWithTrainAndStations(
+            localJakarta.plusDays(1)
+        );
         Schedule schedule = scheduleList.get(1); // get tomorrow second schedule
 
         mvc.perform(

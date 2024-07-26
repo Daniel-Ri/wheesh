@@ -1,8 +1,10 @@
 package com.daniel.wheesh.orderedseat;
 
+import com.daniel.wheesh.carriage.Carriage;
 import com.daniel.wheesh.constraints.MinAge;
 import com.daniel.wheesh.order.Order;
 import com.daniel.wheesh.passenger.Gender;
+import com.daniel.wheesh.schedule.Schedule;
 import com.daniel.wheesh.seat.Seat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -32,36 +34,39 @@ public class OrderedSeat {
     public Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "\"orderId\"", nullable = false)
-    private Order order;
+    @JoinColumn(name = "\"scheduleId\"", nullable = false)
+    private Schedule schedule;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "\"carriageId\"", nullable = false)
+    private Carriage carriage;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "\"seatId\"", nullable = false)
     private Seat seat;
 
-    @Column(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "\"orderId\"")
+    private Order order;
+
     private Long price;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Gender gender;
 
-    @MinAge(value = 17, message = "Must be at least 17 years old")
-    @Column(nullable = false, name = "\"dateOfBirth\"")
+    @MinAge(value = 17, required = false, message = "Must be at least 17 years old")
+    @Column(name = "\"dateOfBirth\"")
     public LocalDate dateOfBirth;
 
     @Pattern(regexp = "\\d{16}", message = "ID Card must be exactly 16 digits")
-    @Column(nullable = false, name = "\"idCard\"")
+    @Column(name = "\"idCard\"")
     public String idCard;
 
-    @Column(nullable = false)
     public String name;
 
     @Email
-    @Column(nullable = false)
     public String email;
 
-    @Column(nullable = false)
     public String secret;
 
     @CreatedDate
@@ -76,8 +81,9 @@ public class OrderedSeat {
     public String toString() {
         return "OrderedSeat{" +
             "id=" + id +
-            ", orderId=" + order.getId() +
+            ", scheduleId=" + schedule.getId() +
             ", seatId=" + seat.getId() +
+            ", orderId=" + (order != null ? order.getId() : "null") +
             ", price=" + price +
             ", gender='" + gender + '\'' +
             ", dateOfBirth=" + dateOfBirth +
