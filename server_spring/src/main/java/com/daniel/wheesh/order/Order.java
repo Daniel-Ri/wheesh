@@ -41,7 +41,7 @@ public class Order {
     @Column(nullable = false, name = "\"isNotified\"")
     private Boolean isNotified;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "order")
     private List<OrderedSeat> orderedSeats;
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -72,7 +72,7 @@ public class Order {
     @Override
     public String toString() {
         return "Order{" +
-            "id=" + id + "," +
+            "id=" + id +
             ", userId=" + user.getId() +
             ", scheduleId=" + schedule.getId() +
             ", isNotified=" + isNotified +

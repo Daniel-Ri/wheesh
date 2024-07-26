@@ -6,6 +6,7 @@ import com.daniel.wheesh.order.Order;
 import com.daniel.wheesh.order.OrderRepository;
 import com.daniel.wheesh.passenger.Gender;
 import com.daniel.wheesh.schedule.Schedule;
+import com.daniel.wheesh.schedule.ScheduleRepository;
 import com.daniel.wheesh.schedule.SeatClass;
 import com.daniel.wheesh.scheduleprice.SchedulePrice;
 import com.daniel.wheesh.seat.Seat;
@@ -27,6 +28,7 @@ public class OrderedSeatSeeder {
     private static final int BATCH_SIZE = 100;
 
     private final OrderRepository orderRepository;
+    private final ScheduleRepository scheduleRepository;
     private final OrderedSeatRepository orderedSeatRepository;
 
     @Transactional
@@ -39,8 +41,25 @@ public class OrderedSeatSeeder {
         logger.info("No ordered seats found in the database. Seeding initial data.");
 
         List<Order> orderList = orderRepository.findAll();
+        List<Schedule> scheduleList = scheduleRepository.findAll();
         List<OrderedSeat> orderedSeatList = new ArrayList<>();
 
+        // First, create all orderedSeats for all schedules
+        for (Schedule schedule : scheduleList) {
+            for (Carriage carriage : schedule.getTrain().getCarriages()) {
+                for (Seat seat : carriage.getSeats()) {
+                    orderedSeatList.add(
+                        OrderedSeat.builder()
+                            .schedule(schedule)
+                            .carriage(carriage)
+                            .seat(seat)
+                            .build()
+                    );
+                }
+            }
+        }
+
+        // Last, modify orderedSeats that are really ordered
         /* 1: Order half all seats */
         processOrder(orderList.get(0), orderedSeatList, 4, true);
 
@@ -82,11 +101,13 @@ public class OrderedSeatSeeder {
         logger.info("Seeded initial ordered seats data");
     }
 
-    private OrderedSeat generateOrderedSeatItem(Order order, Seat seat, long price) {
+    private Map<SeatClass, Long> createSchedulePriceMap(Schedule schedule) {
+        return schedule.getSchedulePrices().stream()
+            .collect(Collectors.toMap(SchedulePrice::getSeatClass, SchedulePrice::getPrice));
+    }
+
+    private OrderedSeat generateOrderedSeatItem() {
         return OrderedSeat.builder()
-            .order(order)
-            .seat(seat)
-            .price(price)
             .gender(Math.random() > 0.5 ? Gender.Male : Gender.Female)
             .dateOfBirth(Utility.getRandomDOB())
             .idCard(Utility.generateRandomId())
@@ -96,50 +117,60 @@ public class OrderedSeatSeeder {
             .build();
     }
 
-    private void processCarriages(List<Carriage> carriages, Order order, List<OrderedSeat> orderedSeatList,
-                                  Map<SeatClass, SchedulePrice> schedulePriceMap, int carriageLimit,
-                                  boolean isLessThanOrEqual) {
-        carriages.stream()
-            .filter(carriage -> isLessThanOrEqual == (carriage.getCarriageNumber() <= carriageLimit))
-            .forEach(carriage -> processSeats(carriage.getSeats(), order, orderedSeatList, schedulePriceMap));
-    }
-
-    private void processSeats(List<Seat> seats, Order order, List<OrderedSeat> orderedSeatList, Map<SeatClass,
-        SchedulePrice> schedulePriceMap) {
-        seats.forEach(seat -> {
-            SchedulePrice price = schedulePriceMap.get(seat.getSeatClass());
-            orderedSeatList.add(generateOrderedSeatItem(order, seat, price.getPrice()));
-        });
-    }
-
-    private void processSeatsByClass(List<Carriage> carriages, Order order, List<OrderedSeat> orderedSeatList,
-                                     Map<SeatClass, SchedulePrice> schedulePriceMap, SeatClass seatClass) {
-        carriages.stream()
-            .flatMap(carriage -> carriage.getSeats().stream())
-            .filter(seat -> seat.getSeatClass() == seatClass)
-            .forEach(seat -> {
-                SchedulePrice price = schedulePriceMap.get(seat.getSeatClass());
-                orderedSeatList.add(generateOrderedSeatItem(order, seat, price.getPrice()));
-            });
-    }
-
     private void processOrder(Order order, List<OrderedSeat> orderedSeatList, int carriageLimit,
                               boolean isLessThanOrEqual) {
+        Map<SeatClass, Long> schedulePriceMap = createSchedulePriceMap(order.getSchedule());
         List<Carriage> carriages = order.getSchedule().getTrain().getCarriages();
-        Map<SeatClass, SchedulePrice> schedulePriceMap = createSchedulePriceMap(order.getSchedule());
-        processCarriages(carriages, order, orderedSeatList, schedulePriceMap, carriageLimit, isLessThanOrEqual);
+        carriages.stream()
+            .filter(carriage -> isLessThanOrEqual == (carriage.getCarriageNumber() <= carriageLimit))
+            .forEach(carriage ->
+                processSeatList(order.getSchedule(), carriage.getSeats(), order, orderedSeatList, schedulePriceMap)
+            );
+    }
+
+    private void processSeatList(Schedule schedule, List<Seat> seats, Order order, List<OrderedSeat> orderedSeatList,
+                                 Map<SeatClass, Long> schedulePriceMap) {
+        seats.forEach(seat -> processSeat(schedule, seat, order, orderedSeatList, schedulePriceMap));
     }
 
     private void processOrderByClass(Order order, List<OrderedSeat> orderedSeatList, SeatClass seatClass) {
+        Map<SeatClass, Long> schedulePriceMap = createSchedulePriceMap(order.getSchedule());
         List<Carriage> carriages = order.getSchedule().getTrain().getCarriages();
-        Map<SeatClass, SchedulePrice> schedulePriceMap = createSchedulePriceMap(order.getSchedule());
-        processSeatsByClass(carriages, order, orderedSeatList, schedulePriceMap, seatClass);
+        processSeatsByClass(order.getSchedule(), carriages, order, orderedSeatList, seatClass, schedulePriceMap);
+    }
+
+    private void processSeatsByClass(Schedule schedule, List<Carriage> carriages, Order order,
+                                     List<OrderedSeat> orderedSeatList, SeatClass seatClass,
+                                     Map<SeatClass, Long> schedulePriceMap) {
+        carriages.stream()
+            .flatMap(carriage -> carriage.getSeats().stream())
+            .filter(seat -> seat.getSeatClass() == seatClass)
+            .forEach(seat -> processSeat(schedule, seat, order, orderedSeatList, schedulePriceMap));
+    }
+
+    private void processSeat(Schedule schedule, Seat seat, Order order, List<OrderedSeat> orderedSeatList,
+                             Map<SeatClass, Long> schedulePriceMap) {
+        OrderedSeat orderedSeat = orderedSeatList.stream()
+            .filter(os -> schedule == os.getSchedule() && seat == os.getSeat())
+            .findFirst() // Find the first match
+            .orElseThrow(() -> new IllegalArgumentException("No matching ordered seat found for seat: " + seat));
+
+        // If a matching orderedSeat is found, update it
+        OrderedSeat temp = generateOrderedSeatItem();
+        orderedSeat.setOrder(order);
+        orderedSeat.setPrice(schedulePriceMap.get(orderedSeat.getSeat().getSeatClass()));
+        orderedSeat.setGender(temp.getGender());
+        orderedSeat.setDateOfBirth(temp.getDateOfBirth());
+        orderedSeat.setIdCard(temp.getIdCard());
+        orderedSeat.setName(temp.getName());
+        orderedSeat.setEmail(temp.getEmail());
+        orderedSeat.setSecret(temp.getSecret());
     }
 
     private void processMixedOrder(Order order, List<OrderedSeat> orderedSeatList) {
-        List<Carriage> carriages = order.getSchedule().getTrain().getCarriages();
-        Map<SeatClass, SchedulePrice> schedulePriceMap = createSchedulePriceMap(order.getSchedule());
+        Map<SeatClass, Long> schedulePriceMap = createSchedulePriceMap(order.getSchedule());
 
+        List<Carriage> carriages = order.getSchedule().getTrain().getCarriages();
         List<Seat> seats = new ArrayList<>();
 
         // Get 80% of first class seats
@@ -155,13 +186,13 @@ public class OrderedSeatSeeder {
             .filter(seat -> seat.getSeatClass() == SeatClass.business || seat.getSeatClass() == SeatClass.economy)
             .toList());
 
-        processSeats(seats, order, orderedSeatList, schedulePriceMap);
+        processSeatList(order.getSchedule(), seats, order, orderedSeatList, schedulePriceMap);
     }
 
     private void processRandomSeats(Order order, List<OrderedSeat> orderedSeatList, SeatClass seatClass,
                                     double percentageOrCount) {
+        Map<SeatClass, Long> schedulePriceMap = createSchedulePriceMap(order.getSchedule());
         List<Carriage> carriages = order.getSchedule().getTrain().getCarriages();
-        Map<SeatClass, SchedulePrice> schedulePriceMap = createSchedulePriceMap(order.getSchedule());
 
         List<Seat> seats = carriages.stream()
             .flatMap(carriage -> carriage.getSeats().stream())
@@ -175,12 +206,7 @@ public class OrderedSeatSeeder {
             selectedSeats = Utility.selectRandomly(seats, (int) percentageOrCount);
         }
 
-        processSeats(selectedSeats, order, orderedSeatList, schedulePriceMap);
-    }
-
-    private Map<SeatClass, SchedulePrice> createSchedulePriceMap(Schedule schedule) {
-        return schedule.getSchedulePrices().stream()
-            .collect(Collectors.toMap(SchedulePrice::getSeatClass, price -> price));
+        processSeatList(order.getSchedule(), selectedSeats, order, orderedSeatList, schedulePriceMap);
     }
 
     public void unseed() {

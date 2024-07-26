@@ -1,10 +1,14 @@
 package com.daniel.wheesh.scheduler;
 
 import com.daniel.wheesh.TestEmailConfig;
+import com.daniel.wheesh.carriage.Carriage;
+import com.daniel.wheesh.carriage.CarriageRepository;
 import com.daniel.wheesh.config.EmailService;
 import com.daniel.wheesh.order.Order;
 import com.daniel.wheesh.order.OrderControllerIntTest;
 import com.daniel.wheesh.order.OrderRepository;
+import com.daniel.wheesh.orderedseat.OrderedSeat;
+import com.daniel.wheesh.orderedseat.OrderedSeatRepository;
 import com.daniel.wheesh.schedule.Schedule;
 import com.daniel.wheesh.schedule.ScheduleRepository;
 import com.daniel.wheesh.schedule.SeatClass;
@@ -49,6 +53,12 @@ class ScheduledTasksTest {
     private ScheduleRepository scheduleRepository;
 
     @Autowired
+    private CarriageRepository carriageRepository;
+
+    @Autowired
+    private OrderedSeatRepository orderedSeatRepository;
+
+    @Autowired
     private ScheduledTasks scheduledTasks;
 
     @SpyBean
@@ -85,18 +95,35 @@ class ScheduledTasksTest {
     }
 
     @Test
-    @Transactional
     @DirtiesContext
     void shouldSuccessDeleteUnpaidOrderPassedDueTime() throws Exception {
         createTwoOrders();
 
         LocalDateTime oneMinuteAgo = LocalDateTime.now(jakartaZone).minusMinutes(1L);
         List<Order> unpaidOrders = orderRepository.findAllUnpaidOrders();
+        List<Long> orderedSeatIds = unpaidOrders.stream()
+            .flatMap(order -> order.getOrderedSeats().stream())
+            .map(OrderedSeat::getId)
+            .toList();
+
         unpaidOrders.forEach(order -> order.getPayment().setDuePayment(oneMinuteAgo));
         orderRepository.saveAll(unpaidOrders);
 
         scheduledTasks.deleteUnpaidOrderPassedDueTime();
         assertTrue(orderRepository.findAllUnpaidOrders().isEmpty());
+
+        List<OrderedSeat> orderedSeatList = orderedSeatRepository.findAllById(orderedSeatIds);
+        assertEquals(orderedSeatIds.size(), orderedSeatList.size());
+        orderedSeatList.forEach(orderedSeat -> {
+            assertNull(orderedSeat.getOrder());
+            assertNull(orderedSeat.getPrice());
+            assertNull(orderedSeat.getGender());
+            assertNull(orderedSeat.getDateOfBirth());
+            assertNull(orderedSeat.getIdCard());
+            assertNull(orderedSeat.getName());
+            assertNull(orderedSeat.getEmail());
+            assertNull(orderedSeat.getSecret());
+        });
     }
 
     void createTwoOrders() throws Exception {
@@ -107,7 +134,8 @@ class ScheduledTasksTest {
         List<Schedule> tomorrowSchedules = scheduleRepository.findByDepartureTimeAfterOrderById(tomorrowLocal);
         Schedule tomorrowSecondSchedule = tomorrowSchedules.get(1);
 
-        List<Seat> businessSeats = tomorrowSecondSchedule.getTrain().getCarriages().getFirst().getSeats().stream()
+        List<Carriage> carriageList = carriageRepository.findByTrainId(tomorrowSecondSchedule.getTrain().getId());
+        List<Seat> businessSeats = carriageList.getFirst().getSeats().stream()
             .filter(seat -> seat.getSeatClass() == SeatClass.business).toList();
 
         // Passenger Ids is manually hard coded. They are John Doe's passengers
@@ -121,7 +149,7 @@ class ScheduledTasksTest {
             johnDoeToken
         );
 
-        List<Seat> economySeats = tomorrowSecondSchedule.getTrain().getCarriages().get(1).getSeats().stream()
+        List<Seat> economySeats = carriageList.get(1).getSeats().stream()
             .filter(seat -> seat.getSeatClass() == SeatClass.economy).toList();
 
         OrderControllerIntTest.callCreateOrderRequest(
@@ -185,7 +213,6 @@ class ScheduledTasksTest {
     }
 
     @Test
-    @Transactional
     @DirtiesContext
     void shouldSuccessAddDailyData() {
         LocalDateTime afterMidnightSevenDaysAway = LocalDateTime.now(jakartaZone).plusDays(7)
@@ -195,6 +222,11 @@ class ScheduledTasksTest {
         assertTrue(scheduleRepository.findAfterLocalDateTime(afterMidnightSevenDaysAway).isEmpty());
 
         scheduledTasks.addDailyData();
-        assertFalse(scheduleRepository.findAfterLocalDateTime(afterMidnightSevenDaysAway).isEmpty());
+        List<Schedule> newScheduleList = scheduleRepository.findAfterLocalDateTime(afterMidnightSevenDaysAway);
+        assertFalse(newScheduleList.isEmpty());
+
+        newScheduleList.forEach(
+            schedule -> assertFalse(schedule.getOrderedSeats().isEmpty())
+        );
     }
 }

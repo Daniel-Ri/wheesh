@@ -1,12 +1,19 @@
 package com.daniel.wheesh.order;
 
+import com.daniel.wheesh.carriage.Carriage;
+import com.daniel.wheesh.carriage.CarriageRepository;
 import com.daniel.wheesh.orderedseat.OrderedSeat;
+import com.daniel.wheesh.orderedseat.OrderedSeatRepository;
 import com.daniel.wheesh.schedule.Schedule;
 import com.daniel.wheesh.schedule.ScheduleRepository;
 import com.daniel.wheesh.schedule.SeatClass;
 import com.daniel.wheesh.seat.Seat;
+import com.daniel.wheesh.train.Train;
 import com.daniel.wheesh.user.LoginResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +44,9 @@ public class OrderControllerIntTest {
     private MockMvc mvc;
 
     @Autowired
+    private SessionFactory sessionFactory;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     @Autowired
@@ -44,6 +54,12 @@ public class OrderControllerIntTest {
 
     @Autowired
     private ScheduleRepository scheduleRepository;
+
+    @Autowired
+    private CarriageRepository carriageRepository;
+
+    @Autowired
+    private OrderedSeatRepository orderedSeatRepository;
 
     private final ZoneId jakartaZone = ZoneId.of("Asia/Jakarta");
 
@@ -544,25 +560,50 @@ public class OrderControllerIntTest {
             .andExpect(jsonPath("$.data.OrderedSeats[0].secret").isString());
     }
 
-    @Test
-    @DirtiesContext
-    @Transactional
-    void shouldSuccessCancelOrder() throws Exception {
+    private class Selected {
+        private final Schedule schedule;
+        private final List<Seat> seatList;
+
+        public Selected(Schedule schedule, List<Seat> seatList) {
+            this.schedule = schedule;
+            this.seatList = seatList;
+        }
+
+        public Schedule getSchedule() {
+            return schedule;
+        }
+
+        public List<Seat> getSeatList() {
+            return seatList;
+        }
+    }
+
+    private Selected getTomorrowSecondScheduleAndSeatList() {
         ZonedDateTime tomorrowZoned =
             ZonedDateTime.now(jakartaZone).withHour(0).withMinute(0).withSecond(0).withNano(0).plusDays(1);
         LocalDateTime tomorrowLocal = tomorrowZoned.toLocalDateTime();
 
         List<Schedule> tomorrowSchedules = scheduleRepository.findByDepartureTimeAfterOrderByDepartureTime(tomorrowLocal);
         Schedule tomorrowSecondSchedule = tomorrowSchedules.get(1);
+        List<Carriage> carriageList = carriageRepository.findByTrainId(tomorrowSecondSchedule.getTrain().getId());
 
-        List<Seat> seats = tomorrowSecondSchedule.getTrain().getCarriages().getFirst().getSeats().stream()
-            .filter(seat -> seat.getSeatClass() == SeatClass.business).toList();
+        List<Seat> seats = carriageList.getFirst().getSeats().stream()
+            .filter(seat -> seat.getSeatClass() == SeatClass.business)
+            .toList();
+
+        return new Selected(tomorrowSecondSchedule, seats);
+    }
+
+    @Test
+    @DirtiesContext
+    void shouldSuccessCancelOrder() throws Exception {
+        Selected selected = getTomorrowSecondScheduleAndSeatList();
 
         callCreateOrderRequest(
             mvc,
-            tomorrowSecondSchedule.getId(),
-            seats.get(0),
-            seats.get(1),
+            selected.getSchedule().getId(),
+            selected.getSeatList().get(0),
+            selected.getSeatList().get(1),
             2,
             3,
             johnDoeToken
@@ -571,6 +612,9 @@ public class OrderControllerIntTest {
         LocalDateTime now = LocalDateTime.now(jakartaZone);
         List<Order> unpaidOrders = orderRepository.findUnpaidOrdersByUserIdAndLocalDateTime(2L, now);
         Order order = unpaidOrders.getFirst();
+        List<Long> orderedSeatIds = order.getOrderedSeats().stream()
+            .map(OrderedSeat::getId)
+            .toList();
 
         mvc.perform(
                 delete("/api/order/%d".formatted(order.getId()))
@@ -584,6 +628,19 @@ public class OrderControllerIntTest {
                     .header("Authorization", "Bearer " + johnDoeToken)
             )
             .andExpect(status().isNotFound());
+
+        List<OrderedSeat> orderedSeatList = orderedSeatRepository.findAllById(orderedSeatIds);
+        assertEquals(orderedSeatIds.size(), orderedSeatList.size());
+        orderedSeatList.forEach(orderedSeat -> {
+            assertNull(orderedSeat.getOrder());
+            assertNull(orderedSeat.getPrice());
+            assertNull(orderedSeat.getGender());
+            assertNull(orderedSeat.getDateOfBirth());
+            assertNull(orderedSeat.getIdCard());
+            assertNull(orderedSeat.getName());
+            assertNull(orderedSeat.getEmail());
+            assertNull(orderedSeat.getSecret());
+        });
     }
 
     @Test

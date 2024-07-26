@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -21,23 +22,26 @@ public class SecurityConfiguration {
     private final AuthenticationProvider authenticationProvider;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final AllowedPathsConfig allowedPathsConfig;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(CsrfConfigurer::disable)
-            .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/station").permitAll()
-                .requestMatchers("/api/schedule/**").permitAll()
-                .requestMatchers("/api/order/validate**").permitAll()
-                .requestMatchers("/api/user/login").permitAll()
-                .requestMatchers("/api/user/register").permitAll()
-                .requestMatchers("/api/user/sendEmailToken").permitAll()
-                .requestMatchers("/api/public/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/banner/**").permitAll()
-                .requestMatchers("/api/banner/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-            )
+            .formLogin(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(authz -> {
+                allowedPathsConfig.getPermittedPaths().forEach(
+                    path -> authz.requestMatchers(path).permitAll()
+                );
+                allowedPathsConfig.getMethodSpecificPaths().forEach((path, method) -> {
+                    if (method.equalsIgnoreCase("GET")) {
+                        authz.requestMatchers(HttpMethod.GET, path).permitAll();
+                    }
+                });
+                authz
+                    .requestMatchers("/api/banner/**").hasRole("ADMIN")
+                    .anyRequest().authenticated();
+            })
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )

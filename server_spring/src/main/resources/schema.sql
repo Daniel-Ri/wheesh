@@ -16,7 +16,7 @@ DROP TABLE IF EXISTS "Users";
 
 -- Create users table
 CREATE TABLE "Users" (
-  id SERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
   username VARCHAR(255) NOT NULL,
   password VARCHAR(255) NOT NULL,
   role VARCHAR(255) NOT NULL DEFAULT 'user',
@@ -29,7 +29,7 @@ CREATE TABLE "Users" (
 
 -- Create passengers table
 CREATE TABLE "Passengers" (
-  id SERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
   "userId" INT NOT NULL,
   "isUser" BOOLEAN NOT NULL,
   gender VARCHAR(255) NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE "Passengers" (
 
 -- Create emailtokens table
 CREATE TABLE "EmailTokens" (
-  id SERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
   email VARCHAR(255) NOT NULL,
   token VARCHAR(255) NOT NULL,
   "expiredAt" TIMESTAMP NOT NULL,
@@ -55,7 +55,7 @@ CREATE TABLE "EmailTokens" (
 
 -- Create stations table
 CREATE TABLE "Stations" (
-  id SERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   "createdAt" TIMESTAMP NOT NULL,
   "updatedAt" TIMESTAMP NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE "Stations" (
 
 -- Create scheduledays table
 CREATE TABLE "ScheduleDays" (
-  id SERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
   "departureStationId" INT NOT NULL,
   "arrivalStationId" INT NOT NULL,
   "departureTime" TIME NOT NULL,
@@ -77,7 +77,7 @@ CREATE TABLE "ScheduleDays" (
 
 -- Create trains table
 CREATE TABLE "Trains" (
-  id SERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   "createdAt" TIMESTAMP NOT NULL,
   "updatedAt" TIMESTAMP NOT NULL,
@@ -86,7 +86,7 @@ CREATE TABLE "Trains" (
 
 -- Create schedules table
 CREATE TABLE "Schedules" (
-  id SERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
   "trainId" INT NOT NULL,
   "departureStationId" INT NOT NULL,
   "arrivalStationId" INT NOT NULL,
@@ -101,7 +101,7 @@ CREATE TABLE "Schedules" (
 
 -- Create scheduleprices table
 CREATE TABLE "SchedulePrices" (
-  id SERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
   "scheduleId" INT NOT NULL,
   "seatClass" VARCHAR(255) NOT NULL,
   price INT NOT NULL,
@@ -112,7 +112,7 @@ CREATE TABLE "SchedulePrices" (
 
 -- Create carriages table
 CREATE TABLE "Carriages" (
-  id SERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
   "trainId" INT,
   "carriageNumber" INT NOT NULL,
   "createdAt" TIMESTAMP NOT NULL,
@@ -122,7 +122,7 @@ CREATE TABLE "Carriages" (
 
 -- Create seats table
 CREATE TABLE "Seats" (
-  id SERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
   "carriageId" INT,
   "seatNumber" VARCHAR(255) NOT NULL,
   "seatClass" VARCHAR(255) NOT NULL,
@@ -133,7 +133,7 @@ CREATE TABLE "Seats" (
 
 -- Create orders table
 CREATE TABLE "Orders" (
-  id SERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
   "userId" INT NOT NULL,
   "scheduleId" INT NOT NULL,
   "isNotified" BOOLEAN DEFAULT FALSE,
@@ -145,25 +145,29 @@ CREATE TABLE "Orders" (
 
 -- Create orderedseats table
 CREATE TABLE "OrderedSeats" (
-  id SERIAL PRIMARY KEY,
-  "orderId" INT NOT NULL,
+  id BIGSERIAL PRIMARY KEY,
+  "scheduleId" INT NOT NULL,
+  "carriageId" INT NOT NULL,
   "seatId" INT NOT NULL,
-  price INT NOT NULL,
-  gender VARCHAR(255) NOT NULL,
-  "dateOfBirth" DATE NOT NULL,
-  "idCard" VARCHAR(255) NOT NULL,
-  name VARCHAR(255) NOT NULL,
+  "orderId" INT,
+  price INT,
+  gender VARCHAR(255),
+  "dateOfBirth" DATE,
+  "idCard" VARCHAR(255),
+  name VARCHAR(255),
   email VARCHAR(255),
-  secret VARCHAR(255) NOT NULL,
+  secret VARCHAR(255),
   "createdAt" TIMESTAMP NOT NULL,
   "updatedAt" TIMESTAMP NOT NULL,
-  FOREIGN KEY ("orderId") REFERENCES "Orders" (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY ("seatId") REFERENCES "Seats" (id) ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY ("scheduleId") REFERENCES "Schedules" (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY ("carriageId") REFERENCES "Carriages" (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY ("seatId") REFERENCES "Seats" (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY ("orderId") REFERENCES "Orders" (id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- Create payments table
 CREATE TABLE "Payments" (
-  id SERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
   "orderId" INT NOT NULL,
   amount INT NOT NULL,
   "isPaid" BOOLEAN NOT NULL,
@@ -175,9 +179,12 @@ CREATE TABLE "Payments" (
 
 -- Create banners table
 CREATE TABLE "Banners" (
-  id SERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
   "imageDesktop" VARCHAR(255) NOT NULL,
   "imageMobile" VARCHAR(255) NOT NULL,
   "createdAt" TIMESTAMP NOT NULL,
   "updatedAt" TIMESTAMP NOT NULL
 );
+
+-- Add index on departureTime column in Schedules table
+CREATE INDEX idx_departure_time ON "Schedules"("departureTime");

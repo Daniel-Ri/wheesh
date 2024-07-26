@@ -34,6 +34,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -159,14 +160,14 @@ public class OrderService {
             orderedSeatRepository.findLockedOrderedSeatsBySeatIdsAndScheduleId(seatIds, request.getScheduleId());
 
         // Check if any of the seats are already booked
-        if (!lockedOrderedSeats.isEmpty()) {
-            Seat seat = lockedOrderedSeats.getFirst().getSeat();
-
-            throw new CustomException(
-                "You cannot book booked seat %02d-%s".formatted(seat.getCarriage().getCarriageNumber(),
-                    seat.getSeatNumber()),
-                HttpStatus.CONFLICT
-            );
+        for (OrderedSeat orderedSeat : lockedOrderedSeats) {
+            if (orderedSeat.getOrder() != null) {
+                throw new CustomException(
+                    "You cannot book booked seat %02d-%s".formatted(orderedSeat.getCarriage().getCarriageNumber(),
+                        orderedSeat.getSeat().getSeatNumber()),
+                    HttpStatus.CONFLICT
+                );
+            }
         }
 
         List<SchedulePrice> prices = schedule.getSchedulePrices();
@@ -183,28 +184,29 @@ public class OrderService {
         newOrder = orderRepository.save(newOrder);
 
         for (CreateOrderedSeatRequest orderedSeatRequest : request.getOrderedSeats()) {
-            Seat seat = seatRepository.findById(orderedSeatRequest.getSeatId())
-                .orElseThrow(() -> new CustomException("Seat Not Found", HttpStatus.NOT_FOUND));
-            Long price = seatClassToPriceMap.get(seat.getSeatClass());
-            totalAmount += price;
-
             Passenger passenger = passengers.stream()
                 .filter(p -> p.getId().equals(orderedSeatRequest.getPassengerId()))
                 .findFirst()
                 .orElseThrow(() -> new CustomException("Passenger Not Found", HttpStatus.NOT_FOUND));
 
-            OrderedSeat orderedSeat = OrderedSeat.builder()
-                .order(newOrder)
-                .seat(seat)
-                .price(price)
-                .gender(passenger.getGender())
-                .dateOfBirth(passenger.getDateOfBirth())
-                .idCard(passenger.getIdCard())
-                .name(passenger.getName())
-                .email(passenger.getEmail())
-                .secret(Utility.generateRandomSecret())
-                .build();
-            orderedSeats.add(orderedSeat);
+            OrderedSeat updateOrderedSeat = lockedOrderedSeats.stream()
+                .filter(orderedSeat -> Objects.equals(orderedSeat.getSeat().getId(), orderedSeatRequest.getSeatId()))
+                .findFirst()
+                .orElseThrow(() -> new CustomException("Seat Not Found", HttpStatus.NOT_FOUND));
+
+            Long price = seatClassToPriceMap.get(updateOrderedSeat.getSeat().getSeatClass());
+            totalAmount += price;
+
+            updateOrderedSeat.setOrder(newOrder);
+            updateOrderedSeat.setPrice(price);
+            updateOrderedSeat.setGender(passenger.getGender());
+            updateOrderedSeat.setDateOfBirth(passenger.getDateOfBirth());
+            updateOrderedSeat.setIdCard(passenger.getIdCard());
+            updateOrderedSeat.setName(passenger.getName());
+            updateOrderedSeat.setEmail(passenger.getEmail());
+            updateOrderedSeat.setSecret(Utility.generateRandomSecret());
+
+            orderedSeats.add(updateOrderedSeat);
         }
 
         newOrder.setOrderedSeats(orderedSeats);
@@ -368,6 +370,7 @@ public class OrderService {
         return new UpdateOrderResponse();
     }
 
+    @Transactional
     public DeleteOrderResponse cancelOrder(Long orderId) throws Exception {
         User currentUser = getCurrentUser();
 
@@ -382,6 +385,7 @@ public class OrderService {
             throw new CustomException("Cannot cancel paid order", HttpStatus.BAD_REQUEST);
         }
 
+        orderedSeatRepository.cancelBookSeatByOrderId(orderId);
         orderRepository.delete(order);
         return new DeleteOrderResponse();
     }

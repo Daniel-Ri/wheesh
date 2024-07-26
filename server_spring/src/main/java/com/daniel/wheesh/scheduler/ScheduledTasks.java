@@ -1,8 +1,11 @@
 package com.daniel.wheesh.scheduler;
 
+import com.daniel.wheesh.carriage.Carriage;
 import com.daniel.wheesh.config.EmailService;
 import com.daniel.wheesh.order.Order;
 import com.daniel.wheesh.order.OrderRepository;
+import com.daniel.wheesh.orderedseat.OrderedSeat;
+import com.daniel.wheesh.orderedseat.OrderedSeatRepository;
 import com.daniel.wheesh.passenger.Passenger;
 import com.daniel.wheesh.schedule.Schedule;
 import com.daniel.wheesh.schedule.ScheduleRepository;
@@ -12,6 +15,7 @@ import com.daniel.wheesh.scheduleday.ScheduleDayRepository;
 import com.daniel.wheesh.scheduleprice.SchedulePrice;
 import com.daniel.wheesh.scheduleprice.SchedulePriceRepository;
 import com.daniel.wheesh.scheduleprice.SchedulePriceSeeder;
+import com.daniel.wheesh.seat.Seat;
 import com.daniel.wheesh.train.Train;
 import com.daniel.wheesh.train.TrainRepository;
 import jakarta.mail.MessagingException;
@@ -32,7 +36,11 @@ import java.util.List;
 public class ScheduledTasks {
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
 
+    private static final int BATCH_SIZE = 100;
+
     private final OrderRepository orderRepository;
+
+    private final OrderedSeatRepository orderedSeatRepository;
 
     private final ScheduleDayRepository scheduleDayRepository;
 
@@ -59,10 +67,16 @@ public class ScheduledTasks {
         addDailyData();
     }
 
+    @Transactional
     public void deleteUnpaidOrderPassedDueTime() {
         List<Order> unpaidOrdersPassedDueTime = orderRepository.findAllUnpaidOrdersPassedDueTime(
             LocalDateTime.now(jakartaZone)
         );
+
+        List<Long> orderIds = unpaidOrdersPassedDueTime.stream()
+            .map(Order::getId)
+            .toList();
+        orderedSeatRepository.cancelBookSeatByManyOrderIds(orderIds);
         orderRepository.deleteAll(unpaidOrdersPassedDueTime);
     }
 
@@ -129,6 +143,8 @@ public class ScheduledTasks {
         scheduleRepository.saveAll(scheduleList);
 
         List<SchedulePrice> schedulePriceList = new ArrayList<>();
+        List<OrderedSeat> orderedSeatList = new ArrayList<>();
+
         for (Schedule schedule: scheduleList) {
             for (SeatClass seatClass: SeatClass.values()) {
                 SchedulePrice schedulePrice = SchedulePrice.builder()
@@ -138,8 +154,25 @@ public class ScheduledTasks {
                     .build();
                 schedulePriceList.add(schedulePrice);
             }
+
+            for (Carriage carriage : schedule.getTrain().getCarriages()) {
+                for (Seat seat : carriage.getSeats()) {
+                    orderedSeatList.add(
+                        OrderedSeat.builder()
+                            .schedule(schedule)
+                            .carriage(carriage)
+                            .seat(seat)
+                            .build()
+                    );
+                }
+            }
         }
 
         schedulePriceRepository.saveAll(schedulePriceList);
+
+        for (int i = 0; i < orderedSeatList.size(); i += BATCH_SIZE) {
+            List<OrderedSeat> batchList = orderedSeatList.subList(i, Math.min(i + BATCH_SIZE, orderedSeatList.size()));
+            orderedSeatRepository.saveAll(batchList);
+        }
     }
 }

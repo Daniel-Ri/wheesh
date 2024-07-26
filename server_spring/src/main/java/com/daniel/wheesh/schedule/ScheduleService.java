@@ -3,10 +3,9 @@ package com.daniel.wheesh.schedule;
 import com.daniel.wheesh.carriage.Carriage;
 import com.daniel.wheesh.carriage.ResponseDataCarriageWithSeats;
 import com.daniel.wheesh.global.CustomException;
-import com.daniel.wheesh.order.Order;
+import com.daniel.wheesh.orderedseat.OrderedSeat;
 import com.daniel.wheesh.scheduleprice.ResponseDataSchedulePrice;
 import com.daniel.wheesh.seat.ResponseDataSeat;
-import com.daniel.wheesh.seat.Seat;
 import com.daniel.wheesh.station.ResponseDataStation;
 import com.daniel.wheesh.station.Station;
 import com.daniel.wheesh.station.StationRepository;
@@ -21,15 +20,20 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final StationRepository stationRepository;
+
     private final ZoneId jakartaZone = ZoneId.of("Asia/Jakarta");
 
     public LatestDateResponse getLatestDate() {
@@ -77,11 +81,10 @@ public class ScheduleService {
 
     private ResponseDataSchedule createResponseDataSchedule(Schedule schedule, Station departureStation,
                                                             Station arrivalStation) {
-        List<Order> orderList = schedule.getOrders();
         Train train = schedule.getTrain();
-
-        Map<SeatClass, Long> totalSeats = countSeats(train.getCarriages());
-        Map<SeatClass, Long> bookedSeats = countBookedSeats(train.getCarriages(), orderList);
+        Map<BookingStatus, Map<SeatClass, Long>> totalBookingStatusSeats = countTotalAndBookedSeats(
+            schedule.getOrderedSeats()
+        );
 
         return ResponseDataSchedule.builder()
             .id(schedule.getId())
@@ -90,36 +93,41 @@ public class ScheduleService {
             .arrivalStation(new ResponseDataStation(arrivalStation.getId(), arrivalStation.getName()))
             .departureTime(schedule.getDepartureTime())
             .arrivalTime(schedule.getArrivalTime())
-            .firstSeatAvailable(isSeatAvailable(bookedSeats.getOrDefault(SeatClass.first, 0L),
-                totalSeats.getOrDefault(SeatClass.first, 0L)))
-            .businessSeatAvailable(isSeatAvailable(bookedSeats.getOrDefault(SeatClass.business, 0L),
-                totalSeats.getOrDefault(SeatClass.business, 0L)))
-            .economySeatAvailable(isSeatAvailable(bookedSeats.getOrDefault(SeatClass.economy, 0L),
-                totalSeats.getOrDefault(SeatClass.economy, 0L)))
+            .firstSeatAvailable(isSeatAvailable(totalBookingStatusSeats, SeatClass.first))
+            .businessSeatAvailable(isSeatAvailable(totalBookingStatusSeats, SeatClass.business))
+            .economySeatAvailable(isSeatAvailable(totalBookingStatusSeats, SeatClass.economy))
             .prices(schedule.getSchedulePrices().stream()
                 .map(price -> new ResponseDataSchedulePrice(price.getId(), price.getSeatClass(), price.getPrice()))
                 .toList())
             .build();
     }
 
-    private Map<SeatClass, Long> countSeats(List<Carriage> carriages) {
-        return carriages.stream()
-            .flatMap(carriage -> carriage.getSeats().stream())
-            .collect(Collectors.groupingBy(Seat::getSeatClass, Collectors.counting()));
-    }
-
     @Transactional
-    private Map<SeatClass, Long> countBookedSeats(List<Carriage> carriages, List<Order> orderList) {
-        return carriages.stream()
-            .flatMap(carriage -> carriage.getSeats().stream())
-            .filter(seat -> seat.getOrderedSeats().stream()
-                .anyMatch(orderedSeat -> orderList.contains(orderedSeat.getOrder())
-                )
-            )
-            .collect(Collectors.groupingBy(Seat::getSeatClass, Collectors.counting()));
+    private Map<BookingStatus, Map<SeatClass, Long>> countTotalAndBookedSeats(List<OrderedSeat> orderedSeatList) {
+        Map<SeatClass, Long> totalSeats = Stream.of(SeatClass.values())
+            .collect(Collectors.toMap(Function.identity(), c -> 0L));
+        Map<SeatClass, Long> bookedSeats = new HashMap<>(totalSeats);
+
+        for (OrderedSeat orderedSeat : orderedSeatList) {
+            SeatClass seatClass = orderedSeat.getSeat().getSeatClass();
+            totalSeats.merge(seatClass, 1L, Long::sum);
+
+            if (orderedSeat.getOrder() != null) {
+                bookedSeats.merge(seatClass, 1L, Long::sum);
+            }
+        }
+
+        return Map.of(
+            BookingStatus.TOTAL, totalSeats,
+            BookingStatus.BOOKED, bookedSeats
+        );
     }
 
-    private Availibility isSeatAvailable(long booked, long total) {
+    private Availibility isSeatAvailable(Map<BookingStatus, Map<SeatClass, Long>> totalBookingStatusSeats,
+                                         SeatClass seatClass) {
+        long booked = totalBookingStatusSeats.get(BookingStatus.BOOKED).get(seatClass);
+        long total = totalBookingStatusSeats.get(BookingStatus.TOTAL).get(seatClass);
+
         if (booked == total) {
             return Availibility.None;
         } else if ((double) booked / total > 0.75) {
@@ -136,14 +144,15 @@ public class ScheduleService {
             throw new CustomException("Cannot access previous schedule", HttpStatus.BAD_REQUEST);
         }
 
-        List<Order> orderList = schedule.getOrders();
         Train train = schedule.getTrain();
 
-        Map<SeatClass, Long> totalSeats = countSeats(train.getCarriages());
-        Map<SeatClass, Long> bookedSeats = countBookedSeats(train.getCarriages(), orderList);
+        Map<BookingStatus, Map<SeatClass, Long>> totalBookingStatusSeats =
+            countTotalAndBookedSeats(
+                schedule.getOrderedSeats()
+            );
 
         List<ResponseDataCarriageWithSeats> responseDataCarriageWithSeatsList = train.getCarriages().stream()
-            .map(carriage -> createResponseDataCarriage(carriage, orderList))
+            .map(carriage -> createResponseDataCarriage(carriage, schedule.getOrderedSeats()))
             .toList();
 
         return OneScheduleResponse.builder()
@@ -155,12 +164,21 @@ public class ScheduleService {
                     .arrivalStation(new ResponseDataStation(schedule.getArrivalStation().getId(), schedule.getArrivalStation().getName()))
                     .departureTime(schedule.getDepartureTime())
                     .arrivalTime(schedule.getArrivalTime())
-                    .firstSeatAvailable(isSeatAvailable(bookedSeats.getOrDefault(SeatClass.first, 0L), totalSeats.getOrDefault(SeatClass.first, 0L)))
-                    .businessSeatAvailable(isSeatAvailable(bookedSeats.getOrDefault(SeatClass.business, 0L), totalSeats.getOrDefault(SeatClass.business, 0L)))
-                    .economySeatAvailable(isSeatAvailable(bookedSeats.getOrDefault(SeatClass.economy, 0L), totalSeats.getOrDefault(SeatClass.economy, 0L)))
-                    .firstSeatRemainder(totalSeats.getOrDefault(SeatClass.first, 0L) - bookedSeats.getOrDefault(SeatClass.first, 0L))
-                    .businessSeatRemainder(totalSeats.getOrDefault(SeatClass.business, 0L) - bookedSeats.getOrDefault(SeatClass.business, 0L))
-                    .economySeatRemainder(totalSeats.getOrDefault(SeatClass.economy, 0L) - bookedSeats.getOrDefault(SeatClass.economy, 0L))
+                    .firstSeatAvailable(isSeatAvailable(totalBookingStatusSeats, SeatClass.first))
+                    .businessSeatAvailable(isSeatAvailable(totalBookingStatusSeats, SeatClass.business))
+                    .economySeatAvailable(isSeatAvailable(totalBookingStatusSeats, SeatClass.economy))
+                    .firstSeatRemainder(
+                        totalBookingStatusSeats.get(BookingStatus.TOTAL).get(SeatClass.first) -
+                            totalBookingStatusSeats.get(BookingStatus.BOOKED).get(SeatClass.first)
+                    )
+                    .businessSeatRemainder(
+                        totalBookingStatusSeats.get(BookingStatus.TOTAL).get(SeatClass.business) -
+                            totalBookingStatusSeats.get(BookingStatus.BOOKED).get(SeatClass.business)
+                    )
+                    .economySeatRemainder(
+                        totalBookingStatusSeats.get(BookingStatus.TOTAL).get(SeatClass.economy) -
+                            totalBookingStatusSeats.get(BookingStatus.BOOKED).get(SeatClass.economy)
+                    )
                     .prices(schedule.getSchedulePrices().stream()
                         .map(price -> new ResponseDataSchedulePrice(price.getId(), price.getSeatClass(), price.getPrice()))
                         .toList())
@@ -170,14 +188,16 @@ public class ScheduleService {
             .build();
     }
 
-    private ResponseDataCarriageWithSeats createResponseDataCarriage(Carriage carriage, List<Order> orderList) {
-        List<ResponseDataSeat> responseDataSeatList = carriage.getSeats().stream()
-            .map(seat -> ResponseDataSeat.builder()
-                .id(seat.getId())
-                .seatNumber(seat.getSeatNumber())
-                .seatClass(seat.getSeatClass())
-                .isBooked(seat.getOrderedSeats().stream().anyMatch(orderedSeat -> orderList.contains(orderedSeat.getOrder())))
-                .build())
+    private ResponseDataCarriageWithSeats createResponseDataCarriage(Carriage carriage, List<OrderedSeat> orderedSeats) {
+        List<ResponseDataSeat> responseDataSeatList = orderedSeats.stream()
+            .filter(orderedSeat -> Objects.equals(orderedSeat.getCarriage().getId(), carriage.getId()))
+            .map(orderedSeat -> ResponseDataSeat.builder()
+                .id(orderedSeat.getSeat().getId())
+                .seatNumber(orderedSeat.getSeat().getSeatNumber())
+                .seatClass(orderedSeat.getSeat().getSeatClass())
+                .isBooked(orderedSeat.getOrder() != null)
+                .build()
+            )
             .toList();
 
         return new ResponseDataCarriageWithSeats(carriage.getId(), carriage.getCarriageNumber(), responseDataSeatList);
