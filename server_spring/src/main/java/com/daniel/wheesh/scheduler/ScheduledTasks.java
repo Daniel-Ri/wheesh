@@ -1,6 +1,7 @@
 package com.daniel.wheesh.scheduler;
 
 import com.daniel.wheesh.carriage.Carriage;
+import com.daniel.wheesh.config.DataSeedingCompletedEvent;
 import com.daniel.wheesh.config.EmailService;
 import com.daniel.wheesh.order.Order;
 import com.daniel.wheesh.order.OrderRepository;
@@ -22,6 +23,7 @@ import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,17 +56,28 @@ public class ScheduledTasks {
 
     private final ZoneId jakartaZone = ZoneId.of("Asia/Jakarta");
 
+    private boolean tasksEnabled = false;
+
+    @EventListener
+    public void onApplicationEvent(DataSeedingCompletedEvent event) {
+        tasksEnabled = true;
+    }
+
     @Scheduled(cron = "0 * * * * *")
     public void everyMinute() {
-        logger.info("Job running every minute.");
-        deleteUnpaidOrderPassedDueTime();
-        remindUserBeforeOneHourOfDeparture();
+        if (tasksEnabled) {
+            logger.info("Job running every minute.");
+            deleteUnpaidOrderPassedDueTime();
+            remindUserBeforeOneHourOfDeparture();
+        }
     }
 
     @Scheduled(cron = "1 0 0 * * *", zone = "Asia/Jakarta")
     public void everyMidnight() {
-        logger.info("Job running every midnight.");
-        addDailyData();
+        if (tasksEnabled) {
+            logger.info("Job running every midnight.");
+            addDailyData();
+        }
     }
 
     @Transactional
