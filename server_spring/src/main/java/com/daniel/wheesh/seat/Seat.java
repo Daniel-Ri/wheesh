@@ -14,6 +14,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @Builder
@@ -60,5 +61,15 @@ public class Seat {
             ", createdAt=" + createdAt + "'" +
             ", updatedAt=" + updatedAt +
             "}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Seat seat = (Seat) o;
+        return Objects.equals(id, seat.id) && Objects.equals(seatNumber, seat.seatNumber) &&
+            Objects.equals(seatClass, seat.seatClass) && Objects.equals(createdAt, seat.createdAt) &&
+            Objects.equals(updatedAt, seat.updatedAt);
     }
 }

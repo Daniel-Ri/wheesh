@@ -63,4 +63,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     @Modifying
     @Query("DELETE FROM Schedule s WHERE s.departureTime >= :timeLimit")
     void deleteAfterTimeLimit(LocalDateTime timeLimit);
+
+    @Query("SELECT s FROM Schedule s JOIN s.orders o WHERE o.id = :orderId")
+    Optional<Schedule> findByOrderId(Long orderId);
 }

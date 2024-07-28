@@ -34,6 +34,7 @@ public class DataSeeder {
     private final BannerSeeder bannerSeeder;
 
     public void seed() throws Exception {
+        bannerSeeder.seedBanners();
         userSeeder.seedUsers();
         passengerSeeder.seedPassengers();
         stationSeeder.seedStations();
@@ -46,6 +47,5 @@ public class DataSeeder {
         orderSeeder.seed();
         orderedSeatSeeder.seed();
         paymentSeeder.seed();
-        bannerSeeder.seedBanners();
     }
 }

@@ -1,6 +1,7 @@
 package com.daniel.wheesh.orderedseat;
 
 import com.daniel.wheesh.carriage.Carriage;
+import com.daniel.wheesh.carriage.CarriageRepository;
 import com.daniel.wheesh.global.Utility;
 import com.daniel.wheesh.order.Order;
 import com.daniel.wheesh.order.OrderRepository;
@@ -9,16 +10,16 @@ import com.daniel.wheesh.schedule.Schedule;
 import com.daniel.wheesh.schedule.ScheduleRepository;
 import com.daniel.wheesh.schedule.SeatClass;
 import com.daniel.wheesh.scheduleprice.SchedulePrice;
+import com.daniel.wheesh.scheduleprice.SchedulePriceRepository;
 import com.daniel.wheesh.seat.Seat;
+import com.daniel.wheesh.train.Train;
+import com.daniel.wheesh.train.TrainRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -28,10 +29,12 @@ public class OrderedSeatSeeder {
     private static final int BATCH_SIZE = 100;
 
     private final OrderRepository orderRepository;
+    private final TrainRepository trainRepository;
+    private final CarriageRepository carriageRepository;
     private final ScheduleRepository scheduleRepository;
+    private final SchedulePriceRepository schedulePriceRepository;
     private final OrderedSeatRepository orderedSeatRepository;
 
-    @Transactional
     public void seed() {
         if (orderedSeatRepository.count() > 0) {
             logger.info("Ordered seats already exist in the database. No seeding needed.");
@@ -46,7 +49,8 @@ public class OrderedSeatSeeder {
 
         // First, create all orderedSeats for all schedules
         for (Schedule schedule : scheduleList) {
-            for (Carriage carriage : schedule.getTrain().getCarriages()) {
+            List<Carriage> carriageList = carriageRepository.findByTrainId(schedule.getTrain().getId());
+            for (Carriage carriage : carriageList) {
                 for (Seat seat : carriage.getSeats()) {
                     orderedSeatList.add(
                         OrderedSeat.builder()
@@ -102,7 +106,7 @@ public class OrderedSeatSeeder {
     }
 
     private Map<SeatClass, Long> createSchedulePriceMap(Schedule schedule) {
-        return schedule.getSchedulePrices().stream()
+        return schedulePriceRepository.findByScheduleId(schedule.getId()).stream()
             .collect(Collectors.toMap(SchedulePrice::getSeatClass, SchedulePrice::getPrice));
     }
 
@@ -120,11 +124,14 @@ public class OrderedSeatSeeder {
     private void processOrder(Order order, List<OrderedSeat> orderedSeatList, int carriageLimit,
                               boolean isLessThanOrEqual) {
         Map<SeatClass, Long> schedulePriceMap = createSchedulePriceMap(order.getSchedule());
-        List<Carriage> carriages = order.getSchedule().getTrain().getCarriages();
+        Train train = trainRepository.findByScheduleId(order.getSchedule().getId()).orElseThrow();
+        List<Carriage> carriages = carriageRepository.findByTrainId(train.getId());
+        Schedule schedule = scheduleRepository.findByOrderId(order.getId()).orElseThrow();
+
         carriages.stream()
             .filter(carriage -> isLessThanOrEqual == (carriage.getCarriageNumber() <= carriageLimit))
             .forEach(carriage ->
-                processSeatList(order.getSchedule(), carriage.getSeats(), order, orderedSeatList, schedulePriceMap)
+                processSeatList(schedule, carriage.getSeats(), order, orderedSeatList, schedulePriceMap)
             );
     }
 
@@ -135,8 +142,11 @@ public class OrderedSeatSeeder {
 
     private void processOrderByClass(Order order, List<OrderedSeat> orderedSeatList, SeatClass seatClass) {
         Map<SeatClass, Long> schedulePriceMap = createSchedulePriceMap(order.getSchedule());
-        List<Carriage> carriages = order.getSchedule().getTrain().getCarriages();
-        processSeatsByClass(order.getSchedule(), carriages, order, orderedSeatList, seatClass, schedulePriceMap);
+        Train train = trainRepository.findByScheduleId(order.getSchedule().getId()).orElseThrow();
+        List<Carriage> carriages = carriageRepository.findByTrainId(train.getId());
+        Schedule schedule = scheduleRepository.findByOrderId(order.getId()).orElseThrow();
+
+        processSeatsByClass(schedule, carriages, order, orderedSeatList, seatClass, schedulePriceMap);
     }
 
     private void processSeatsByClass(Schedule schedule, List<Carriage> carriages, Order order,
@@ -151,9 +161,11 @@ public class OrderedSeatSeeder {
     private void processSeat(Schedule schedule, Seat seat, Order order, List<OrderedSeat> orderedSeatList,
                              Map<SeatClass, Long> schedulePriceMap) {
         OrderedSeat orderedSeat = orderedSeatList.stream()
-            .filter(os -> schedule == os.getSchedule() && seat == os.getSeat())
+            .filter(os -> Objects.equals(schedule, os.getSchedule()) && Objects.equals(seat, os.getSeat()))
             .findFirst() // Find the first match
-            .orElseThrow(() -> new IllegalArgumentException("No matching ordered seat found for seat: " + seat));
+            .orElseThrow(() -> new IllegalArgumentException("No matching ordered seat found for seat: " + seat +
+                ", schedule: " + schedule)
+            );
 
         // If a matching orderedSeat is found, update it
         OrderedSeat temp = generateOrderedSeatItem();
@@ -170,7 +182,9 @@ public class OrderedSeatSeeder {
     private void processMixedOrder(Order order, List<OrderedSeat> orderedSeatList) {
         Map<SeatClass, Long> schedulePriceMap = createSchedulePriceMap(order.getSchedule());
 
-        List<Carriage> carriages = order.getSchedule().getTrain().getCarriages();
+        Train train = trainRepository.findByScheduleId(order.getSchedule().getId()).orElseThrow();
+        List<Carriage> carriages = carriageRepository.findByTrainId(train.getId());
+        Schedule schedule = scheduleRepository.findByOrderId(order.getId()).orElseThrow();
         List<Seat> seats = new ArrayList<>();
 
         // Get 80% of first class seats
@@ -186,13 +200,15 @@ public class OrderedSeatSeeder {
             .filter(seat -> seat.getSeatClass() == SeatClass.business || seat.getSeatClass() == SeatClass.economy)
             .toList());
 
-        processSeatList(order.getSchedule(), seats, order, orderedSeatList, schedulePriceMap);
+        processSeatList(schedule, seats, order, orderedSeatList, schedulePriceMap);
     }
 
     private void processRandomSeats(Order order, List<OrderedSeat> orderedSeatList, SeatClass seatClass,
                                     double percentageOrCount) {
         Map<SeatClass, Long> schedulePriceMap = createSchedulePriceMap(order.getSchedule());
-        List<Carriage> carriages = order.getSchedule().getTrain().getCarriages();
+        Train train = trainRepository.findByScheduleId(order.getSchedule().getId()).orElseThrow();
+        List<Carriage> carriages = carriageRepository.findByTrainId(train.getId());
+        Schedule schedule = scheduleRepository.findByOrderId(order.getId()).orElseThrow();
 
         List<Seat> seats = carriages.stream()
             .flatMap(carriage -> carriage.getSeats().stream())
@@ -206,7 +222,7 @@ public class OrderedSeatSeeder {
             selectedSeats = Utility.selectRandomly(seats, (int) percentageOrCount);
         }
 
-        processSeatList(order.getSchedule(), selectedSeats, order, orderedSeatList, schedulePriceMap);
+        processSeatList(schedule, selectedSeats, order, orderedSeatList, schedulePriceMap);
     }
 
     public void unseed() {
